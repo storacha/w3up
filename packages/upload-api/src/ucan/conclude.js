@@ -49,7 +49,7 @@ export function getConcludeReceipt(concludeFx) {
 
 /**
  * @param {API.Signer} id
- * @param {API.Verifier} serviceDid
+ * @param {API.Principal} serviceDid
  * @param {API.Receipt} receipt
  */
 export function createConcludeInvocation(id, serviceDid, receipt) {

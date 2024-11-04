@@ -1,4 +1,4 @@
-import * as IndexCapabilities from '@storacha/capabilities/index'
+import * as IndexCapabilities from '@storacha/capabilities/space/index'
 import { SpaceDID } from '@storacha/capabilities/utils'
 import retry from 'p-retry'
 import { servicePrincipal, connection } from '../service.js'
@@ -25,7 +25,7 @@ import { REQUEST_RETRIES } from '../constants.js'
  * The issuer needs the `index/add` delegated capability.
  * @param {import('../types.js').CARLink} index Index to store.
  * @param {import('../types.js').RequestOptions} [options]
- * @returns {Promise<import('../types.js').IndexAddSuccess>}
+ * @returns {Promise<import('../types.js').SpaceIndexAddSuccess>}
  */
 export async function add(
   { issuer, with: resource, proofs, audience },

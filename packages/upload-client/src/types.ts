@@ -21,25 +21,25 @@ import {
   UCANConcludeSuccess,
   UCANConcludeFailure,
   BlobModel,
-  BlobAdd,
-  BlobAddSuccess,
-  BlobAddFailure,
+  SpaceBlobAdd,
+  SpaceBlobAddSuccess,
+  SpaceBlobAddFailure,
   BlobAllocateSuccess,
   BlobAllocateFailure,
   BlobAcceptSuccess,
   BlobAcceptFailure,
-  BlobRemove,
-  BlobRemoveSuccess,
-  BlobRemoveFailure,
-  BlobList,
-  BlobListSuccess,
-  BlobListFailure,
-  BlobGet,
-  BlobGetSuccess,
-  BlobGetFailure,
-  IndexAdd,
-  IndexAddSuccess,
-  IndexAddFailure,
+  SpaceBlobRemove,
+  SpaceBlobRemoveSuccess,
+  SpaceBlobRemoveFailure,
+  SpaceBlobList,
+  SpaceBlobListSuccess,
+  SpaceBlobListFailure,
+  SpaceBlobGet,
+  SpaceBlobGetSuccess,
+  SpaceBlobGetFailure,
+  SpaceIndexAdd,
+  SpaceIndexAddSuccess,
+  SpaceIndexAddFailure,
   StoreAdd,
   StoreAddSuccess,
   StoreAddSuccessUpload,
@@ -97,24 +97,24 @@ type FetchOptions = Override<
 export type {
   FetchOptions,
   BlobModel,
-  BlobAddSuccess,
-  BlobAddFailure,
+  SpaceBlobAddSuccess,
+  SpaceBlobAddFailure,
   BlobAllocateSuccess,
   BlobAllocateFailure,
   BlobAcceptSuccess,
   BlobAcceptFailure,
-  BlobRemove,
-  BlobRemoveSuccess,
-  BlobRemoveFailure,
-  BlobList,
-  BlobListSuccess,
-  BlobListFailure,
-  BlobGet,
-  BlobGetSuccess,
-  BlobGetFailure,
-  IndexAdd,
-  IndexAddSuccess,
-  IndexAddFailure,
+  SpaceBlobRemove,
+  SpaceBlobRemoveSuccess,
+  SpaceBlobRemoveFailure,
+  SpaceBlobList,
+  SpaceBlobListSuccess,
+  SpaceBlobListFailure,
+  SpaceBlobGet,
+  SpaceBlobGetSuccess,
+  SpaceBlobGetFailure,
+  SpaceIndexAdd,
+  SpaceIndexAddSuccess,
+  SpaceIndexAddFailure,
   StoreAdd,
   StoreAddSuccess,
   StoreAddSuccessUpload,
@@ -168,17 +168,17 @@ export interface Service extends StorefrontService {
   }
   space: {
     blob: {
-      add: ServiceMethod<BlobAdd, BlobAddSuccess, BlobAddFailure>
-      remove: ServiceMethod<BlobRemove, BlobRemoveSuccess, BlobRemoveFailure>
-      list: ServiceMethod<BlobList, BlobListSuccess, BlobListFailure>
+      add: ServiceMethod<SpaceBlobAdd, SpaceBlobAddSuccess, SpaceBlobAddFailure>
+      remove: ServiceMethod<SpaceBlobRemove, SpaceBlobRemoveSuccess, SpaceBlobRemoveFailure>
+      list: ServiceMethod<SpaceBlobList, SpaceBlobListSuccess, SpaceBlobListFailure>
       get: {
         0: {
-          1: ServiceMethod<BlobGet, BlobGetSuccess, BlobGetFailure>
+          1: ServiceMethod<SpaceBlobGet, SpaceBlobGetSuccess, SpaceBlobGetFailure>
         }
       }
     }
     index: {
-      add: ServiceMethod<IndexAdd, IndexAddSuccess, IndexAddFailure>
+      add: ServiceMethod<SpaceIndexAdd, SpaceIndexAddSuccess, SpaceIndexAddFailure>
     }
   }
   store: {

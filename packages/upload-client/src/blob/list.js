@@ -1,4 +1,4 @@
-import * as BlobCapabilities from '@storacha/capabilities/blob'
+import * as BlobCapabilities from '@storacha/capabilities/space/blob'
 import { SpaceDID } from '@storacha/capabilities/utils'
 import { servicePrincipal, connection } from '../service.js'
 
@@ -19,7 +19,7 @@ import { servicePrincipal, connection } from '../service.js'
  *
  * The issuer needs the `blob/list` delegated capability.
  * @param {import('../types.js').ListRequestOptions} [options]
- * @returns {Promise<import('../types.js').BlobListSuccess>}
+ * @returns {Promise<import('../types.js').SpaceBlobListSuccess>}
  */
 export async function list(
   { issuer, with: resource, proofs, audience },

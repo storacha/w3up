@@ -249,7 +249,7 @@ export type InvokeOptions<
     Match<{ can: A; with: R & Resource; nb: Caveats }, UnknownMatch>
   >
 > = UCANBasicOptions &
-  InferNb<InferInvokedCapability<CAP>['nb']> & {
+  Omit<InferInvokedCapability<CAP>, 'can'|'with'> & {
     /**
      * Resource for the capability, normally a Space DID
      * Defaults to the current selected Space

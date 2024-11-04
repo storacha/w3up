@@ -1,4 +1,4 @@
-import * as BlobCapabilities from '@storacha/capabilities/blob'
+import * as BlobCapabilities from '@storacha/capabilities/space/blob'
 import { SpaceDID } from '@storacha/capabilities/utils'
 import { servicePrincipal, connection } from '../service.js'
 

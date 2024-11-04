@@ -239,7 +239,7 @@ export class Agent {
       }
     }
     const receipt = await this.invokeAndExecute(UCAN.revoke, {
-      // per https://github.com/storacha/upload-service/blob/main/packages/capabilities/src/ucan.js#L38C6-L38C6 the resource here should be
+      // per https://github.com/storacha/w3up/blob/main/packages/capabilities/src/ucan.js#L38C6-L38C6 the resource here should be
       // the current issuer - using the space DID here works for simple cases but falls apart when a delegee tries to revoke a delegation
       // they have re-delegated, since they don't have "ucan/revoke" capabilities on the space
       with: this.issuer.did(),
@@ -577,7 +577,7 @@ export class Agent {
       // @ts-ignore
       capability: cap.create({
         with: space,
-        nb: options.nb,
+        nb: 'nb' in options ? options.nb : undefined,
       }),
       issuer: this.issuer,
       proofs: [...proofs],

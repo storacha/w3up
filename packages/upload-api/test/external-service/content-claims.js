@@ -82,13 +82,13 @@ export const activate = async ({ http } = {}) => {
       chunks.push(chunk)
     }
 
-    const { headers, body } = await server.request({
+    const { status, headers, body } = await server.request({
       // @ts-expect-error
       headers: req.headers,
       body: new Uint8Array(await new Blob(chunks).arrayBuffer()),
     })
 
-    res.writeHead(200, headers)
+    res.writeHead(status ?? 200, headers)
     res.write(body)
     res.end()
   })

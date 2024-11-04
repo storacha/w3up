@@ -11,7 +11,7 @@
  *
  * @module
  */
-import { equals as SpaceBlob } from 'uint8arrays/equals'
+import { equals as SpaceBlobCapabilities } from 'uint8arrays/equals'
 import { capability, Schema, fail, ok } from '@ucanto/validator'
 import { equalBlob, equalWith, SpaceDID } from '../utils.js'
 
@@ -94,7 +94,7 @@ export const remove = capability({
       )
     } else if (
       delegated.nb.digest &&
-      !SpaceBlob(delegated.nb.digest, claimed.nb.digest)
+      !SpaceBlobCapabilities(delegated.nb.digest, claimed.nb.digest)
     ) {
       return fail(
         `Link ${
@@ -160,7 +160,7 @@ export const get = capability({
       )
     } else if (
       delegated.nb.digest &&
-      !SpaceBlob(delegated.nb.digest, claimed.nb.digest)
+      !SpaceBlobCapabilities(delegated.nb.digest, claimed.nb.digest)
     ) {
       return fail(
         `Link ${

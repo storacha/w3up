@@ -38,9 +38,9 @@
     "test-watch": "pnpm build && mocha --bail --timeout 10s --watch --parallel -n no-warnings -n experimental-vm-modules -n experimental-fetch --watch-files src,test"
   },
   "devDependencies": {
+    "@storacha/eslint-config": "workspace:^",
     "@types/assert": "^1.5.6",
     "@types/mocha": "^10.0.1",
-    "@storacha/eslint-config": "workspace:^",
     "mocha": "^10.2.0",
     "typescript": "5.2.2"
   },

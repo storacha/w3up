@@ -32,7 +32,7 @@ import * as Filecoin from '@storacha/capabilities/filecoin'
 import * as Aggregator from '@storacha/capabilities/filecoin/aggregator'
 import * as DealTracker from '@storacha/capabilities/filecoin/deal-tracker'
 import * as Dealer from '@storacha/capabilities/filecoin/dealer'
-import * as Index from '@storacha/capabilities/index'
+import * as Index from '@storacha/capabilities/space/index'
 
 // This package has a "main" entrypoint but we recommend the usage of the specific imports above
 ```

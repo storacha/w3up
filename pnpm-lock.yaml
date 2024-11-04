@@ -13,7 +13,7 @@ importers:
         version: 1.4.7
       typedoc-plugin-missing-exports:
         specifier: ^2.1.0
-        version: 2.2.0(typedoc@0.25.13(typescript@5.2.2))
+        version: 2.3.0(typedoc@0.25.13(typescript@5.2.2))
     devDependencies:
       '@arethetypeswrong/cli':
         specifier: ^0.15.3
@@ -57,6 +57,12 @@ importers:
       '@scure/bip39':
         specifier: ^1.2.1
         version: 1.3.0
+      '@storacha/capabilities':
+        specifier: workspace:^
+        version: link:../capabilities
+      '@storacha/did-mailto':
+        specifier: workspace:^
+        version: link:../did-mailto
       '@storacha/one-webcrypto':
         specifier: ^1.0.1
         version: 1.0.1
@@ -78,12 +84,6 @@ importers:
       '@ucanto/validator':
         specifier: ^9.0.2
         version: 9.0.2
-      '@storacha/capabilities':
-        specifier: workspace:^
-        version: link:../capabilities
-      '@storacha/did-mailto':
-        specifier: workspace:^
-        version: link:../did-mailto
       bigint-mod-arith:
         specifier: ^3.1.2
         version: 3.3.1
@@ -103,6 +103,9 @@ importers:
         specifier: ^4.0.6
         version: 4.0.10
     devDependencies:
+      '@storacha/eslint-config':
+        specifier: workspace:^
+        version: link:../eslint-config-w3up
       '@types/assert':
         specifier: ^1.5.6
         version: 1.5.10
@@ -127,9 +130,6 @@ importers:
       '@ucanto/server':
         specifier: ^10.0.0
         version: 10.0.0
-      '@storacha/eslint-config':
-        specifier: workspace:^
-        version: link:../eslint-config-w3up
       assert:
         specifier: ^2.0.0
         version: 2.1.0
@@ -154,6 +154,9 @@ importers:
       '@ipld/dag-cbor':
         specifier: ^9.0.6
         version: 9.2.0
+      '@storacha/capabilities':
+        specifier: workspace:^
+        version: link:../capabilities
       '@storacha/one-webcrypto':
         specifier: ^1.0.1
         version: 1.0.1
@@ -163,9 +166,6 @@ importers:
       '@ucanto/interface':
         specifier: ^10.0.1
         version: 10.0.1
-      '@storacha/capabilities':
-        specifier: workspace:^
-        version: link:../capabilities
       carstream:
         specifier: ^2.1.0
         version: 2.1.0
@@ -176,12 +176,12 @@ importers:
         specifier: ^5.0.3
         version: 5.0.3
     devDependencies:
-      '@ucanto/transport':
-        specifier: ^9.1.1
-        version: 9.1.1
       '@storacha/eslint-config':
         specifier: workspace:^
         version: link:../eslint-config-w3up
+      '@ucanto/transport':
+        specifier: ^9.1.1
+        version: 9.1.1
       c8:
         specifier: ^7.14.0
         version: 7.14.0
@@ -216,6 +216,9 @@ importers:
         specifier: ^5.0.3
         version: 5.0.3
     devDependencies:
+      '@storacha/eslint-config':
+        specifier: workspace:^
+        version: link:../eslint-config-w3up
       '@types/assert':
         specifier: ^1.5.6
         version: 1.5.10
@@ -225,9 +228,6 @@ importers:
       '@types/node':
         specifier: ^20.8.4
         version: 20.12.10
-      '@storacha/eslint-config':
-        specifier: workspace:^
-        version: link:../eslint-config-w3up
       assert:
         specifier: ^2.0.0
         version: 2.1.0
@@ -249,15 +249,15 @@ importers:
 
   packages/did-mailto:
     devDependencies:
+      '@storacha/eslint-config':
+        specifier: workspace:^
+        version: link:../eslint-config-w3up
       '@types/assert':
         specifier: ^1.5.6
         version: 1.5.10
       '@types/mocha':
         specifier: ^10.0.1
         version: 10.0.6
-      '@storacha/eslint-config':
-        specifier: workspace:^
-        version: link:../eslint-config-w3up
       mocha:
         specifier: ^10.2.0
         version: 10.4.0
@@ -269,10 +269,10 @@ importers:
     dependencies:
       '@typescript-eslint/eslint-plugin':
         specifier: ^6.9.1
-        version: 6.21.0(@typescript-eslint/parser@6.21.0(eslint@8.57.0)(typescript@5.3.3))(eslint@8.57.0)(typescript@5.3.3)
+        version: 6.21.0(@typescript-eslint/parser@6.21.0(eslint@8.57.0)(typescript@5.7.0-beta))(eslint@8.57.0)(typescript@5.7.0-beta)
       '@typescript-eslint/parser':
         specifier: ^6.9.1
-        version: 6.21.0(eslint@8.57.0)(typescript@5.3.3)
+        version: 6.21.0(eslint@8.57.0)(typescript@5.7.0-beta)
       eslint:
         specifier: ^8.56.0
         version: 8.57.0
@@ -285,6 +285,9 @@ importers:
       '@ipld/dag-ucan':
         specifier: ^3.4.0
         version: 3.4.0
+      '@storacha/capabilities':
+        specifier: workspace:^
+        version: link:../capabilities
       '@ucanto/client':
         specifier: ^9.0.1
         version: 9.0.1
@@ -300,9 +303,6 @@ importers:
       '@ucanto/transport':
         specifier: ^9.1.1
         version: 9.1.1
-      '@storacha/capabilities':
-        specifier: workspace:^
-        version: link:../capabilities
       '@web3-storage/content-claims':
         specifier: ^5.0.0
         version: 5.0.0
@@ -316,6 +316,12 @@ importers:
         specifier: ^6.0.0
         version: 6.0.0
     devDependencies:
+      '@storacha/eslint-config':
+        specifier: workspace:^
+        version: link:../eslint-config-w3up
+      '@storacha/filecoin-client':
+        specifier: workspace:^
+        version: link:../filecoin-client
       '@storacha/one-webcrypto':
         specifier: ^1.0.1
         version: 1.0.1
@@ -331,12 +337,6 @@ importers:
       '@web-std/blob':
         specifier: ^3.0.5
         version: 3.0.5
-      '@storacha/eslint-config':
-        specifier: workspace:^
-        version: link:../eslint-config-w3up
-      '@storacha/filecoin-client':
-        specifier: workspace:^
-        version: link:../filecoin-client
       c8:
         specifier: ^10.1.2
         version: 10.1.2
@@ -358,6 +358,9 @@ importers:
       '@ipld/dag-ucan':
         specifier: ^3.4.0
         version: 3.4.0
+      '@storacha/capabilities':
+        specifier: workspace:^
+        version: link:../capabilities
       '@ucanto/client':
         specifier: ^9.0.1
         version: 9.0.1
@@ -370,13 +373,13 @@ importers:
       '@ucanto/transport':
         specifier: ^9.1.1
         version: 9.1.1
-      '@storacha/capabilities':
-        specifier: workspace:^
-        version: link:../capabilities
     devDependencies:
       '@ipld/dag-json':
         specifier: ^10.1.4
         version: 10.2.0
+      '@storacha/eslint-config':
+        specifier: workspace:^
+        version: link:../eslint-config-w3up
       '@types/assert':
         specifier: ^1.5.6
         version: 1.5.10
@@ -392,9 +395,6 @@ importers:
       '@web3-storage/data-segment':
         specifier: ^4.0.0
         version: 4.0.0
-      '@storacha/eslint-config':
-        specifier: workspace:^
-        version: link:../eslint-config-w3up
       assert:
         specifier: ^2.0.0
         version: 2.1.0
@@ -422,6 +422,21 @@ importers:
 
   packages/upload-api:
     dependencies:
+      '@storacha/access':
+        specifier: workspace:^
+        version: link:../access-client
+      '@storacha/blob-index':
+        specifier: workspace:^
+        version: link:../blob-index
+      '@storacha/capabilities':
+        specifier: workspace:^
+        version: link:../capabilities
+      '@storacha/did-mailto':
+        specifier: workspace:^
+        version: link:../did-mailto
+      '@storacha/filecoin-api':
+        specifier: workspace:^
+        version: link:../filecoin-api
       '@ucanto/client':
         specifier: ^9.0.1
         version: 9.0.1
@@ -440,24 +455,9 @@ importers:
       '@ucanto/validator':
         specifier: ^9.0.2
         version: 9.0.2
-      '@storacha/access':
-        specifier: workspace:^
-        version: link:../access-client
-      '@storacha/blob-index':
-        specifier: workspace:^
-        version: link:../blob-index
-      '@storacha/capabilities':
-        specifier: workspace:^
-        version: link:../capabilities
       '@web3-storage/content-claims':
-        specifier: ^5.1.0
-        version: 5.1.0
-      '@storacha/did-mailto':
-        specifier: workspace:^
-        version: link:../did-mailto
-      '@storacha/filecoin-api':
-        specifier: workspace:^
-        version: link:../filecoin-api
+        specifier: ^5.1.3
+        version: 5.1.3
       multiformats:
         specifier: ^12.1.2
         version: 12.1.3
@@ -471,6 +471,9 @@ importers:
       '@ipld/dag-ucan':
         specifier: ^3.4.0
         version: 3.4.0
+      '@storacha/eslint-config':
+        specifier: workspace:^
+        version: link:../eslint-config-w3up
       '@storacha/one-webcrypto':
         specifier: ^1.0.1
         version: 1.0.1
@@ -483,9 +486,6 @@ importers:
       '@web-std/blob':
         specifier: ^3.0.5
         version: 3.0.5
-      '@storacha/eslint-config':
-        specifier: workspace:^
-        version: link:../eslint-config-w3up
       '@web3-storage/sigv4':
         specifier: ^1.0.2
         version: 1.0.2
@@ -513,6 +513,15 @@ importers:
       '@ipld/unixfs':
         specifier: ^2.1.1
         version: 2.2.0
+      '@storacha/blob-index':
+        specifier: workspace:^
+        version: link:../blob-index
+      '@storacha/capabilities':
+        specifier: workspace:^
+        version: link:../capabilities
+      '@storacha/filecoin-client':
+        specifier: workspace:^
+        version: link:../filecoin-client
       '@ucanto/client':
         specifier: ^9.0.1
         version: 9.0.1
@@ -525,18 +534,9 @@ importers:
       '@ucanto/transport':
         specifier: ^9.1.1
         version: 9.1.1
-      '@storacha/blob-index':
-        specifier: workspace:^
-        version: link:../blob-index
-      '@storacha/capabilities':
-        specifier: workspace:^
-        version: link:../capabilities
       '@web3-storage/data-segment':
         specifier: ^5.1.0
         version: 5.1.0
-      '@storacha/filecoin-client':
-        specifier: workspace:^
-        version: link:../filecoin-client
       ipfs-utils:
         specifier: ^9.0.14
         version: 9.0.14(encoding@0.1.13)
@@ -550,6 +550,9 @@ importers:
         specifier: ^6.0.0
         version: 6.0.0
     devDependencies:
+      '@storacha/eslint-config':
+        specifier: workspace:^
+        version: link:../eslint-config-w3up
       '@types/assert':
         specifier: ^1.5.6
         version: 1.5.10
@@ -568,9 +571,6 @@ importers:
       '@web3-storage/content-claims':
         specifier: ^5.0.0
         version: 5.0.0
-      '@storacha/eslint-config':
-        specifier: workspace:^
-        version: link:../eslint-config-w3up
       assert:
         specifier: ^2.0.0
         version: 2.1.0
@@ -596,29 +596,14 @@ importers:
         specifier: ^12.3.4
         version: 12.6.1
       typescript:
-        specifier: 5.2.2
-        version: 5.2.2
+        specifier: 5.6.3
+        version: 5.6.3
 
   packages/w3up-client:
     dependencies:
       '@ipld/dag-ucan':
         specifier: ^3.4.0
         version: 3.4.0
-      '@ucanto/client':
-        specifier: ^9.0.1
-        version: 9.0.1
-      '@ucanto/core':
-        specifier: ^10.0.1
-        version: 10.0.1
-      '@ucanto/interface':
-        specifier: ^10.0.1
-        version: 10.0.1
-      '@ucanto/principal':
-        specifier: ^9.0.1
-        version: 9.0.1
-      '@ucanto/transport':
-        specifier: ^9.1.1
-        version: 9.1.1
       '@storacha/access':
         specifier: workspace:^
         version: link:../access-client
@@ -637,6 +622,21 @@ importers:
       '@storacha/upload-client':
         specifier: workspace:^
         version: link:../upload-client
+      '@ucanto/client':
+        specifier: ^9.0.1
+        version: 9.0.1
+      '@ucanto/core':
+        specifier: ^10.0.1
+        version: 10.0.1
+      '@ucanto/interface':
+        specifier: ^10.0.1
+        version: 10.0.1
+      '@ucanto/principal':
+        specifier: ^9.0.1
+        version: 9.0.1
+      '@ucanto/transport':
+        specifier: ^9.1.1
+        version: 9.1.1
     devDependencies:
       '@ipld/car':
         specifier: ^5.1.1
@@ -644,6 +644,12 @@ importers:
       '@ipld/unixfs':
         specifier: ^2.1.1
         version: 2.2.0
+      '@storacha/eslint-config':
+        specifier: workspace:^
+        version: link:../eslint-config-w3up
+      '@storacha/upload-api':
+        specifier: workspace:^
+        version: link:../upload-api
       '@types/assert':
         specifier: ^1.5.6
         version: 1.5.10
@@ -662,12 +668,6 @@ importers:
       '@web3-storage/data-segment':
         specifier: ^5.0.0
         version: 5.1.0
-      '@storacha/eslint-config':
-        specifier: workspace:^
-        version: link:../eslint-config-w3up
-      '@storacha/upload-api':
-        specifier: workspace:^
-        version: link:../upload-api
       assert:
         specifier: ^2.0.0
         version: 2.1.0
@@ -691,10 +691,10 @@ importers:
         version: 12.6.1
       typedoc:
         specifier: ^0.25.3
-        version: 0.25.13(typescript@5.2.2)
+        version: 0.25.13(typescript@5.6.3)
       typescript:
         specifier: ^5.2.2
-        version: 5.2.2
+        version: 5.6.3
 
 packages:
 
@@ -893,8 +893,16 @@ packages:
     resolution: {integrity: sha512-2ofRCjnnA9y+wk8b9IAREroeUP02KHp431N2mhKniy2yKIDKpbrHv9eXwm8cBeWQYcJmzv5qKCu65P47eCF7CQ==}
     engines: {node: '>=6.9.0'}
 
+  '@babel/helper-string-parser@7.25.9':
+    resolution: {integrity: sha512-4A/SCr/2KLd5jrtOMFzaKjVtAei3+2r/NChoBNoZ3EyP/+GlhoaEGoWOZUmFmoITP7zOJyHIMm+DYRd8o3PvHA==}
+    engines: {node: '>=6.9.0'}
+
   '@babel/helper-validator-identifier@7.24.5':
     resolution: {integrity: sha512-3q93SSKX2TWCG30M2G2kwaKeTYgEUp5Snjuj8qm729SObL6nbtUldAi37qbxkD5gg3xnBio+f9nqpSepGZMvxA==}
+    engines: {node: '>=6.9.0'}
+
+  '@babel/helper-validator-identifier@7.25.9':
+    resolution: {integrity: sha512-Ed61U6XJc3CVRfkERJWDz4dJwKe7iLmmJsbOGu9wSloNSFttHV0I8g6UAgb7qnK5ly5bGLPd4oXZlxCdANBOWQ==}
     engines: {node: '>=6.9.0'}
 
   '@babel/helper-validator-option@7.23.5':
@@ -915,6 +923,11 @@ packages:
 
   '@babel/parser@7.24.5':
     resolution: {integrity: sha512-EOv5IK8arwh3LI47dz1b0tKUb/1uhHAnHJOrjgtQMIpu1uXd9mlFrJg9IUgGUgZ41Ch0K8REPTYpO7B76b4vJg==}
+    engines: {node: '>=6.0.0'}
+    hasBin: true
+
+  '@babel/parser@7.26.2':
+    resolution: {integrity: sha512-DWMCZH9WA4Maitz2q21SRKHo9QXZxkDsbNZoVD62gusNtNBBqDg9i7uOhASfTfIGNzW+O+r7+jAlM8dwphcJKQ==}
     engines: {node: '>=6.0.0'}
     hasBin: true
 
@@ -1432,6 +1445,10 @@ packages:
     resolution: {integrity: sha512-6mQNsaLeXTw0nxYUYu+NSa4Hx4BlF1x1x8/PMFbiR+GBSr+2DkECc69b8hgy2frEodNcvPffeH8YfWd3LI6jhQ==}
     engines: {node: '>=6.9.0'}
 
+  '@babel/types@7.26.0':
+    resolution: {integrity: sha512-Z/yiTPj+lDVnF7lWeKCIJzaIkI0vYO87dMpZ4bg4TDrFe4XXLFWL1TbXU27gBP3QccxV9mZICCrnjnYlJjXHOA==}
+    engines: {node: '>=6.9.0'}
+
   '@bcoe/v8-coverage@0.2.3':
     resolution: {integrity: sha512-0hYQ8SB4Db5zvZB4axdMHGwEaQjkZzFjQiN9LVYvIFB2nSUHW9tYpxWriPrWDASIxiaXax83REcLxuSdnGPZtw==}
 
@@ -1845,6 +1862,9 @@ packages:
 
   '@jridgewell/sourcemap-codec@1.4.15':
     resolution: {integrity: sha512-eF2rxCRulEKXHTRiDrDy6erMYWqNw4LPdQ8UQA4huuxaQsVeRPFl2oM8oDGxMFhJUWZf9McpLtJasDDZb/Bpeg==}
+
+  '@jridgewell/sourcemap-codec@1.5.0':
+    resolution: {integrity: sha512-gv3ZRaISU3fjPAgNsriBRqGWQL6quFx04YMPW/zD8XMLsU32mhCCbfbO6KZFLjvYpCZ8zyDEgqsgf+PwPaM7GQ==}
 
   '@jridgewell/trace-mapping@0.3.25':
     resolution: {integrity: sha512-vNk6aEwybGtawWmy/PzwnGDOjCkLWSD2wqvjGGAgOAwCGWySYXfYoxt00IJkTF+8Lb57DwOb3Aa0o9CApepiYQ==}
@@ -2344,20 +2364,20 @@ packages:
   '@ungap/structured-clone@1.2.0':
     resolution: {integrity: sha512-zuVdFrMJiuCDQUMCzQaD6KL28MjnqqN8XnAqiEq9PNm/hCPTSGfrXCOfwj1ow4LFb/tNymJPwsNbVePc1xFqrQ==}
 
-  '@vue/compiler-core@3.4.27':
-    resolution: {integrity: sha512-E+RyqY24KnyDXsCuQrI+mlcdW3ALND6U7Gqa/+bVwbcpcR3BRRIckFoz7Qyd4TTlnugtwuI7YgjbvsLmxb+yvg==}
+  '@vue/compiler-core@3.5.12':
+    resolution: {integrity: sha512-ISyBTRMmMYagUxhcpyEH0hpXRd/KqDU4ymofPgl2XAkY9ZhQ+h0ovEZJIiPop13UmR/54oA2cgMDjgroRelaEw==}
 
-  '@vue/compiler-dom@3.4.27':
-    resolution: {integrity: sha512-kUTvochG/oVgE1w5ViSr3KUBh9X7CWirebA3bezTbB5ZKBQZwR2Mwj9uoSKRMFcz4gSMzzLXBPD6KpCLb9nvWw==}
+  '@vue/compiler-dom@3.5.12':
+    resolution: {integrity: sha512-9G6PbJ03uwxLHKQ3P42cMTi85lDRvGLB2rSGOiQqtXELat6uI4n8cNz9yjfVHRPIu+MsK6TE418Giruvgptckg==}
 
-  '@vue/compiler-sfc@3.4.27':
-    resolution: {integrity: sha512-nDwntUEADssW8e0rrmE0+OrONwmRlegDA1pD6QhVeXxjIytV03yDqTey9SBDiALsvAd5U4ZrEKbMyVXhX6mCGA==}
+  '@vue/compiler-sfc@3.5.12':
+    resolution: {integrity: sha512-2k973OGo2JuAa5+ZlekuQJtitI5CgLMOwgl94BzMCsKZCX/xiqzJYzapl4opFogKHqwJk34vfsaKpfEhd1k5nw==}
 
-  '@vue/compiler-ssr@3.4.27':
-    resolution: {integrity: sha512-CVRzSJIltzMG5FcidsW0jKNQnNRYC8bT21VegyMMtHmhW3UOI7knmUehzswXLrExDLE6lQCZdrhD4ogI7c+vuw==}
+  '@vue/compiler-ssr@3.5.12':
+    resolution: {integrity: sha512-eLwc7v6bfGBSM7wZOGPmRavSWzNFF6+PdRhE+VFJhNCgHiF8AM7ccoqcv5kBXA2eWUfigD7byekvf/JsOfKvPA==}
 
-  '@vue/shared@3.4.27':
-    resolution: {integrity: sha512-DL3NmY2OFlqmYYrzp39yi3LDkKxa5vZVwxWdQ3rG0ekuWscHraeIbnI8t+aZK7qhYqEqWKTUdijadunb9pnrgA==}
+  '@vue/shared@3.5.12':
+    resolution: {integrity: sha512-L2RPSAwUFbgZH20etwrXyVyCBu9OxRSi8T/38QsvnkJyvq2LufW2lDCOzm7t/U9C1mkhJGWYfCuFBCmIuNivrg==}
 
   '@web-std/blob@3.0.5':
     resolution: {integrity: sha512-Lm03qr0eT3PoLBuhkvFBLf0EFkAsNz/G/AYCzpOdi483aFaVX86b4iQs0OHhzHJfN5C15q17UtDbyABjlzM96A==}
@@ -2371,8 +2391,8 @@ packages:
   '@web3-storage/content-claims@5.0.0':
     resolution: {integrity: sha512-HJFRFsR0qHCe0cOERsb3AjAxxzohYMMoIWaGJgrShDycnl6yqXHrGcdua1BWUDu5pmvKzwD9D7VmI8aSfrCcRA==}
 
-  '@web3-storage/content-claims@5.1.0':
-    resolution: {integrity: sha512-3VStFKoeieRpRU7brFjKTsAuAffQzYDIZ8F3Gh0+niw+MgzBK72osW+fftdquT8neWir34Ndu3mBUKKJ3ck1RQ==}
+  '@web3-storage/content-claims@5.1.3':
+    resolution: {integrity: sha512-X+Cpm+EmGuEvFyM8oX1NqsBkuSje836B72yuvnVmgd80XPt+McpOhM6ko7rfs9Dx9UmpiZq+998jlvBhg2W5ZA==}
 
   '@web3-storage/data-segment@4.0.0':
     resolution: {integrity: sha512-AnNyJp3wHMa7LBzguQzm4rmXSi8vQBz4uFs+jiXnSNtLR5dAqHfhMvi9XdWonWPYvxNvT5ZhYCSF0mpDjymqKg==}
@@ -3516,6 +3536,7 @@ packages:
   eslint@8.57.0:
     resolution: {integrity: sha512-dZ6+mexnaTIbSBZWgou51U6OmzIhYM2VcNdtiTtI7qPNZm35Akpr0f6vtw3w1Kmn5PYo+tZVfh13WrhpS6oLqQ==}
     engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}
+    deprecated: This version is no longer supported. Please see https://eslint.org/version-support for other options.
     hasBin: true
 
   espree@9.6.1:
@@ -4753,8 +4774,8 @@ packages:
   lunr@2.3.9:
     resolution: {integrity: sha512-zTU3DaZaF3Rt9rhN3uBMGQD3dD2/vFQqnvZCDv4dl5iOzq2IZQqTxu90r4E5J+nP70J3ilqVCrbho2eWaeW8Ow==}
 
-  magic-string@0.30.10:
-    resolution: {integrity: sha512-iIRwTIf0QKV3UAnYK4PU8uiEc4SRh5jX0mwpIwETPpHdhVM4f53RSwS/vXvN1JhGX+Cs7B8qIq3d6AH49O5fAQ==}
+  magic-string@0.30.12:
+    resolution: {integrity: sha512-Ea8I3sQMVXr8JhN4z+H/d8zwo+tYDgHE9+5G4Wnrwhs0gaK9fXTKx0Tw5Xwsd/bCPTTZNRAdpyzvoeORe9LYpw==}
 
   make-dir@4.0.0:
     resolution: {integrity: sha512-hXdUTZYIVOt1Ex//jAQi+wTZZpUpwBj/0QsOzqegb3rGMMeJiSEu5xLHnYfBrRV4RH2+OCSOO95Is/7x1WJ4bw==}
@@ -5070,6 +5091,10 @@ packages:
 
   minimatch@9.0.4:
     resolution: {integrity: sha512-KqWh+VchfxcMNRAJjj2tnsSJdNbHsVgnkBhTNrW7AjVo6OvLtxw8zfT9oLw1JSohlFzJ8jCoTgaoXvJ+kHt6fw==}
+    engines: {node: '>=16 || 14 >=14.17'}
+
+  minimatch@9.0.5:
+    resolution: {integrity: sha512-G6T0ZX48xgozx7587koeX9Ys2NYy6Gmv//P89sEte9V9whIapMNF4idKxnW2QtCcLiTWlb/wfCabAtAFWhhBow==}
     engines: {node: '>=16 || 14 >=14.17'}
 
   minimist@1.2.8:
@@ -5478,6 +5503,9 @@ packages:
   picocolors@1.0.0:
     resolution: {integrity: sha512-1fygroTLlHu66zi26VoTDv8yRgm0Fccecssto+MhsZ0D/DGW2sm8E8AjW7NU5VVTRt5GxbeZ5qBuJr+HyLYkjQ==}
 
+  picocolors@1.1.1:
+    resolution: {integrity: sha512-xceH2snhtb5M9liqDsmEw56le376mTZkEX/jEb/RxNFyegNul7eNslCXP9FDj/Lcu0X8KEyMceP2ntpaHrDEVA==}
+
   picomatch@2.3.1:
     resolution: {integrity: sha512-JU3teHTNjmE2VCGFzuY8EXzCDVwEqB2a8fsIvwaStHhAWJEeVd1o1QD80CU6+ZdEXXSLbSsuLwJjkCBWqRQUVA==}
     engines: {node: '>=8.6'}
@@ -5756,6 +5784,10 @@ packages:
 
   postcss@8.4.38:
     resolution: {integrity: sha512-Wglpdk03BSfXkHoQa3b/oulrotAkwrlLDRSOb9D0bN86FdRyE9lppSp33aHNPgBa0JKCoB+drFLZkQoRRYae5A==}
+    engines: {node: ^10 || ^12 || >=14}
+
+  postcss@8.4.47:
+    resolution: {integrity: sha512-56rxCq7G/XfB4EkXq9Egn5GCqugWvDFjafDOThIdMBsI15iqPqR5r15TfSr1YPYeEI19YeaXMCbY6u88Y76GLQ==}
     engines: {node: ^10 || ^12 || >=14}
 
   prelude-ls@1.2.1:
@@ -6311,6 +6343,10 @@ packages:
     resolution: {integrity: sha512-itJW8lvSA0TXEphiRoawsCksnlf8SyvmFzIhltqAHluXd88pkCd+cXJVHTDwdCr0IzwptSm035IHQktUu1QUMg==}
     engines: {node: '>=0.10.0'}
 
+  source-map-js@1.2.1:
+    resolution: {integrity: sha512-UXWMKhLOwVKb728IUtQPXxfYU+usdybtUrK/8uGE8CQMvrhOpwvzDBwj0QhSL7MQc7vIsISBG8VQ8+IDQxpfQA==}
+    engines: {node: '>=0.10.0'}
+
   source-map-support@0.5.21:
     resolution: {integrity: sha512-uBHU3L3czsIyYXKX88fdrGovxdSCoTGDRZ6SYXtSRxLZUzHg5P/66Ht6uoUlHu9EZod+inXhKo3qQgwXUT/y1w==}
 
@@ -6654,8 +6690,8 @@ packages:
     peerDependencies:
       typedoc: '>=0.24.0'
 
-  typedoc-plugin-missing-exports@2.2.0:
-    resolution: {integrity: sha512-2+XR1IcyQ5UwXZVJe9NE6HrLmNufT9i5OwoIuuj79VxuA3eYq+Y6itS9rnNV1D7UeQnUSH8kISYD73gHE5zw+w==}
+  typedoc-plugin-missing-exports@2.3.0:
+    resolution: {integrity: sha512-iI9ITNNLlbsLCBBeYDyu0Qqp3GN/9AGyWNKg8bctRXuZEPT7G1L+0+MNWG9MsHcf/BFmNbXL0nQ8mC/tXRicog==}
     peerDependencies:
       typedoc: 0.24.x || 0.25.x
 
@@ -6676,8 +6712,18 @@ packages:
     engines: {node: '>=14.17'}
     hasBin: true
 
-  uglify-js@3.17.4:
-    resolution: {integrity: sha512-T9q82TJI9e/C1TAxYvfb16xO120tMVFZrGA3f9/P4424DNu6ypK103y0GPFVa17yotwSyZW5iYXgjYHkGrJW/g==}
+  typescript@5.6.3:
+    resolution: {integrity: sha512-hjcS1mhfuyi4WW8IWtjP7brDrG2cuDZukyrYrSauoXGNgx0S7zceP07adYkJycEr56BOUTNPzbInooiN3fn1qw==}
+    engines: {node: '>=14.17'}
+    hasBin: true
+
+  typescript@5.7.0-beta:
+    resolution: {integrity: sha512-opDlmEnzKdl082N5piLS43lsyugg0aORdv+XnNzMv5yP5VtBWuZhFDxU8lizmhW+PEFa/fZiShYRBxKsrkTDMQ==}
+    engines: {node: '>=14.17'}
+    hasBin: true
+
+  uglify-js@3.19.3:
+    resolution: {integrity: sha512-v3Xu+yuwBXisp6QYTcH4UbH+xYJXqnq2m/LtQVWKWzYc1iehYnLixoQDN9FH6/j9/oybfd6W9Ghwkl8+UMKTKQ==}
     engines: {node: '>=0.8.0'}
     hasBin: true
 
@@ -7232,11 +7278,11 @@ snapshots:
 
   '@babel/helper-annotate-as-pure@7.22.5':
     dependencies:
-      '@babel/types': 7.24.5
+      '@babel/types': 7.26.0
 
   '@babel/helper-builder-binary-assignment-operator-visitor@7.22.15':
     dependencies:
-      '@babel/types': 7.24.5
+      '@babel/types': 7.26.0
 
   '@babel/helper-compilation-targets@7.23.6':
     dependencies:
@@ -7290,7 +7336,7 @@ snapshots:
 
   '@babel/helper-member-expression-to-functions@7.24.5':
     dependencies:
-      '@babel/types': 7.24.5
+      '@babel/types': 7.26.0
 
   '@babel/helper-module-imports@7.24.3':
     dependencies:
@@ -7307,7 +7353,7 @@ snapshots:
 
   '@babel/helper-optimise-call-expression@7.22.5':
     dependencies:
-      '@babel/types': 7.24.5
+      '@babel/types': 7.26.0
 
   '@babel/helper-plugin-utils@7.24.5': {}
 
@@ -7327,11 +7373,11 @@ snapshots:
 
   '@babel/helper-simple-access@7.24.5':
     dependencies:
-      '@babel/types': 7.24.5
+      '@babel/types': 7.26.0
 
   '@babel/helper-skip-transparent-expression-wrappers@7.22.5':
     dependencies:
-      '@babel/types': 7.24.5
+      '@babel/types': 7.26.0
 
   '@babel/helper-split-export-declaration@7.24.5':
     dependencies:
@@ -7339,7 +7385,11 @@ snapshots:
 
   '@babel/helper-string-parser@7.24.1': {}
 
+  '@babel/helper-string-parser@7.25.9': {}
+
   '@babel/helper-validator-identifier@7.24.5': {}
+
+  '@babel/helper-validator-identifier@7.25.9': {}
 
   '@babel/helper-validator-option@7.23.5': {}
 
@@ -7347,7 +7397,7 @@ snapshots:
     dependencies:
       '@babel/helper-function-name': 7.23.0
       '@babel/template': 7.24.0
-      '@babel/types': 7.24.5
+      '@babel/types': 7.26.0
 
   '@babel/helpers@7.24.5':
     dependencies:
@@ -7367,6 +7417,10 @@ snapshots:
   '@babel/parser@7.24.5':
     dependencies:
       '@babel/types': 7.24.5
+
+  '@babel/parser@7.26.2':
+    dependencies:
+      '@babel/types': 7.26.0
 
   '@babel/plugin-bugfix-firefox-class-in-computed-class-key@7.24.5(@babel/core@7.24.5)':
     dependencies:
@@ -7988,6 +8042,11 @@ snapshots:
       '@babel/helper-string-parser': 7.24.1
       '@babel/helper-validator-identifier': 7.24.5
       to-fast-properties: 2.0.0
+
+  '@babel/types@7.26.0':
+    dependencies:
+      '@babel/helper-string-parser': 7.25.9
+      '@babel/helper-validator-identifier': 7.25.9
 
   '@bcoe/v8-coverage@0.2.3': {}
 
@@ -8861,6 +8920,8 @@ snapshots:
 
   '@jridgewell/sourcemap-codec@1.4.15': {}
 
+  '@jridgewell/sourcemap-codec@1.5.0': {}
+
   '@jridgewell/trace-mapping@0.3.25':
     dependencies:
       '@jridgewell/resolve-uri': 3.1.2
@@ -9086,7 +9147,7 @@ snapshots:
 
   '@svgr/hast-util-to-babel-ast@8.0.0':
     dependencies:
-      '@babel/types': 7.24.5
+      '@babel/types': 7.26.0
       entities: 4.5.0
 
   '@svgr/plugin-jsx@8.1.0(@svgr/core@8.1.0(typescript@5.2.2))':
@@ -9334,13 +9395,13 @@ snapshots:
     dependencies:
       '@types/yargs-parser': 21.0.3
 
-  '@typescript-eslint/eslint-plugin@6.21.0(@typescript-eslint/parser@6.21.0(eslint@8.57.0)(typescript@5.3.3))(eslint@8.57.0)(typescript@5.3.3)':
+  '@typescript-eslint/eslint-plugin@6.21.0(@typescript-eslint/parser@6.21.0(eslint@8.57.0)(typescript@5.7.0-beta))(eslint@8.57.0)(typescript@5.7.0-beta)':
     dependencies:
       '@eslint-community/regexpp': 4.10.0
-      '@typescript-eslint/parser': 6.21.0(eslint@8.57.0)(typescript@5.3.3)
+      '@typescript-eslint/parser': 6.21.0(eslint@8.57.0)(typescript@5.7.0-beta)
       '@typescript-eslint/scope-manager': 6.21.0
-      '@typescript-eslint/type-utils': 6.21.0(eslint@8.57.0)(typescript@5.3.3)
-      '@typescript-eslint/utils': 6.21.0(eslint@8.57.0)(typescript@5.3.3)
+      '@typescript-eslint/type-utils': 6.21.0(eslint@8.57.0)(typescript@5.7.0-beta)
+      '@typescript-eslint/utils': 6.21.0(eslint@8.57.0)(typescript@5.7.0-beta)
       '@typescript-eslint/visitor-keys': 6.21.0
       debug: 4.3.4(supports-color@8.1.1)
       eslint: 8.57.0
@@ -9348,22 +9409,22 @@ snapshots:
       ignore: 5.3.1
       natural-compare: 1.4.0
       semver: 7.6.0
-      ts-api-utils: 1.3.0(typescript@5.3.3)
+      ts-api-utils: 1.3.0(typescript@5.7.0-beta)
     optionalDependencies:
-      typescript: 5.3.3
+      typescript: 5.7.0-beta
     transitivePeerDependencies:
       - supports-color
 
-  '@typescript-eslint/parser@6.21.0(eslint@8.57.0)(typescript@5.3.3)':
+  '@typescript-eslint/parser@6.21.0(eslint@8.57.0)(typescript@5.7.0-beta)':
     dependencies:
       '@typescript-eslint/scope-manager': 6.21.0
       '@typescript-eslint/types': 6.21.0
-      '@typescript-eslint/typescript-estree': 6.21.0(typescript@5.3.3)
+      '@typescript-eslint/typescript-estree': 6.21.0(typescript@5.7.0-beta)
       '@typescript-eslint/visitor-keys': 6.21.0
       debug: 4.3.4(supports-color@8.1.1)
       eslint: 8.57.0
     optionalDependencies:
-      typescript: 5.3.3
+      typescript: 5.7.0-beta
     transitivePeerDependencies:
       - supports-color
 
@@ -9372,21 +9433,21 @@ snapshots:
       '@typescript-eslint/types': 6.21.0
       '@typescript-eslint/visitor-keys': 6.21.0
 
-  '@typescript-eslint/type-utils@6.21.0(eslint@8.57.0)(typescript@5.3.3)':
+  '@typescript-eslint/type-utils@6.21.0(eslint@8.57.0)(typescript@5.7.0-beta)':
     dependencies:
-      '@typescript-eslint/typescript-estree': 6.21.0(typescript@5.3.3)
-      '@typescript-eslint/utils': 6.21.0(eslint@8.57.0)(typescript@5.3.3)
+      '@typescript-eslint/typescript-estree': 6.21.0(typescript@5.7.0-beta)
+      '@typescript-eslint/utils': 6.21.0(eslint@8.57.0)(typescript@5.7.0-beta)
       debug: 4.3.4(supports-color@8.1.1)
       eslint: 8.57.0
-      ts-api-utils: 1.3.0(typescript@5.3.3)
+      ts-api-utils: 1.3.0(typescript@5.7.0-beta)
     optionalDependencies:
-      typescript: 5.3.3
+      typescript: 5.7.0-beta
     transitivePeerDependencies:
       - supports-color
 
   '@typescript-eslint/types@6.21.0': {}
 
-  '@typescript-eslint/typescript-estree@6.21.0(typescript@5.3.3)':
+  '@typescript-eslint/typescript-estree@6.21.0(typescript@5.7.0-beta)':
     dependencies:
       '@typescript-eslint/types': 6.21.0
       '@typescript-eslint/visitor-keys': 6.21.0
@@ -9395,20 +9456,20 @@ snapshots:
       is-glob: 4.0.3
       minimatch: 9.0.3
       semver: 7.6.0
-      ts-api-utils: 1.3.0(typescript@5.3.3)
+      ts-api-utils: 1.3.0(typescript@5.7.0-beta)
     optionalDependencies:
-      typescript: 5.3.3
+      typescript: 5.7.0-beta
     transitivePeerDependencies:
       - supports-color
 
-  '@typescript-eslint/utils@6.21.0(eslint@8.57.0)(typescript@5.3.3)':
+  '@typescript-eslint/utils@6.21.0(eslint@8.57.0)(typescript@5.7.0-beta)':
     dependencies:
       '@eslint-community/eslint-utils': 4.4.0(eslint@8.57.0)
       '@types/json-schema': 7.0.15
       '@types/semver': 7.5.8
       '@typescript-eslint/scope-manager': 6.21.0
       '@typescript-eslint/types': 6.21.0
-      '@typescript-eslint/typescript-estree': 6.21.0(typescript@5.3.3)
+      '@typescript-eslint/typescript-estree': 6.21.0(typescript@5.7.0-beta)
       eslint: 8.57.0
       semver: 7.6.0
     transitivePeerDependencies:
@@ -9470,37 +9531,37 @@ snapshots:
 
   '@ungap/structured-clone@1.2.0': {}
 
-  '@vue/compiler-core@3.4.27':
+  '@vue/compiler-core@3.5.12':
     dependencies:
-      '@babel/parser': 7.24.5
-      '@vue/shared': 3.4.27
+      '@babel/parser': 7.26.2
+      '@vue/shared': 3.5.12
       entities: 4.5.0
       estree-walker: 2.0.2
-      source-map-js: 1.2.0
+      source-map-js: 1.2.1
 
-  '@vue/compiler-dom@3.4.27':
+  '@vue/compiler-dom@3.5.12':
     dependencies:
-      '@vue/compiler-core': 3.4.27
-      '@vue/shared': 3.4.27
+      '@vue/compiler-core': 3.5.12
+      '@vue/shared': 3.5.12
 
-  '@vue/compiler-sfc@3.4.27':
+  '@vue/compiler-sfc@3.5.12':
     dependencies:
-      '@babel/parser': 7.24.5
-      '@vue/compiler-core': 3.4.27
-      '@vue/compiler-dom': 3.4.27
-      '@vue/compiler-ssr': 3.4.27
-      '@vue/shared': 3.4.27
+      '@babel/parser': 7.26.2
+      '@vue/compiler-core': 3.5.12
+      '@vue/compiler-dom': 3.5.12
+      '@vue/compiler-ssr': 3.5.12
+      '@vue/shared': 3.5.12
       estree-walker: 2.0.2
-      magic-string: 0.30.10
-      postcss: 8.4.38
-      source-map-js: 1.2.0
+      magic-string: 0.30.12
+      postcss: 8.4.47
+      source-map-js: 1.2.1
 
-  '@vue/compiler-ssr@3.4.27':
+  '@vue/compiler-ssr@3.5.12':
     dependencies:
-      '@vue/compiler-dom': 3.4.27
-      '@vue/shared': 3.4.27
+      '@vue/compiler-dom': 3.5.12
+      '@vue/shared': 3.5.12
 
-  '@vue/shared@3.4.27': {}
+  '@vue/shared@3.5.12': {}
 
   '@web-std/blob@3.0.5':
     dependencies:
@@ -9529,14 +9590,14 @@ snapshots:
       carstream: 2.1.0
       multiformats: 13.1.0
 
-  '@web3-storage/content-claims@5.1.0':
+  '@web3-storage/content-claims@5.1.3':
     dependencies:
       '@ucanto/client': 9.0.1
       '@ucanto/interface': 10.0.1
       '@ucanto/server': 10.0.0
       '@ucanto/transport': 9.1.1
       carstream: 2.1.0
-      multiformats: 13.1.0
+      multiformats: 13.3.0
 
   '@web3-storage/data-segment@4.0.0':
     dependencies:
@@ -10434,12 +10495,12 @@ snapshots:
   css-tree@2.2.1:
     dependencies:
       mdn-data: 2.0.28
-      source-map-js: 1.2.0
+      source-map-js: 1.2.1
 
   css-tree@2.3.1:
     dependencies:
       mdn-data: 2.0.30
-      source-map-js: 1.2.0
+      source-map-js: 1.2.1
 
   css-what@6.1.0: {}
 
@@ -10589,9 +10650,9 @@ snapshots:
 
   depcheck@1.4.7:
     dependencies:
-      '@babel/parser': 7.24.5
+      '@babel/parser': 7.26.2
       '@babel/traverse': 7.24.5
-      '@vue/compiler-sfc': 3.4.27
+      '@vue/compiler-sfc': 3.5.12
       callsite: 1.0.0
       camelcase: 6.3.0
       cosmiconfig: 7.1.0
@@ -11339,7 +11400,7 @@ snapshots:
     dependencies:
       foreground-child: 3.2.1
       jackspeak: 3.4.3
-      minimatch: 9.0.4
+      minimatch: 9.0.5
       minipass: 7.1.2
       package-json-from-dist: 1.0.0
       path-scurry: 1.11.1
@@ -11483,7 +11544,7 @@ snapshots:
       source-map: 0.6.1
       wordwrap: 1.0.0
     optionalDependencies:
-      uglify-js: 3.17.4
+      uglify-js: 3.19.3
 
   has-bigints@1.0.2: {}
 
@@ -12330,9 +12391,9 @@ snapshots:
 
   lunr@2.3.9: {}
 
-  magic-string@0.30.10:
+  magic-string@0.30.12:
     dependencies:
-      '@jridgewell/sourcemap-codec': 1.4.15
+      '@jridgewell/sourcemap-codec': 1.5.0
 
   make-dir@4.0.0:
     dependencies:
@@ -12923,6 +12984,10 @@ snapshots:
     dependencies:
       brace-expansion: 2.0.1
 
+  minimatch@9.0.5:
+    dependencies:
+      brace-expansion: 2.0.1
+
   minimist@1.2.8: {}
 
   minipass@7.1.2: {}
@@ -13327,6 +13392,8 @@ snapshots:
 
   picocolors@1.0.0: {}
 
+  picocolors@1.1.1: {}
+
   picomatch@2.3.1: {}
 
   pidtree@0.3.1: {}
@@ -13608,6 +13675,12 @@ snapshots:
       nanoid: 3.3.7
       picocolors: 1.0.0
       source-map-js: 1.2.0
+
+  postcss@8.4.47:
+    dependencies:
+      nanoid: 3.3.7
+      picocolors: 1.1.1
+      source-map-js: 1.2.1
 
   prelude-ls@1.2.1: {}
 
@@ -14304,6 +14377,8 @@ snapshots:
 
   source-map-js@1.2.0: {}
 
+  source-map-js@1.2.1: {}
+
   source-map-support@0.5.21:
     dependencies:
       buffer-from: 1.1.2
@@ -14555,7 +14630,7 @@ snapshots:
     dependencies:
       '@istanbuljs/schema': 0.1.3
       glob: 10.4.5
-      minimatch: 9.0.4
+      minimatch: 9.0.5
 
   text-table@0.2.0: {}
 
@@ -14585,9 +14660,9 @@ snapshots:
     dependencies:
       matchit: 1.1.0
 
-  ts-api-utils@1.3.0(typescript@5.3.3):
+  ts-api-utils@1.3.0(typescript@5.7.0-beta):
     dependencies:
-      typescript: 5.3.3
+      typescript: 5.7.0-beta
 
   ts-expose-internals-conditionally@1.0.0-empty.0: {}
 
@@ -14655,7 +14730,7 @@ snapshots:
       handlebars: 4.7.8
       typedoc: 0.25.13(typescript@5.2.2)
 
-  typedoc-plugin-missing-exports@2.2.0(typedoc@0.25.13(typescript@5.2.2)):
+  typedoc-plugin-missing-exports@2.3.0(typedoc@0.25.13(typescript@5.2.2)):
     dependencies:
       typedoc: 0.25.13(typescript@5.2.2)
 
@@ -14667,11 +14742,23 @@ snapshots:
       shiki: 0.14.7
       typescript: 5.2.2
 
+  typedoc@0.25.13(typescript@5.6.3):
+    dependencies:
+      lunr: 2.3.9
+      marked: 4.3.0
+      minimatch: 9.0.4
+      shiki: 0.14.7
+      typescript: 5.6.3
+
   typescript@5.2.2: {}
 
   typescript@5.3.3: {}
 
-  uglify-js@3.17.4:
+  typescript@5.6.3: {}
+
+  typescript@5.7.0-beta: {}
+
+  uglify-js@3.19.3:
     optional: true
 
   uint8arraylist@2.4.8:

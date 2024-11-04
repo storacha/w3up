@@ -2,13 +2,13 @@ import * as API from '../../src/types.js'
 import { sha256 } from 'multiformats/hashes/sha2'
 import { ed25519 } from '@ucanto/principal'
 import { Receipt } from '@ucanto/core'
-import * as BlobCapabilities from '@storacha/capabilities/blob'
+import * as BlobCapabilities from '@storacha/capabilities/space/blob'
 
 import { createServer, connect } from '../../src/lib.js'
 import { alice, registerSpace } from '../util.js'
-import { BlobSizeOutsideOfSupportedRangeName } from '../../src/blob/lib.js'
 import { createConcludeInvocation } from '../../src/ucan/conclude.js'
-import { parseBlobAddReceiptNext } from '../helpers/blob.js'
+import { parseBlobAddReceiptNext, uploadBlob } from '../helpers/blob.js'
+import { BlobSizeLimitExceededError } from '../external-service/storage-node.js'
 
 /**
  * @type {API.Tests}
@@ -409,7 +409,7 @@ export const test = {
     )
     const ucanConclude = await httpPutConcludeInvocation.execute(connection)
     if (!ucanConclude.out.ok) {
-      throw new Error('invocation failed', { cause: ucanConclude.out })
+      throw new Error('invocation failed', { cause: ucanConclude.out.error })
     }
 
     const accept = await context.agentStore.receipts.get(
@@ -464,7 +464,7 @@ export const test = {
       assert.ok(work.allocate.receipt.out.error, 'allocation has failed')
       assert.equal(
         work.allocate.receipt.out.error?.name,
-        BlobSizeOutsideOfSupportedRangeName,
+        BlobSizeLimitExceededError.name,
         'allocation failed with BlobSizeOutsideOfSupportedRange error'
       )
       assert.ok(work.put.task, 'put task was scheduled')
@@ -482,8 +482,7 @@ export const test = {
 
       // prepare data
       const data = new Uint8Array([11, 22, 34, 44, 55])
-      const multihash = await sha256.digest(data)
-      const digest = multihash.bytes
+      const digest = await sha256.digest(data)
       const size = data.byteLength
 
       // create service connection
@@ -492,24 +491,13 @@ export const test = {
         channel: createServer(context),
       })
 
-      // create `blob/add` invocation
-      const blobAddInvocation = BlobCapabilities.add.invoke({
+      await uploadBlob({
         issuer: alice,
         audience: context.id,
         with: spaceDid,
-        nb: {
-          blob: {
-            digest,
-            size,
-          },
-        },
         proofs: [proof],
-      })
-      // Invoke `blob/add` to allocate content
-      const blobAdd = await blobAddInvocation.execute(connection)
-      if (!blobAdd.out.ok) {
-        throw new Error('invocation failed', { cause: blobAdd.out.error })
-      }
+        connection
+      }, { digest, bytes: data })
 
       // invoke `blob/remove`
       const blobRemoveInvocation = BlobCapabilities.remove.invoke({
@@ -517,7 +505,7 @@ export const test = {
         audience: context.id,
         with: spaceDid,
         nb: {
-          digest,
+          digest: digest.bytes,
         },
         proofs: [proof],
       })
@@ -595,31 +583,14 @@ export const test = {
       new Uint8Array([11, 22, 34, 44, 55]),
       new Uint8Array([22, 34, 44, 55, 66]),
     ]
-    const receipts = []
     for (const datum of data) {
-      const multihash = await sha256.digest(datum)
-      const digest = multihash.bytes
-      const size = datum.byteLength
-      const blobAdd = await BlobCapabilities.add
-        .invoke({
-          issuer: alice,
-          audience: connection.id,
-          with: spaceDid,
-          nb: {
-            blob: {
-              digest,
-              size,
-            },
-          },
-          proofs: [proof],
-        })
-        .execute(connection)
-
-      if (blobAdd.out.error) {
-        throw new Error('invocation failed', { cause: blobAdd })
-      }
-
-      receipts.push(blobAdd)
+      await uploadBlob({
+        issuer: alice,
+        audience: context.id,
+        with: spaceDid,
+        proofs: [proof],
+        connection
+      }, { digest: await sha256.digest(datum), bytes: datum })
     }
 
     const blobList = await BlobCapabilities.list
@@ -635,7 +606,7 @@ export const test = {
     if (blobList.out.error) {
       throw new Error('invocation failed', { cause: blobList })
     }
-    assert.equal(blobList.out.ok.size, receipts.length)
+    assert.equal(blobList.out.ok.size, data.length)
     // list order last-in-first-out
     const listReverse = await Promise.all(
       data
@@ -660,27 +631,13 @@ export const test = {
     ]
 
     for (const datum of data) {
-      const multihash = await sha256.digest(datum)
-      const digest = multihash.bytes
-      const size = datum.byteLength
-      const blobAdd = await BlobCapabilities.add
-        .invoke({
-          issuer: alice,
-          audience: connection.id,
-          with: spaceDid,
-          nb: {
-            blob: {
-              digest,
-              size,
-            },
-          },
-          proofs: [proof],
-        })
-        .execute(connection)
-
-      if (blobAdd.out.error) {
-        throw new Error('invocation failed', { cause: blobAdd })
-      }
+      await uploadBlob({
+        issuer: alice,
+        audience: context.id,
+        with: spaceDid,
+        proofs: [proof],
+        connection
+      }, { digest: await sha256.digest(datum), bytes: datum })
     }
 
     // Get list with page size 1 (two pages)

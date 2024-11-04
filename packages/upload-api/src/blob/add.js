@@ -1,14 +1,15 @@
 import * as Server from '@ucanto/server'
-import { Receipt } from '@ucanto/core'
+import { Message, Receipt } from '@ucanto/core'
+import * as Transport from '@ucanto/transport/car'
 import { ed25519 } from '@ucanto/principal'
 import * as Blob from '@storacha/capabilities/blob'
 import * as SpaceBlob from '@storacha/capabilities/space/blob'
 import * as HTTP from '@storacha/capabilities/http'
 import * as API from '../types.js'
-
 import { createConcludeInvocation } from '../ucan/conclude.js'
 import { AwaitError } from './lib.js'
 import * as Digest from 'multiformats/hashes/digest'
+import { AgentMessage } from '../lib.js'
 
 /**
  * Derives did:key principal from (blob) multihash that can be used to
@@ -28,7 +29,7 @@ const conclude = (receipt, issuer, audience = issuer) =>
 
 /**
  * @param {API.BlobServiceContext} context
- * @returns {API.ServiceMethod<API.SpaceBlobAdd, API.BlobAddSuccess, API.BlobAddFailure>}
+ * @returns {API.ServiceMethod<API.SpaceBlobAdd, API.SpaceBlobAddSuccess, API.SpaceBlobAddFailure>}
  */
 export function blobAddProvider(context) {
   return Server.provideAdvanced({
@@ -51,16 +52,13 @@ export function blobAddProvider(context) {
         blob,
         allocation: allocation.ok,
       })
-      if (delivery.error) {
-        return delivery
-      }
 
       const acceptance = await accept({
         context,
         provider: allocation.ok.provider,
         blob,
         space,
-        delivery: delivery.ok,
+        delivery: delivery,
       })
       if (acceptance.error) {
         return acceptance
@@ -68,18 +66,18 @@ export function blobAddProvider(context) {
 
       // Create a result describing the this invocation workflow
       let result = Server.ok({
-        /** @type {API.BlobAddSuccess['site']} */
+        /** @type {API.SpaceBlobAddSuccess['site']} */
         site: {
           'ucan/await': ['.out.ok.site', acceptance.ok.task.link()],
         },
       })
         .fork(allocation.ok.task)
-        .fork(delivery.ok.task)
+        .fork(delivery.task)
         .fork(acceptance.ok.task)
 
       // As a temporary solution we fork all add effects that add inline
       // receipts so they can be delivered to the client.
-      const fx = [...allocation.ok.fx, ...delivery.ok.fx, ...acceptance.ok.fx]
+      const fx = [...allocation.ok.fx, ...delivery.fx, ...acceptance.ok.fx]
       for (const task of fx) {
         result = result.fork(task)
       }
@@ -146,11 +144,21 @@ async function allocate({ context, blob, space, cause }) {
 
   const task = await configure.ok.invocation.delegate()
   const receipt = await configure.ok.invocation.execute(configure.ok.connection)
-  if (receipt.out.error) {
-    return receipt.out
-  }
 
-  // TODO: ADD TO ALLOCATIONS STORAGE
+  // record the invocation and the receipt, so we can retrieve it later when we
+  // get a http/put receipt in ucan/conclude
+  const message = await Message.build({
+    invocations: [configure.ok.invocation],
+    receipts: [receipt]
+  })
+  const messageWrite = await context.agentStore.messages.write({
+    source: await Transport.outbound.encode(message),
+    data: message,
+    index: [...AgentMessage.index(message)]
+  })
+  if (messageWrite.error) {
+    return messageWrite
+  }
 
   // 4. Create `blob/allocate` receipt as conclude invocation to inline as effect
   const concludeAllocate = createConcludeInvocation(
@@ -241,11 +249,11 @@ async function put({ blob, allocation }) {
     })
   }
 
-  return Server.ok({
+  return {
     task,
     receipt,
     fx: receipt ? [await conclude(receipt, blobProvider)] : [],
-  })
+  }
 }
 
 /**

@@ -48,7 +48,7 @@ export const allocate = capability({
     /** Blob to allocate. */
     blob: content,
     /** Link to the add blob task that initiated the allocation. */
-    cause: Link,
+    cause: Schema.link({ version: 1 }),
     /** DID of the user space where the allocation takes place. */
     space: SpaceDID,
   }),

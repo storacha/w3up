@@ -1,7 +1,6 @@
+import * as API from '@ucanto/interface'
 import { DID, Schema, fail, ok } from '@ucanto/validator'
 import { equals } from 'uint8arrays/equals'
-
-/** @import * as API from '@ucanto/interface' */
 
 // e.g. did:web:storacha.network or did:web:staging.storacha.network
 export const ProviderDID = DID.match({ method: 'web' })

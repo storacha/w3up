@@ -41,17 +41,17 @@
   },
   "dependencies": {
     "@ipld/dag-cbor": "^9.0.6",
+    "@storacha/capabilities": "workspace:^",
     "@storacha/one-webcrypto": "^1.0.1",
     "@ucanto/core": "^10.0.1",
     "@ucanto/interface": "^10.0.1",
-    "@storacha/capabilities": "workspace:^",
     "carstream": "^2.1.0",
     "multiformats": "^13.0.1",
     "uint8arrays": "^5.0.3"
   },
   "devDependencies": {
-    "@ucanto/transport": "^9.1.1",
     "@storacha/eslint-config": "workspace:^",
+    "@ucanto/transport": "^9.1.1",
     "c8": "^7.14.0",
     "entail": "^2.1.2",
     "typescript": "5.2.2"

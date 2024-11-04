@@ -537,7 +537,7 @@ export interface BlobModel {
 }
 
 // Blob add
-export interface BlobAddSuccess {
+export interface SpaceBlobAddSuccess {
   site: UCANAwait<'.out.ok.site'>
 }
 
@@ -550,39 +550,37 @@ export interface AwaitError extends Ucanto.Failure {
 }
 
 // TODO: We need Ucanto.Failure because provideAdvanced can't handle errors without it
-export type BlobAddFailure =
+export type SpaceBlobAddFailure =
   | BlobSizeOutsideOfSupportedRange
   | AwaitError
   | StorageGetError
   | Ucanto.Failure
 
-export interface BlobListItem {
+export interface BlobItem {
   blob: BlobModel
+  cause: Link
   insertedAt: ISO8601Date
 }
 
 // Blob remove
-export interface BlobRemoveSuccess {
+export interface SpaceBlobRemoveSuccess {
   size: number
 }
 
 // TODO: make types more specific
-export type BlobRemoveFailure = Ucanto.Failure
+export type SpaceBlobRemoveFailure = Ucanto.Failure
 
 // Blob list
-export interface BlobListSuccess extends ListResponse<BlobListItem> {}
+export interface SpaceBlobListSuccess extends ListResponse<BlobItem> {}
 
 // TODO: make types more specific
-export type BlobListFailure = Ucanto.Failure
+export type SpaceBlobListFailure = Ucanto.Failure
 
 // Blob get
-export interface BlobGetSuccess {
-  blob: { digest: Uint8Array; size: number }
-  cause: UnknownLink
-}
+export interface SpaceBlobGetSuccess extends BlobItem {}
 
 // TODO: make types more specific
-export type BlobGetFailure = Ucanto.Failure
+export type SpaceBlobGetFailure = Ucanto.Failure
 
 // Blob allocate
 export interface BlobAllocateSuccess {
@@ -593,7 +591,7 @@ export interface BlobAllocateSuccess {
 export interface BlobAddress {
   url: ToString<URL>
   headers: Record<string, string>
-  expiresAt: ISO8601Date
+  expires: number
 }
 
 // If user space has not enough space to allocate the blob.

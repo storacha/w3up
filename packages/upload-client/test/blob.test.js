@@ -6,10 +6,10 @@ import { provide } from '@ucanto/server'
 import * as CAR from '@ucanto/transport/car'
 import * as Signer from '@ucanto/principal/ed25519'
 import * as UCAN from '@storacha/capabilities/ucan'
-import * as BlobCapabilities from '@storacha/capabilities/blob'
+import * as BlobCapabilities from '@storacha/capabilities/space/blob'
 import * as Blob from '../src/blob/index.js'
 import { serviceSigner } from './fixtures.js'
-import { randomBytes } from './helpers/random.js'
+import { randomBlock, randomBytes } from './helpers/random.js'
 import { mockService } from './helpers/mocks.js'
 import {
   validateAuthorization,
@@ -688,6 +688,7 @@ describe('Blob.list', () => {
             digest: bytesHash.bytes,
             size: 123,
           },
+          cause: (await randomBlock(32)).cid,
           insertedAt: '1970-01-01T00:00:00.000Z',
         },
       ],
@@ -767,6 +768,7 @@ describe('Blob.list', () => {
             digest: bytesHash[0].bytes,
             size: 123,
           },
+          cause: (await randomBlock(32)).cid,
           insertedAt: '1970-01-01T00:00:00.000Z',
         },
       ],
@@ -779,6 +781,7 @@ describe('Blob.list', () => {
             digest: bytesHash[1].bytes,
             size: 123,
           },
+          cause: (await randomBlock(32)).cid,
           insertedAt: '1970-01-01T00:00:00.000Z',
         },
       ],
@@ -1037,6 +1040,7 @@ describe('Blob.get', () => {
                   ok: {
                     cause: invocation.link(),
                     blob: { digest: bytesHash.bytes, size: bytes.length },
+                    insertedAt: '1970-01-01T00:00:00.000Z',
                   },
                 }
               }),

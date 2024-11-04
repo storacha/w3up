@@ -101,6 +101,8 @@
     "@ipld/car": "^5.1.1",
     "@ipld/dag-ucan": "^3.4.0",
     "@scure/bip39": "^1.2.1",
+    "@storacha/capabilities": "workspace:^",
+    "@storacha/did-mailto": "workspace:^",
     "@storacha/one-webcrypto": "^1.0.1",
     "@ucanto/client": "^9.0.1",
     "@ucanto/core": "^10.0.1",
@@ -108,8 +110,6 @@
     "@ucanto/principal": "^9.0.1",
     "@ucanto/transport": "^9.1.1",
     "@ucanto/validator": "^9.0.2",
-    "@storacha/capabilities": "workspace:^",
-    "@storacha/did-mailto": "workspace:^",
     "bigint-mod-arith": "^3.1.2",
     "conf": "11.0.2",
     "multiformats": "^12.1.2",
@@ -118,6 +118,7 @@
     "uint8arrays": "^4.0.6"
   },
   "devDependencies": {
+    "@storacha/eslint-config": "workspace:^",
     "@types/assert": "^1.5.6",
     "@types/inquirer": "^9.0.4",
     "@types/mocha": "^10.0.1",
@@ -126,7 +127,6 @@
     "@types/varint": "^6.0.1",
     "@types/ws": "^8.5.4",
     "@ucanto/server": "^10.0.0",
-    "@storacha/eslint-config": "workspace:^",
     "assert": "^2.0.0",
     "mocha": "^10.2.0",
     "playwright-test": "^12.3.4",
