@@ -242,8 +242,8 @@ export class AccountPlan {
    * or when the abort signal is aborted.
    *
    * @param {object} [options]
-   * @param {number} [options.interval=1000] - The polling interval in milliseconds (default is 1000ms).
-   * @param {number} [options.timeout=900000] - The maximum time to wait in milliseconds before throwing a timeout error (default is 15 minutes).
+   * @param {number} [options.interval] - The polling interval in milliseconds (default is 1000ms).
+   * @param {number} [options.timeout] - The maximum time to wait in milliseconds before throwing a timeout error (default is 15 minutes).
    * @param {AbortSignal} [options.signal] - An optional AbortSignal to cancel the waiting process.
    * @returns {Promise<import('@storacha/access').PlanGetSuccess>} - Resolves once a payment plan is selected within the timeout.
    * @throws {Error} - Throws an error if there is an issue retrieving the payment plan or if the timeout is exceeded.
