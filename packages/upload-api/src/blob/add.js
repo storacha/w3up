@@ -133,11 +133,13 @@ async function allocate({ context, blob, space, cause }) {
         size: blob.size,
       },
       space,
-      cause
-    }
+      cause,
+    },
   })
 
-  const configure = await router.configureInvocation(candidate.ok, cap, { expiration: Infinity })
+  const configure = await router.configureInvocation(candidate.ok, cap, {
+    expiration: Infinity,
+  })
   if (configure.error) {
     return configure
   }
@@ -149,12 +151,12 @@ async function allocate({ context, blob, space, cause }) {
   // get a http/put receipt in ucan/conclude
   const message = await Message.build({
     invocations: [configure.ok.invocation],
-    receipts: [receipt]
+    receipts: [receipt],
   })
   const messageWrite = await context.agentStore.messages.write({
     source: await Transport.outbound.encode(message),
     data: message,
-    index: [...AgentMessage.index(message)]
+    index: [...AgentMessage.index(message)],
   })
   if (messageWrite.error) {
     return messageWrite
@@ -280,7 +282,9 @@ async function accept({ context, provider, blob, space, delivery }) {
     },
   })
 
-  const configure = await context.router.configureInvocation(provider, cap, { expiration: Infinity })
+  const configure = await context.router.configureInvocation(provider, cap, {
+    expiration: Infinity,
+  })
   if (configure.error) {
     return configure
   }

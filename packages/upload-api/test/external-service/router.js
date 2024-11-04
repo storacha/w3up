@@ -16,14 +16,17 @@ const stickySelect = new Map()
  * @param {import('@ucanto/interface').Signer} serviceID
  * @param {Array<StorageProvider>} storageProviders
  */
-export const create = (serviceID, storageProviders) => 
+export const create = (serviceID, storageProviders) =>
   /** @type {import('../../src/types/blob.js').RoutingService} */
   ({
     selectStorageProvider: async (digest) => {
       // ensure we pick the same provider for a given digest within a test
       const key = base58btc.encode(digest.bytes)
       let provider = stickySelect.get(key)
-      if (provider && !storageProviders.some(p => p.id.did() === provider?.did())) {
+      if (
+        provider &&
+        !storageProviders.some((p) => p.id.did() === provider?.did())
+      ) {
         provider = undefined
       }
       if (!provider) {
@@ -33,9 +36,11 @@ export const create = (serviceID, storageProviders) =>
       return ok(provider)
     },
     configureInvocation: async (provider, capability, options) => {
-      const prov = storageProviders.find(p => p.id.did() === provider.did())
+      const prov = storageProviders.find((p) => p.id.did() === provider.did())
       if (!prov) {
-        return error(new ProofUnavailableError(`unknown provider: ${provider.did()}`))
+        return error(
+          new ProofUnavailableError(`unknown provider: ${provider.did()}`)
+        )
       }
 
       const proof = await Delegation.delegate({
@@ -53,11 +58,11 @@ export const create = (serviceID, storageProviders) =>
         proofs: [proof],
       })
       return ok({ invocation, connection: prov.connection })
-    }
+    },
   })
 
 /** @param {number} max */
-const getRandomInt = max => Math.floor(Math.random() * max)
+const getRandomInt = (max) => Math.floor(Math.random() * max)
 
 export class ProofUnavailableError extends Failure {
   static name = 'ProofUnavailable'
@@ -67,7 +72,7 @@ export class ProofUnavailableError extends Failure {
   }
 
   /** @param {string} [reason] */
-  constructor (reason) {
+  constructor(reason) {
     super()
     this.reason = reason
   }

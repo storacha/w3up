@@ -194,7 +194,11 @@ export type { SubscriptionsStorage }
 import { UsageStorage } from './types/usage.js'
 export type { UsageStorage }
 import { StorageGetError } from './types/storage.js'
-import { Registry as BlobRegistry, Entry as BlobEntry, RoutingService } from './types/blob.js'
+import {
+  Registry as BlobRegistry,
+  Entry as BlobEntry,
+  RoutingService,
+} from './types/blob.js'
 export type { BlobRegistry, BlobEntry, RoutingService }
 import { IndexServiceContext } from './types/index.js'
 import { ClaimsClientConfig } from './types/content-claims.js'
@@ -319,15 +323,31 @@ export interface Service extends StorefrontService {
   space: {
     info: ServiceMethod<SpaceInfo, SpaceInfoSuccess, SpaceInfoFailure>
     index: {
-      add: ServiceMethod<SpaceIndexAdd, SpaceIndexAddSuccess, SpaceIndexAddFailure>
+      add: ServiceMethod<
+        SpaceIndexAdd,
+        SpaceIndexAddSuccess,
+        SpaceIndexAddFailure
+      >
     }
     blob: {
       add: ServiceMethod<SpaceBlobAdd, SpaceBlobAddSuccess, SpaceBlobAddFailure>
-      remove: ServiceMethod<SpaceBlobRemove, SpaceBlobRemoveSuccess, SpaceBlobRemoveFailure>
-      list: ServiceMethod<SpaceBlobList, SpaceBlobListSuccess, SpaceBlobListFailure>
+      remove: ServiceMethod<
+        SpaceBlobRemove,
+        SpaceBlobRemoveSuccess,
+        SpaceBlobRemoveFailure
+      >
+      list: ServiceMethod<
+        SpaceBlobList,
+        SpaceBlobListSuccess,
+        SpaceBlobListFailure
+      >
       get: {
         0: {
-          1: ServiceMethod<SpaceBlobGet, SpaceBlobGetSuccess, SpaceBlobGetFailure>
+          1: ServiceMethod<
+            SpaceBlobGet,
+            SpaceBlobGetSuccess,
+            SpaceBlobGetFailure
+          >
         }
       }
     }

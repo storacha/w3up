@@ -60,8 +60,8 @@ export const poll = async (context, receipt) => {
         space: allocate.nb.space,
         _put: {
           'ucan/await': ['.out.ok', receipt.ran.link()],
-        }
-      }
+        },
+      },
     }),
     {
       // ⚠️ We need invocation to be deterministic which is why we use exact
@@ -77,17 +77,19 @@ export const poll = async (context, receipt) => {
     return configure
   }
 
-  const acceptReceipt = await configure.ok.invocation.execute(configure.ok.connection)
+  const acceptReceipt = await configure.ok.invocation.execute(
+    configure.ok.connection
+  )
 
   // record the invocation and the receipt
   const message = await Message.build({
     invocations: [configure.ok.invocation],
-    receipts: [acceptReceipt]
+    receipts: [acceptReceipt],
   })
   const messageWrite = await context.agentStore.messages.write({
     source: await Transport.outbound.encode(message),
     data: message,
-    index: [...AgentMessage.index(message)]
+    index: [...AgentMessage.index(message)],
   })
   if (messageWrite.error) {
     return messageWrite

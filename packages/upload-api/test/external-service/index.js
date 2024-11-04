@@ -14,7 +14,7 @@ export const getExternalServiceImplementations = async (config) => {
   /** @type {import('@ucanto/interface').PrincipalResolver} */
   let principalResolver = {}
   if (config.serviceID.did().startsWith('did:web')) {
-    principalResolver.resolveDIDKey = did =>
+    principalResolver.resolveDIDKey = (did) =>
       did === config.serviceID.did()
         ? ok(config.serviceID.toDIDKey())
         : error(new DIDResolutionError(did))
@@ -27,13 +27,13 @@ export const getExternalServiceImplementations = async (config) => {
       ...config,
       ...principalResolver,
       ...(config.http ? {} : { port: 8989 }),
-      claimsService
+      claimsService,
     }),
     StorageNode.activate({
       ...config,
       ...principalResolver,
       ...(config.http ? {} : { port: 8990 }),
-      claimsService
+      claimsService,
     }),
   ])
   const router = Router.create(config.serviceID, storageProviders)
@@ -41,6 +41,6 @@ export const getExternalServiceImplementations = async (config) => {
     claimsService,
     storageProviders,
     blobRetriever,
-    router
+    router,
   }
 }

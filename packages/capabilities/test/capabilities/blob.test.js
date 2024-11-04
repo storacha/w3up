@@ -9,7 +9,11 @@ import {
   mallory as account,
   bob,
 } from '../helpers/fixtures.js'
-import { createCar, createCborCid, validateAuthorization } from '../helpers/utils.js'
+import {
+  createCar,
+  createCborCid,
+  validateAuthorization,
+} from '../helpers/utils.js'
 
 const top = () =>
   Capability.top.delegate({
@@ -38,10 +42,10 @@ describe('blob capabilities', function () {
       nb: {
         blob: {
           digest: car.cid.multihash.bytes,
-          size: car.bytes.length
+          size: car.bytes.length,
         },
         space: space.did(),
-        cause: await createCborCid({ now: Date.now() })
+        cause: await createCborCid({ now: Date.now() }),
       },
       proofs: [await top()],
     })
@@ -68,10 +72,10 @@ describe('blob capabilities', function () {
       nb: {
         blob: {
           digest: car.cid.multihash.bytes,
-          size: car.bytes.length
+          size: car.bytes.length,
         },
         space: space.did(),
-        cause: await createCborCid({ now: Date.now() })
+        cause: await createCborCid({ now: Date.now() }),
       },
       proofs: [await blob()],
     })
@@ -105,10 +109,10 @@ describe('blob capabilities', function () {
       nb: {
         blob: {
           digest: car.cid.multihash.bytes,
-          size: car.bytes.length
+          size: car.bytes.length,
         },
         space: space.did(),
-        cause: await createCborCid({ now: Date.now() })
+        cause: await createCborCid({ now: Date.now() }),
       },
       proofs: [blob],
     })
@@ -134,7 +138,7 @@ describe('blob capabilities', function () {
       audience: bob,
       with: account.did(),
       nb: {
-        space: space0.did()
+        space: space0.did(),
       },
       proofs: [await top()],
     })
@@ -146,10 +150,10 @@ describe('blob capabilities', function () {
       nb: {
         blob: {
           digest: car.cid.multihash.bytes,
-          size: car.bytes.length
+          size: car.bytes.length,
         },
         space: space1.did(),
-        cause: await createCborCid({ now: Date.now() })
+        cause: await createCborCid({ now: Date.now() }),
       },
       proofs: [blob],
     })
@@ -175,12 +179,12 @@ describe('blob capabilities', function () {
       nb: {
         blob: {
           digest: car.cid.multihash.bytes,
-          size: car.bytes.length
+          size: car.bytes.length,
         },
         space: space.did(),
         _put: {
-          'ucan/await': ['.out.ok', await createCborCid('receipt')]
-        }
+          'ucan/await': ['.out.ok', await createCborCid('receipt')],
+        },
       },
       proofs: [await top()],
     })
@@ -207,12 +211,12 @@ describe('blob capabilities', function () {
       nb: {
         blob: {
           digest: car.cid.multihash.bytes,
-          size: car.bytes.length
+          size: car.bytes.length,
         },
         space: space.did(),
         _put: {
-          'ucan/await': ['.out.ok', await createCborCid('receipt')]
-        }
+          'ucan/await': ['.out.ok', await createCborCid('receipt')],
+        },
       },
       proofs: [await blob()],
     })
@@ -246,12 +250,12 @@ describe('blob capabilities', function () {
       nb: {
         blob: {
           digest: car.cid.multihash.bytes,
-          size: car.bytes.length
+          size: car.bytes.length,
         },
         space: space.did(),
         _put: {
-          'ucan/await': ['.out.ok', await createCborCid('receipt')]
-        }
+          'ucan/await': ['.out.ok', await createCborCid('receipt')],
+        },
       },
       proofs: [blob],
     })
@@ -277,7 +281,7 @@ describe('blob capabilities', function () {
       audience: bob,
       with: account.did(),
       nb: {
-        space: space0.did()
+        space: space0.did(),
       },
       proofs: [await top()],
     })
@@ -289,12 +293,12 @@ describe('blob capabilities', function () {
       nb: {
         blob: {
           digest: car.cid.multihash.bytes,
-          size: car.bytes.length
+          size: car.bytes.length,
         },
         space: space1.did(),
         _put: {
-          'ucan/await': ['.out.ok', await createCborCid('receipt')]
-        }
+          'ucan/await': ['.out.ok', await createCborCid('receipt')],
+        },
       },
       proofs: [blob],
     })

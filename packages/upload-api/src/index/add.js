@@ -59,7 +59,9 @@ const add = async ({ capability }, context) => {
   // ensure indexed shards are allocated in the agent's space
   const shardDigests = [...idxRes.ok.shards.keys()]
   const shardAllocRes = await Promise.all(
-    shardDigests.map((s) => assertRegistered(context, space, s, 'ShardNotFound'))
+    shardDigests.map((s) =>
+      assertRegistered(context, space, s, 'ShardNotFound')
+    )
   )
   for (const res of shardAllocRes) {
     if (res.error) return res
@@ -67,7 +69,10 @@ const add = async ({ capability }, context) => {
 
   // TODO: randomly validate slices in the index correspond to slices in the blob
 
-  const publishRes = await publishIndexClaim(context, { content: idxRes.ok.content, index: idxLink })
+  const publishRes = await publishIndexClaim(context, {
+    content: idxRes.ok.content,
+    index: idxLink,
+  })
   if (publishRes.error) {
     return publishRes
   }

@@ -524,11 +524,15 @@ export type BlobAllocate = InferInvokedCapability<typeof BlobCaps.allocate>
 export type BlobAccept = InferInvokedCapability<typeof BlobCaps.accept>
 export type SpaceBlob = InferInvokedCapability<typeof SpaceBlobCaps.blob>
 export type SpaceBlobAdd = InferInvokedCapability<typeof SpaceBlobCaps.add>
-export type SpaceBlobRemove = InferInvokedCapability<typeof SpaceBlobCaps.remove>
+export type SpaceBlobRemove = InferInvokedCapability<
+  typeof SpaceBlobCaps.remove
+>
 export type SpaceBlobList = InferInvokedCapability<typeof SpaceBlobCaps.list>
 export type SpaceBlobGet = InferInvokedCapability<typeof SpaceBlobCaps.get>
 export type W3sBlob = InferInvokedCapability<typeof W3sBlobCaps.blob>
-export type W3sBlobAllocate = InferInvokedCapability<typeof W3sBlobCaps.allocate>
+export type W3sBlobAllocate = InferInvokedCapability<
+  typeof W3sBlobCaps.allocate
+>
 export type W3sBlobAccept = InferInvokedCapability<typeof W3sBlobCaps.accept>
 
 export interface BlobModel {

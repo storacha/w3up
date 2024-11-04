@@ -148,7 +148,9 @@ export const test = {
     const firstAllocateTaskLink = firstNext.allocate.task.link()
     const secondAllocateTaskLink = secondNext.allocate.task.link()
 
-    if (firstAllocateTaskLink.toString() !== secondAllocateTaskLink.toString()) {
+    if (
+      firstAllocateTaskLink.toString() !== secondAllocateTaskLink.toString()
+    ) {
       console.error('allocate receipts not equal:')
       console.error(firstNext.allocate.receipt)
       console.error(secondNext.allocate.receipt)
@@ -491,13 +493,16 @@ export const test = {
         channel: createServer(context),
       })
 
-      await uploadBlob({
-        issuer: alice,
-        audience: context.id,
-        with: spaceDid,
-        proofs: [proof],
-        connection
-      }, { digest, bytes: data })
+      await uploadBlob(
+        {
+          issuer: alice,
+          audience: context.id,
+          with: spaceDid,
+          proofs: [proof],
+          connection,
+        },
+        { digest, bytes: data }
+      )
 
       // invoke `blob/remove`
       const blobRemoveInvocation = BlobCapabilities.remove.invoke({
@@ -584,13 +589,16 @@ export const test = {
       new Uint8Array([22, 34, 44, 55, 66]),
     ]
     for (const datum of data) {
-      await uploadBlob({
-        issuer: alice,
-        audience: context.id,
-        with: spaceDid,
-        proofs: [proof],
-        connection
-      }, { digest: await sha256.digest(datum), bytes: datum })
+      await uploadBlob(
+        {
+          issuer: alice,
+          audience: context.id,
+          with: spaceDid,
+          proofs: [proof],
+          connection,
+        },
+        { digest: await sha256.digest(datum), bytes: datum }
+      )
     }
 
     const blobList = await BlobCapabilities.list
@@ -631,13 +639,16 @@ export const test = {
     ]
 
     for (const datum of data) {
-      await uploadBlob({
-        issuer: alice,
-        audience: context.id,
-        with: spaceDid,
-        proofs: [proof],
-        connection
-      }, { digest: await sha256.digest(datum), bytes: datum })
+      await uploadBlob(
+        {
+          issuer: alice,
+          audience: context.id,
+          with: spaceDid,
+          proofs: [proof],
+          connection,
+        },
+        { digest: await sha256.digest(datum), bytes: datum }
+      )
     }
 
     // Get list with page size 1 (two pages)

@@ -30,7 +30,7 @@ export class StorageNode {
     let baseURL
 
     /** @param {API.MultihashDigest} digest */
-    const hasContent = async digest => {
+    const hasContent = async (digest) => {
       if (config.http) {
         return content.has(contentKey(digest))
       }
@@ -51,12 +51,14 @@ export class StorageNode {
               const digest = Digest.decode(capability.nb.blob.digest)
               const checksum = base64pad.baseEncode(digest.digest)
               if (capability.nb.blob.size > MaxUploadSize) {
-                return Server.error(new BlobSizeLimitExceededError(capability.nb.blob.size))
+                return Server.error(
+                  new BlobSizeLimitExceededError(capability.nb.blob.size)
+                )
               }
               if (await hasContent(digest)) {
                 return Server.ok({ size: 0 })
               }
-              
+
               const key = contentKey(digest)
               const size = allocations.has(key) ? 0 : capability.nb.blob.size
               allocations.add(key)
@@ -66,10 +68,10 @@ export class StorageNode {
                 address: {
                   url: new URL(contentKey(digest), baseURL).toString(),
                   headers: { 'x-amz-checksum-sha256': checksum },
-                  expires: 60 * 60 * 24
-                }
+                  expires: 60 * 60 * 24,
+                },
               })
-            }
+            },
           }),
           accept: Server.provideAdvanced({
             capability: BlobCapabilities.accept,
@@ -84,16 +86,16 @@ export class StorageNode {
                 digest,
                 location:
                   /** @type {API.URI} */
-                  (new URL(contentKey(digest), baseURL).toString())
+                  (new URL(contentKey(digest), baseURL).toString()),
               })
               if (receipt.out.error) {
                 return receipt.out
               }
 
               return Server.ok({ site: receipt.ran.link() }).fork(receipt.ran)
-            }
-          })
-        }
+            },
+          }),
+        },
       }),
       // @ts-expect-error
       resolveDIDKey: config.resolveDIDKey,
@@ -161,19 +163,27 @@ export class StorageNode {
       // otherwise it keep connection lingering
       response.destroy()
     })
-    await /** @type {Promise<void>} */ (new Promise((resolve) => {
-      if (config.port) {
-        return httpServer.listen(port, resolve)
-      }
-      httpServer.listen(resolve)
-    }))
+    await /** @type {Promise<void>} */ (
+      new Promise((resolve) => {
+        if (config.port) {
+          return httpServer.listen(port, resolve)
+        }
+        httpServer.listen(resolve)
+      })
+    )
 
     // @ts-ignore - this is actually what it returns on http
     const { port } = httpServer.address()
     baseURL = new URL(`http://127.0.0.1:${port}`)
     const channel = HTTP.open({ url: baseURL, method: 'POST' })
     const connection = connect({ id, codec: CAR.outbound, channel })
-    return new StorageNode({ id, content, url: baseURL, connection, server: httpServer })
+    return new StorageNode({
+      id,
+      content,
+      url: baseURL,
+      connection,
+      server: httpServer,
+    })
   }
 
   async deactivate() {
@@ -201,13 +211,7 @@ export class StorageNode {
    *   server?: import('http').Server
    * }} options
    */
-  constructor({
-    id,
-    url,
-    content,
-    connection,
-    server,
-  }) {
+  constructor({ id, url, content, connection, server }) {
     this.id = id
     this.baseURL = url
     this.content = content
@@ -264,7 +268,7 @@ export class BlobSizeLimitExceededError extends Failure {
   }
 
   /** @param {number} size */
-  constructor (size) {
+  constructor(size) {
     super()
     this.size = size
   }

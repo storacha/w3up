@@ -21,9 +21,9 @@ export class UsageStorage {
         ...item,
         cause: item.invocation,
       })),
-      ...[...this.blobRegistry.data.entries()].flatMap(([space, entries]) => (
-        entries.map(e => ({ space, size: e.blob.size, ...e }))
-      )),
+      ...[...this.blobRegistry.data.entries()].flatMap(([space, entries]) =>
+        entries.map((e) => ({ space, size: e.blob.size, ...e }))
+      ),
     ]
   }
 

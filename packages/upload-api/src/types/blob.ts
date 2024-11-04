@@ -83,13 +83,13 @@ export interface BlobService {
 
 export interface Configuration<C extends Capability> extends UCANOptions {
   /** Connection to the storage node. */
-  connection: ConnectionView<BlobService>,
+  connection: ConnectionView<BlobService>
   /** Invocation to execute. */
   invocation: IssuedInvocationView<C>
 }
 
 /**
- * An unavailable proof error is returned when the routing does not have a 
+ * An unavailable proof error is returned when the routing does not have a
  * valid unexpired and unrevoked proof available.
  */
 export interface ProofUnavailable extends Failure {
@@ -113,12 +113,17 @@ export interface RoutingService {
    * Selects a candidate for blob allocation from the current list of available
    * storage nodes.
    */
-  selectStorageProvider(digest: MultihashDigest, size: number):
-    Promise<Result<Principal, CandidateUnavailable|Failure>>
+  selectStorageProvider(
+    digest: MultihashDigest,
+    size: number
+  ): Promise<Result<Principal, CandidateUnavailable | Failure>>
   /**
    * Returns information required to make an invocation to the requested storage
    * node.
    */
-  configureInvocation<C extends BlobAllocate|BlobAccept>(provider: Principal, capability: C, options?: Omit<UCANOptions, 'audience'>):
-    Promise<Result<Configuration<C>, ProofUnavailable|Failure>>
+  configureInvocation<C extends BlobAllocate | BlobAccept>(
+    provider: Principal,
+    capability: C,
+    options?: Omit<UCANOptions, 'audience'>
+  ): Promise<Result<Configuration<C>, ProofUnavailable | Failure>>
 }

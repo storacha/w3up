@@ -18,7 +18,10 @@ export const test = {
     const registration = await registry.register({ space, blob, cause })
     assert.ok(registration.ok)
   },
-  'should register same blob in the same space once': async (assert, context) => {
+  'should register same blob in the same space once': async (
+    assert,
+    context
+  ) => {
     const { spaceDid: space } = await registerSpace(alice, context)
     const { registry } = context
     const data = new Uint8Array([11, 22, 34, 44, 55])

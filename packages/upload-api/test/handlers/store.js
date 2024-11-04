@@ -405,7 +405,9 @@ export const test = {
     assert.equal(storeAdd.out.error?.message.includes('no storage'), true)
 
     // Register space and retry
-    const account = Absentee.from({ id: 'did:mailto:test.storacha.network:alice' })
+    const account = Absentee.from({
+      id: 'did:mailto:test.storacha.network:alice',
+    })
     const providerAdd = await provisionProvider({
       service: /** @type {API.Signer<API.DID<'web'>>} */ (context.signer),
       agent: alice,

@@ -10,9 +10,9 @@ export class Registry {
   }
 
   /** @type {API.BlobRegistry['register']} */
-  async register ({ space, cause, blob }) {
+  async register({ space, cause, blob }) {
     const entries = this.data.get(space) ?? []
-    if (entries.some(e => equals(e.blob.digest, blob.digest))) {
+    if (entries.some((e) => equals(e.blob.digest, blob.digest))) {
       return error(new EntryExists())
     }
     const insertedAt = new Date().toISOString()
@@ -21,24 +21,27 @@ export class Registry {
   }
 
   /** @type {API.BlobRegistry['find']} */
-  async find (space, digest) {
+  async find(space, digest) {
     const entries = this.data.get(space) ?? []
-    const entry = entries.find(e => equals(e.blob.digest, digest.bytes))
+    const entry = entries.find((e) => equals(e.blob.digest, digest.bytes))
     if (!entry) return error(new EntryNotFound())
     return ok(entry)
   }
 
   /** @type {API.BlobRegistry['deregister']} */
-  async deregister (space, digest) {
+  async deregister(space, digest) {
     const entries = this.data.get(space) ?? []
-    const entry = entries.find(e => equals(e.blob.digest, digest.bytes))
+    const entry = entries.find((e) => equals(e.blob.digest, digest.bytes))
     if (!entry) return error(new EntryNotFound())
-    this.data.set(space, entries.filter(e => e !== entry))
+    this.data.set(
+      space,
+      entries.filter((e) => e !== entry)
+    )
     return ok({})
   }
 
   /** @type {API.BlobRegistry['entries']} */
-  async entries (space, options) {
+  async entries(space, options) {
     const entries = this.data.get(space) ?? []
     const { cursor = '0', size = entries.length } = options ?? {}
     const offset = parseInt(cursor, 10)
@@ -57,7 +60,11 @@ export class Registry {
     const end = last[0] || 0
     const values = matches.map(([_, item]) => item)
 
-    const [before, after, results] = [`${start + offset}`, `${end + 1 + offset}`, values]
+    const [before, after, results] = [
+      `${start + offset}`,
+      `${end + 1 + offset}`,
+      values,
+    ]
 
     return ok({
       size: values.length,

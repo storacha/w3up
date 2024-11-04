@@ -17,7 +17,9 @@ export const getStoreImplementations = () => ({
           queryFn: (items, search, options) => {
             const results = Array.from(items)
               .filter((i) => i.insertedAt > (options?.cursor ?? ''))
-              .filter((i) => search.status ? i.status === search.status : true)
+              .filter((i) =>
+                search.status ? i.status === search.status : true
+              )
               .sort((a, b) => (a.insertedAt > b.insertedAt ? 1 : -1))
               .slice(0, options?.size ?? items.size)
             return { results, cursor: results.at(-1)?.insertedAt }
@@ -208,7 +210,7 @@ export const getStoreImplementations = () => ({
             return nItem
           },
         })
-      ),
+      )
     ),
   },
   dealTracker: {

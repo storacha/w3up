@@ -9,7 +9,7 @@ import { BlobNotFound } from '../../src/blob.js'
 export const create = (claims) => {
   return {
     /** @type {API.BlobRetriever['stream']} */
-    async stream (digest) {
+    async stream(digest) {
       const readResult = await claims.read(digest)
       if (readResult.error) throw readResult.error
       for (const claim of readResult.ok) {
@@ -20,6 +20,6 @@ export const create = (claims) => {
         }
       }
       return error(new BlobNotFound(digest))
-    }
+    },
   }
 }

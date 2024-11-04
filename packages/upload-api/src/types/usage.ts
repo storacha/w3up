@@ -27,6 +27,6 @@ export interface UsageStorage {
     /** The date and time when the resource was served. */
     servedAt: Date,
     /** Identifier of the invocation that caused the egress traffic. */
-    cause: UnknownLink,
+    cause: UnknownLink
   ) => Promise<Result<EgressData, Failure>>
 }

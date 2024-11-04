@@ -52,13 +52,12 @@ export const allocate = capability({
     /** DID of the user space where the allocation takes place. */
     space: SpaceDID,
   }),
-  derives: (claimed, delegated) => (
+  derives: (claimed, delegated) =>
     and(equalWith(claimed, delegated)) ||
     and(equalBlob(claimed, delegated)) ||
     and(checkLink(claimed.nb.cause, delegated.nb.cause, 'cause')) ||
     and(equal(claimed.nb.space, delegated.nb.space, 'space')) ||
-    ok({})
-  ),
+    ok({}),
 })
 
 /**
@@ -78,12 +77,11 @@ export const accept = capability({
     /** This task is blocked on `http/put` receipt available */
     _put: Await,
   }),
-  derives: (claimed, delegated) => (
+  derives: (claimed, delegated) =>
     and(equalWith(claimed, delegated)) ||
     and(equalBlob(claimed, delegated)) ||
     and(equal(claimed.nb.space, delegated.nb.space, 'space')) ||
-    ok({})
-  ),
+    ok({}),
 })
 
 // ⚠️ We export imports here so they are not omitted in generated typedefs

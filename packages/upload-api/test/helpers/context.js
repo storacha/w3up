@@ -51,7 +51,7 @@ export const createContext = async (
 
   const externalServices = await getExternalServiceImplementations({
     ...options,
-    serviceID: id
+    serviceID: id,
   })
 
   /** @type { import('../../src/types.js').UcantoServerContext } */
@@ -119,5 +119,5 @@ export const cleanupContext = (context) =>
     context.carStoreBucket.deactivate(),
     context.claimsService.deactivate(),
     // @ts-expect-error
-    ...context.storageProviders.map(p => p.deactivate()),
+    ...context.storageProviders.map((p) => p.deactivate()),
   ])
