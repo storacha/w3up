@@ -199,6 +199,8 @@ export class StorageNode {
           }
         })
       })
+    } else {
+      await fetch(new URL('/reset', this.baseURL), { method: 'POST' })
     }
   }
 

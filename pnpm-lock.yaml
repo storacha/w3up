@@ -678,7 +678,7 @@ importers:
         specifier: ^0.0.9
         version: 0.0.9
       mocha:
-        specifier: ^10.1.0
+        specifier: ^10.8.2
         version: 10.8.2
       multiformats:
         specifier: ^12.1.2
