@@ -1,7 +1,7 @@
 import { ok, error } from '@ucanto/core'
 import { DIDResolutionError } from '@ucanto/validator'
 import * as ClaimsService from './content-claims.js'
-import { StorageNode } from './storage-node.js'
+import { BrowserStorageNode, StorageNode } from './storage-node.js'
 import * as BlobRetriever from './blob-retriever.js'
 import * as Router from './router.js'
 
@@ -22,18 +22,27 @@ export const getExternalServiceImplementations = async (config) => {
 
   const claimsService = await ClaimsService.activate(config)
   const blobRetriever = BlobRetriever.create(claimsService)
-  const storageProviders = await Promise.all([
+  const storageProviders = await Promise.all(config.http ? [
     StorageNode.activate({
-      ...config,
-      ...principalResolver,
-      ...(config.http ? {} : { port: 8989 }),
+      http: config.http,
       claimsService,
+      ...principalResolver,
     }),
     StorageNode.activate({
-      ...config,
-      ...principalResolver,
-      ...(config.http ? {} : { port: 8990 }),
+      http: config.http,
       claimsService,
+      ...principalResolver,
+    }),
+  ] : [
+    BrowserStorageNode.activate({
+      port: 8989,
+      claimsService,
+      ...principalResolver,
+    }),
+    BrowserStorageNode.activate({
+      port: 8990,
+      claimsService,
+      ...principalResolver,
     }),
   ])
   const router = Router.create(config.serviceID, storageProviders)
