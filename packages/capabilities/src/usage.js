@@ -1,5 +1,5 @@
 import { capability, ok, Schema } from '@ucanto/validator'
-import { and, equal, equalWith, ProviderDID, SpaceDID } from './utils.js'
+import { and, equal, equalWith, SpaceDID } from './utils.js'
 
 /**
  * Capability can only be delegated (but not invoked) allowing audience to
@@ -39,23 +39,4 @@ export const report = capability({
       ok({})
     )
   },
-})
-
-/**
- * Capability can be invoked by an agent to record usage data for a given resource.
- */
-export const record = capability({
-  can: 'usage/record',
-  with: ProviderDID,
-  nb: Schema.struct({
-    /** DID of the space where the resource is served from. */
-    space: SpaceDID,
-    /** CID of the resource that was served. */
-    resource: Schema.link(),
-    /** Amount of bytes served. */
-    bytes: Schema.integer().greaterThan(0),
-    /** Timestamp of the event in seconds after Unix epoch. */
-    servedAt: Schema.integer().greaterThan(-1),
-  }),
-  derives: equalWith,
 })

@@ -18,7 +18,7 @@ import {
   ProofData,
   uint64,
 } from '@web3-storage/data-segment'
-import { space, info } from './space.js'
+import * as SpaceCaps from './space.js'
 import * as provider from './provider.js'
 import { top } from './top.js'
 import * as BlobCaps from './blob.js'
@@ -131,7 +131,7 @@ export type UsageReport = InferInvokedCapability<typeof UsageCaps.report>
 export type UsageReportSuccess = Record<ProviderDID, UsageData>
 export type UsageReportFailure = Ucanto.Failure
 
-export type EgressRecord = InferInvokedCapability<typeof UsageCaps.record>
+export type EgressRecord = InferInvokedCapability<typeof SpaceCaps.recordEgress>
 export type EgressRecordSuccess = Unit
 export type EgressRecordFailure = ConsumerNotFound | Ucanto.Failure
 
@@ -276,8 +276,8 @@ export interface RateLimitListSuccess {
 export type RateLimitListFailure = Ucanto.Failure
 
 // Space
-export type Space = InferInvokedCapability<typeof space>
-export type SpaceInfo = InferInvokedCapability<typeof info>
+export type Space = InferInvokedCapability<typeof SpaceCaps.space>
+export type SpaceInfo = InferInvokedCapability<typeof SpaceCaps.info>
 
 // filecoin
 export interface DealMetadata {

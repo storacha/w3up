@@ -1,5 +1,5 @@
 import assert from 'assert'
-import { access, Schema } from '@ucanto/validator'
+import { access } from '@ucanto/validator'
 import { Verifier } from '@ucanto/principal'
 import * as Usage from '../../src/usage.js'
 import * as Capability from '../../src/top.js'
@@ -8,9 +8,6 @@ import {
   service as w3,
   mallory as account,
   bob,
-  gateway,
-  readmeCID,
-  mallory,
 } from '../helpers/fixtures.js'
 import { validateAuthorization } from '../helpers/utils.js'
 
@@ -202,48 +199,5 @@ describe('usage capabilities', function () {
         proofs,
       })
     }, /Expected value of type integer instead got 6\.6/)
-  })
-
-  it('should delegate and invoke usage/record', async () => {
-    const data = {
-      space: mallory.did(),
-      resource: readmeCID,
-      bytes: 100,
-      servedAt: 1714204800,
-    }
-
-    // W3 delegates ability to record usage to Gateway
-    const usageRecordDelegationProof = await Usage.record.delegate({
-      issuer: w3,
-      audience: gateway,
-      with: w3.did(),
-      expiration: Infinity,
-    })
-
-    // Gateway invokes usage/record and indicates the w3 as the audience
-    const recordInvocation = Usage.record.invoke({
-      issuer: gateway,
-      audience: w3,
-      with: gateway.did(),
-      nb: { ...data },
-      proofs: [usageRecordDelegationProof],
-    })
-
-    // W3 validates the delegation from Gateway to itself
-    const result = await access(await recordInvocation.delegate(), {
-      capability: Usage.record,
-      principal: Verifier,
-      authority: w3,
-      validateAuthorization,
-      resolveDIDKey: () => Schema.ok(gateway.toDIDKey()),
-    })
-
-    if (result.error) {
-      assert.fail(result.error.message)
-    }
-
-    assert.deepEqual(result.ok.audience.did(), w3.did())
-    assert.equal(result.ok.capability.can, 'usage/record')
-    assert.deepEqual(result.ok.capability.nb, { ...data })
   })
 })
