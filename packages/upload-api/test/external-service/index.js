@@ -23,8 +23,18 @@ export const getExternalServiceImplementations = async (config) => {
   const claimsService = await ClaimsService.activate(config)
   const blobRetriever = BlobRetriever.create(claimsService)
   const storageProviders = await Promise.all([
-    StorageNode.activate({ ...config, ...principalResolver, claimsService }),
-    StorageNode.activate({ ...config, ...principalResolver, claimsService }),
+    StorageNode.activate({
+      ...config,
+      ...principalResolver,
+      ...(config.http ? {} : { port: 8989 }),
+      claimsService
+    }),
+    StorageNode.activate({
+      ...config,
+      ...principalResolver,
+      ...(config.http ? {} : { port: 8990 }),
+      claimsService
+    }),
   ])
   const router = Router.create(config.serviceID, storageProviders)
   return {

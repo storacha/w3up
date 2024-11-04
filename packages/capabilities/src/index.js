@@ -20,6 +20,7 @@ import * as SpaceIndex from './space/index.js'
 import * as UCAN from './ucan.js'
 import * as Plan from './plan.js'
 import * as Usage from './usage.js'
+import * as Blob from './blob.js'
 import * as SpaceBlob from './space/blob.js'
 import * as W3sBlob from './web3.storage/blob.js'
 import * as HTTP from './http.js'
@@ -47,6 +48,7 @@ export {
   UCAN,
   Plan,
   Usage,
+  Blob,
   SpaceBlob,
   W3sBlob,
   HTTP,
@@ -97,6 +99,9 @@ export const abilitiesAsStrings = [
   Plan.createAdminSession.can,
   Usage.usage.can,
   Usage.report.can,
+  Blob.blob.can,
+  Blob.allocate.can,
+  Blob.accept.can,
   SpaceBlob.blob.can,
   SpaceBlob.add.can,
   SpaceBlob.remove.can,

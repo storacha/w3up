@@ -13,7 +13,6 @@ import { connect } from '@ucanto/client'
 import { BlobNotFound } from '../../src/blob/lib.js'
 
 export const MaxUploadSize = 127 * (1 << 25)
-let nextPort = 8989
 
 /** @param {API.MultihashDigest} digest */
 const contentKey = (digest) => {
@@ -22,13 +21,24 @@ const contentKey = (digest) => {
 }
 
 export class StorageNode {
-  /** @param {{ http?: import('http'), claimsService: API.ClaimsClientConfig } & import('@ucanto/interface').PrincipalResolver} config */
+  /** @param {{ http?: import('http'), port?: number, claimsService: API.ClaimsClientConfig } & import('@ucanto/interface').PrincipalResolver} config */
   static async activate(config) {
     const id = await ed25519.generate()
     const content = new Map()
     const allocations = new Set()
     /** @type {URL} */
     let baseURL
+
+    /** @param {API.MultihashDigest} digest */
+    const hasContent = async digest => {
+      if (config.http) {
+        return content.has(contentKey(digest))
+      }
+      // if no http server, the content should be available at the base URL
+      // a "public bucket" used in tests.
+      const res = await fetch(new URL(contentKey(digest), baseURL))
+      return res.status === 200
+    }
 
     const server = Server.create({
       id,
@@ -37,17 +47,17 @@ export class StorageNode {
         blob: {
           allocate: Server.provideAdvanced({
             capability: BlobCapabilities.allocate,
-            handler: ({ capability }) => {
+            handler: async ({ capability }) => {
               const digest = Digest.decode(capability.nb.blob.digest)
               const checksum = base64pad.baseEncode(digest.digest)
               if (capability.nb.blob.size > MaxUploadSize) {
                 return Server.error(new BlobSizeLimitExceededError(capability.nb.blob.size))
               }
-              const key = contentKey(digest)
-              if (content.has(key)) {
+              if (await hasContent(digest)) {
                 return Server.ok({ size: 0 })
               }
-
+              
+              const key = contentKey(digest)
               const size = allocations.has(key) ? 0 : capability.nb.blob.size
               allocations.add(key)
 
@@ -65,7 +75,7 @@ export class StorageNode {
             capability: BlobCapabilities.accept,
             handler: async ({ capability }) => {
               const digest = Digest.decode(capability.nb.blob.digest)
-              if (!content.has(contentKey(digest))) {
+              if (!(await hasContent(digest))) {
                 return Server.error(new AllocatedMemoryNotWrittenError())
               }
 
@@ -91,7 +101,7 @@ export class StorageNode {
     })
 
     if (!config.http) {
-      baseURL = new URL(`http://127.0.0.1:${nextPort++}`)
+      baseURL = new URL(`http://127.0.0.1:${config.port ?? 8989}`)
       const connection = connect({ id, codec: CAR.outbound, channel: server })
       return new StorageNode({ id, content, url: baseURL, connection })
     }
@@ -151,7 +161,12 @@ export class StorageNode {
       // otherwise it keep connection lingering
       response.destroy()
     })
-    await new Promise((resolve) => httpServer.listen(resolve))
+    await /** @type {Promise<void>} */ (new Promise((resolve) => {
+      if (config.port) {
+        return httpServer.listen(port, resolve)
+      }
+      httpServer.listen(resolve)
+    }))
 
     // @ts-ignore - this is actually what it returns on http
     const { port } = httpServer.address()

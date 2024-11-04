@@ -1,5 +1,5 @@
 import { Index } from '@storacha/upload-client'
-import { Index as IndexCapabilities } from '@storacha/capabilities'
+import { SpaceIndex as IndexCapabilities } from '@storacha/capabilities'
 import { Base } from '../base.js'
 
 /**

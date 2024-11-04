@@ -15,13 +15,14 @@ import { receiptsEndpoint } from './helpers/utils.js'
 import { Absentee } from '@ucanto/principal'
 import { DIDMailto } from '../src/capability/access.js'
 import { confirmConfirmationUrl } from '../../upload-api/test/helpers/utils.js'
+import * as Result from './helpers/result.js'
 
 /** @type {Test.Suite} */
 export const testClient = {
   uploadFile: Test.withContext({
     'should upload a file to the service': async (
       assert,
-      { connection, provisionsStorage, uploadTable, allocationsStorage }
+      { connection, provisionsStorage, uploadTable, registry }
     ) => {
       const bytes = await randomBytes(128)
       const file = new Blob([bytes])
@@ -61,13 +62,7 @@ export const testClient = {
         ok: true,
       })
 
-      assert.deepEqual(
-        await allocationsStorage.exists(space.did(), expectedCar.cid.multihash),
-        {
-          ok: true,
-        }
-      )
-
+      Result.try(await registry.find(space.did(), expectedCar.cid.multihash))
       assert.equal(carCID?.toString(), expectedCar.cid.toString())
       assert.equal(dataCID.toString(), expectedCar.roots[0].toString())
     },
@@ -144,7 +139,7 @@ export const testClient = {
   uploadCar: Test.withContext({
     'uploads a CAR file to the service': async (
       assert,
-      { connection, provisionsStorage, uploadTable, allocationsStorage }
+      { connection, provisionsStorage, uploadTable, registry }
     ) => {
       const car = await randomCAR(32)
 
@@ -185,12 +180,7 @@ export const testClient = {
         return assert.ok(carCID)
       }
 
-      assert.deepEqual(
-        await allocationsStorage.exists(space.did(), carCID.multihash),
-        {
-          ok: true,
-        }
-      )
+      Result.try(await registry.find(space.did(), carCID.multihash))
     },
   }),
   getReceipt: Test.withContext({

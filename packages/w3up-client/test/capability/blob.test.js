@@ -4,11 +4,12 @@ import { randomBytes } from '../helpers/random.js'
 import { Client } from '../../src/client.js'
 import * as Test from '../test.js'
 import { receiptsEndpoint } from '../helpers/utils.js'
+import * as Result from '../helpers/result.js'
 
 export const BlobClient = Test.withContext({
   'should store a blob': async (
     assert,
-    { connection, provisionsStorage, allocationsStorage }
+    { connection, provisionsStorage, registry }
   ) => {
     const alice = new Client(await AgentData.create(), {
       // @ts-ignore
@@ -38,9 +39,7 @@ export const BlobClient = Test.withContext({
     })
 
     // TODO we should check blobsStorage as well
-    assert.deepEqual(await allocationsStorage.exists(space.did(), digest), {
-      ok: true,
-    })
+    Result.try(await registry.find(space.did(), digest))
 
     assert.deepEqual(digest.bytes, bytesHash.bytes)
   },
