@@ -77,7 +77,6 @@ export const createContext = async (
       },
     },
     // Filecoin
-    maxUploadSize: 5_000_000_000,
     filecoinSubmitQueue,
     pieceOfferQueue,
     pieceStore,
@@ -116,8 +115,6 @@ export const createContext = async (
  */
 export const cleanupContext = (context) =>
   Promise.all([
-    context.carStoreBucket.deactivate(),
     context.claimsService.deactivate(),
-    // @ts-expect-error
     ...context.storageProviders.map((p) => p.deactivate()),
   ])

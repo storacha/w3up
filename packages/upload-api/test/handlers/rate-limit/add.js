@@ -2,7 +2,7 @@ import * as API from '../../types.js'
 import { alice, bob } from '../../helpers/utils.js'
 import { Absentee } from '@ucanto/principal'
 import { delegate } from '@ucanto/core'
-import { Access, RateLimit, Store } from '@storacha/capabilities'
+import { Access, RateLimit, SpaceBlob } from '@storacha/capabilities'
 import * as CAR from '@ucanto/transport/car'
 import * as DidMailto from '@storacha/did-mailto'
 
@@ -112,17 +112,17 @@ export const test = {
     const data = new Uint8Array([11, 22, 34, 44, 55])
     const link = await CAR.codec.link(data)
     const size = data.byteLength
-    const storeResult = await Store.add
+    const storeResult = await SpaceBlob.add
       .invoke({
         issuer: agent,
         audience: service,
         with: space.did(),
-        nb: { link, size },
+        nb: { blob: { digest: link.multihash.bytes, size } },
         proofs: [
           await delegate({
             issuer: space,
             audience: agent,
-            capabilities: [{ with: space.did(), can: 'store/add' }],
+            capabilities: [{ with: space.did(), can: SpaceBlob.add.can }],
           }),
         ],
       })

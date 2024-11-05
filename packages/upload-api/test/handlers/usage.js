@@ -1,8 +1,9 @@
 import * as CAR from '@ucanto/transport/car'
-import { Store, Usage } from '@storacha/capabilities'
+import { Usage } from '@storacha/capabilities'
 import * as API from '../../src/types.js'
 import { createServer, connect } from '../../src/lib.js'
 import { alice, registerSpace } from '../util.js'
+import { uploadBlob } from '../helpers/blob.js'
 
 /** @type {API.Tests} */
 export const test = {
@@ -17,17 +18,16 @@ export const test = {
     const link = await CAR.codec.link(data)
     const size = data.byteLength
 
-    const storeAddRes = await Store.add
-      .invoke({
-        issuer: alice,
-        audience: context.id,
-        with: spaceDid,
-        nb: { link, size },
-        proofs: [proof],
-      })
-      .execute(connection)
-
-    assert.ok(storeAddRes.out.ok)
+    await uploadBlob({
+      connection,
+      issuer: alice,
+      audience: context.id,
+      with: spaceDid,
+      proofs: [proof],
+    }, {
+      digest: link.multihash,
+      bytes: data
+    })
 
     const usageReportRes = await Usage.report
       .invoke({
@@ -48,9 +48,5 @@ export const test = {
     assert.equal(report?.size.final, size)
     assert.equal(report?.events.length, 1)
     assert.equal(report?.events[0].delta, size)
-    assert.equal(
-      report?.events[0].cause.toString(),
-      storeAddRes.ran.link().toString()
-    )
   },
 }

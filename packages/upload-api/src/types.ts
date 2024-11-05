@@ -77,15 +77,6 @@ import {
   SpaceBlobGet,
   SpaceBlobGetSuccess,
   SpaceBlobGetFailure,
-  StoreAdd,
-  StoreGet,
-  StoreAddSuccess,
-  StoreRemove,
-  StoreRemoveSuccess,
-  StoreRemoveFailure,
-  StoreList,
-  StoreListSuccess,
-  StoreListItem,
   UploadAdd,
   UploadGet,
   UploadAddSuccess,
@@ -129,9 +120,6 @@ import {
   RateLimitList,
   RateLimitListSuccess,
   RateLimitListFailure,
-  AdminStoreInspect,
-  AdminStoreInspectSuccess,
-  AdminStoreInspectFailure,
   AdminUploadInspect,
   AdminUploadInspectSuccess,
   AdminUploadInspectFailure,
@@ -140,12 +128,10 @@ import {
   ProviderAddFailure,
   SpaceInfo,
   ProviderDID,
-  StoreGetFailure,
+  UploadGetSuccess,
   UploadGetFailure,
   ListResponse,
   CARLink,
-  StoreGetSuccess,
-  UploadGetSuccess,
   UCANConclude,
   UCANConcludeSuccess,
   UCANConcludeFailure,
@@ -217,12 +203,6 @@ export type {
 } from './types/content-claims.js'
 
 export interface Service extends StorefrontService {
-  store: {
-    add: ServiceMethod<StoreAdd, StoreAddSuccess, Failure>
-    get: ServiceMethod<StoreGet, StoreGetSuccess, StoreGetFailure>
-    remove: ServiceMethod<StoreRemove, StoreRemoveSuccess, StoreRemoveFailure>
-    list: ServiceMethod<StoreList, StoreListSuccess, Failure>
-  }
   upload: {
     add: ServiceMethod<UploadAdd, UploadAddSuccess, Failure>
     get: ServiceMethod<UploadGet, UploadGetSuccess, UploadGetFailure>
@@ -302,13 +282,6 @@ export interface Service extends StorefrontService {
   }
 
   admin: {
-    store: {
-      inspect: ServiceMethod<
-        AdminStoreInspect,
-        AdminStoreInspectSuccess,
-        AdminStoreInspectFailure
-      >
-    }
     upload: {
       inspect: ServiceMethod<
         AdminUploadInspect,
@@ -376,12 +349,6 @@ export type BlobServiceContext = SpaceServiceContext & {
   registry: BlobRegistry
 }
 
-export type StoreServiceContext = SpaceServiceContext & {
-  maxUploadSize: number
-  storeTable: StoreTable
-  carStoreBucket: CarStoreBucket
-}
-
 export type UploadServiceContext = ConsumerServiceContext &
   SpaceServiceContext &
   RevocationServiceContext &
@@ -415,7 +382,6 @@ export interface CustomerServiceContext {
 export interface AdminServiceContext {
   signer: Signer
   uploadTable: UploadTable
-  storeTable: StoreTable
 }
 
 export interface ConsoleServiceContext {}
@@ -473,7 +439,6 @@ export interface ServiceContext
     CustomerServiceContext,
     ProviderServiceContext,
     SpaceServiceContext,
-    StoreServiceContext,
     BlobServiceContext,
     ConcludeServiceContext,
     SubscriptionServiceContext,
@@ -578,8 +543,8 @@ export interface UcantoServerTestContext
 
   grantAccess: (mail: { url: string | URL }) => Promise<void>
 
-  carStoreBucket: CarStoreBucket & Deactivator
   claimsService: ClaimsClientConfig & ClaimReader & Deactivator
+  storageProviders: Deactivator[]
 }
 
 export interface ClaimReader {
@@ -598,33 +563,6 @@ export interface ErrorReporter {
   catch: (error: HandlerExecutionError | WriteError) => void
 }
 
-export interface CarStoreBucket {
-  has: (link: UnknownLink) => Promise<boolean>
-  createUploadUrl: (
-    link: UnknownLink,
-    size: number
-  ) => Promise<{
-    url: URL
-    headers: {
-      'x-amz-checksum-sha256': string
-      'content-length': string
-    } & Record<string, string>
-  }>
-}
-
-export interface CarStoreBucketOptions {
-  accessKeyId?: string
-  secretAccessKey?: string
-  region?: string
-  bucket?: string
-  sessionToken?: string
-  expires?: number
-}
-
-export interface CarStoreBucketService {
-  use(options?: CarStoreBucketOptions): Promise<CarStoreBucket>
-}
-
 /**
  * Indicates the requested record was not present in the table.
  */
@@ -638,28 +576,6 @@ export interface RecordNotFound extends Failure {
  */
 export interface RecordKeyConflict extends Failure {
   name: 'RecordKeyConflict'
-}
-
-export interface StoreTable {
-  inspect: (link: UnknownLink) => Promise<Result<StoreInspectSuccess, Failure>>
-  exists: (space: DID, link: UnknownLink) => Promise<Result<boolean, Failure>>
-  get: (
-    space: DID,
-    link: UnknownLink
-  ) => Promise<Result<StoreGetSuccess, RecordNotFound>>
-  /** Inserts an item in the table if it does not already exist. */
-  insert: (
-    item: StoreAddInput
-  ) => Promise<Result<StoreAddOutput, RecordKeyConflict>>
-  /** Removes an item from the table but fails if the item does not exist. */
-  remove: (
-    space: DID,
-    link: UnknownLink
-  ) => Promise<Result<StoreRemoveSuccess, RecordNotFound>>
-  list: (
-    space: DID,
-    options?: ListOptions
-  ) => Promise<Result<ListResponse<StoreListItem>, Failure>>
 }
 
 export interface UploadTable {
@@ -698,10 +614,6 @@ export type CustomerGetResult = Result<CustomerGetSuccess, CustomerGetFailure>
 export type SubscriptionGetResult = Result<
   SubscriptionGetSuccess,
   SubscriptionGetFailure
->
-export type AdminStoreInspectResult = Result<
-  AdminStoreInspectSuccess,
-  AdminStoreInspectFailure
 >
 export type AdminUploadInspectResult = Result<
   AdminUploadInspectSuccess,

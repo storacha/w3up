@@ -3,7 +3,6 @@ import { Storefront } from '@storacha/filecoin-client'
 import * as Link from 'multiformats/link'
 import * as raw from 'multiformats/codecs/raw'
 import { sha256 } from 'multiformats/hashes/sha2'
-import * as Store from './store.js'
 import * as Blob from './blob/index.js'
 import * as BlobAdd from './blob/add.js'
 import * as Index from './index/index.js'
@@ -15,7 +14,7 @@ import * as CAR from './car.js'
 import { ShardingStream, defaultFileComparator } from './sharding.js'
 import { indexShardedDAG } from '@storacha/blob-index'
 
-export { Blob, Index, Store, Upload, UnixFS, CAR }
+export { Blob, Index, Upload, UnixFS, CAR }
 export * from './sharding.js'
 export { receiptsEndpoint } from './service.js'
 export * as Receipt from './receipts.js'
