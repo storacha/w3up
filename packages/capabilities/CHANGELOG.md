@@ -1,5 +1,122 @@
 # Changelog
 
+## 1.0.0 (2024-11-05)
+
+
+### ⚠ BREAKING CHANGES
+
+* add `index/add` handler ([#1421](https://github.com/storacha/upload-service/issues/1421))
+* restrict store API to CARs ([#1415](https://github.com/storacha/upload-service/issues/1415))
+* **capabilities:** `BlobMultihash` type in `@web3-storage/capabilities` renamed to `Multihash`.
+* allocations storage interface now requires remove to be implemented
+* return allocated bytes in `store/add` receipt ([#1213](https://github.com/storacha/upload-service/issues/1213))
+* coupon ([#1136](https://github.com/storacha/upload-service/issues/1136))
+* see latest specs https://github.com/web3-storage/specs/blob/cbdb706f18567900c5c24d7fb16ccbaf93d0d023/w3-filecoin.md
+* filecoin client to use new capabilities
+* filecoin capabilities
+
+### refactor
+
+* filecoin api services events and tests ([#974](https://github.com/storacha/upload-service/issues/974)) ([953537b](https://github.com/storacha/upload-service/commit/953537bcb98d94b9e9655797a7f9026643ab949f))
+* filecoin capabilities ([c0b97bf](https://github.com/storacha/upload-service/commit/c0b97bf42d87b49d7de11119f9eb6166ab8d97d0))
+* filecoin client to use new capabilities ([b0d9c3f](https://github.com/storacha/upload-service/commit/b0d9c3f258d37701487ef02f70a93e2dd1a18775))
+
+
+### Features
+
+* add "plan/create-admin-session" capability ([#1411](https://github.com/storacha/upload-service/issues/1411)) ([50eeeb5](https://github.com/storacha/upload-service/commit/50eeeb502335ba0413318b5047869a275901824b))
+* add `index/add` handler ([#1421](https://github.com/storacha/upload-service/issues/1421)) ([cbe9524](https://github.com/storacha/upload-service/commit/cbe952451b719fe7ae2f7480d26865eca80aba55))
+* add `initialize` method to `PlansStorage` ([#1278](https://github.com/storacha/upload-service/issues/1278)) ([6792126](https://github.com/storacha/upload-service/commit/6792126d63a1e983713c3886eeba64038cb7cf34))
+* add `store/get` and `upload/get` capabilities ([#942](https://github.com/storacha/upload-service/issues/942)) ([40c79eb](https://github.com/storacha/upload-service/commit/40c79eb8f246775b9e1828240f271fa75ef696be))
+* add `subscription/list` capability ([#1088](https://github.com/storacha/upload-service/issues/1088)) ([471d7e5](https://github.com/storacha/upload-service/commit/471d7e5db24e12a06c1c52ae76bf95ff9471bac8))
+* add a function to verify and return Abilities. ([#1252](https://github.com/storacha/upload-service/issues/1252)) ([2f026a2](https://github.com/storacha/upload-service/commit/2f026a2483a4f323c4e2c6a8a8cb10afd92e21c4))
+* add blob list and remove ([#1385](https://github.com/storacha/upload-service/issues/1385)) ([2f69946](https://github.com/storacha/upload-service/commit/2f6994600e8cc0f70cedc5afe06003a2a0b70af3))
+* add blob protocol to upload-client ([#1425](https://github.com/storacha/upload-service/issues/1425)) ([49aef56](https://github.com/storacha/upload-service/commit/49aef564a726d34dbbedbd83f5366d9320180f99))
+* add blob/get ([#1484](https://github.com/storacha/upload-service/issues/1484)) ([328039d](https://github.com/storacha/upload-service/commit/328039d8a29fec3c1bbab28d1bb9de1643f54f71))
+* add revocation to access-client and w3up-client ([#975](https://github.com/storacha/upload-service/issues/975)) ([6c877aa](https://github.com/storacha/upload-service/commit/6c877aac78eddb924e999dc3270cba010e48e30a))
+* add usage/report capability ([#1079](https://github.com/storacha/upload-service/issues/1079)) ([6418b4b](https://github.com/storacha/upload-service/commit/6418b4b22329a118fb258928bd9a6a45ced5ce45))
+* blob, web3.storage and ucan conclude capabilities together with api handlers  ([#1342](https://github.com/storacha/upload-service/issues/1342)) ([00735a8](https://github.com/storacha/upload-service/commit/00735a80dfddbe86359af78ed9bd182f4804691f))
+* **capabilities:** add `index/add` capability ([#1410](https://github.com/storacha/upload-service/issues/1410)) ([1b71b89](https://github.com/storacha/upload-service/commit/1b71b89ed989cde8ef4bf35c1ebc333872cbc54c))
+* change `plan/update` to `plan/set` and use existing `PlansStorage#set` to implement an invocation handler ([#1258](https://github.com/storacha/upload-service/issues/1258)) ([1ccbfe9](https://github.com/storacha/upload-service/commit/1ccbfe9f84ae5b2e99e315c92d15d2b54e9723ba))
+* coupon ([#1136](https://github.com/storacha/upload-service/issues/1136)) ([1b94f2d](https://github.com/storacha/upload-service/commit/1b94f2d3f6538d717d38b21dcb76657fd1f3e268))
+* filecoin info ([#1091](https://github.com/storacha/upload-service/issues/1091)) ([adb2442](https://github.com/storacha/upload-service/commit/adb24424d1faf50daf2339b77c22fdd44faa236a))
+* Generate Space proofs on the fly, on `access/claim` ([#1555](https://github.com/storacha/upload-service/issues/1555)) ([9e2b1d4](https://github.com/storacha/upload-service/commit/9e2b1d4dc721d3e61cea008719d172909c984344))
+* implement `plan/get` capability ([#1005](https://github.com/storacha/upload-service/issues/1005)) ([f0456d2](https://github.com/storacha/upload-service/commit/f0456d2e2aab462666810e22abd7dfb7e1ce21be))
+* introduce capability for changing billing plan ([#1253](https://github.com/storacha/upload-service/issues/1253)) ([d33b3a9](https://github.com/storacha/upload-service/commit/d33b3a9f72a5e7a738d2a084eb19388fa70d9433))
+* move aggregate information out of deals in filecoin/info ([#1192](https://github.com/storacha/upload-service/issues/1192)) ([18dc590](https://github.com/storacha/upload-service/commit/18dc590ad50a023ef3094bfc1a2d729459e5d68e))
+* publish index claim ([#1487](https://github.com/storacha/upload-service/issues/1487)) ([237b0c6](https://github.com/storacha/upload-service/commit/237b0c6cda70ae3e156bac8a011a2739b346ae4b))
+* restrict store API to CARs ([#1415](https://github.com/storacha/upload-service/issues/1415)) ([e53aa87](https://github.com/storacha/upload-service/commit/e53aa87780446458ef9a19c88877073c1470d50e))
+* return allocated bytes in `store/add` receipt ([#1213](https://github.com/storacha/upload-service/issues/1213)) ([5d52e44](https://github.com/storacha/upload-service/commit/5d52e447c14e7f7fd334e7ff575e032b7b0d89d7))
+* router ([#11](https://github.com/storacha/upload-service/issues/11)) ([c810735](https://github.com/storacha/upload-service/commit/c8107354da663120228f779814eafa0c9a3e80a2))
+* upgrade ucanto/transport to 9.1.0 in all packages to get more verbose errors from HTTP transport on non-ok response ([#1312](https://github.com/storacha/upload-service/issues/1312)) ([d6978d7](https://github.com/storacha/upload-service/commit/d6978d7ab299be76987c6533d18e6857f6998fe6))
+* usage/record capability definition ([#1562](https://github.com/storacha/upload-service/issues/1562)) ([98c8a87](https://github.com/storacha/upload-service/commit/98c8a87c52ef88da728225259e77f65733d2d7e6))
+* wip router ([ffcd9c7](https://github.com/storacha/upload-service/commit/ffcd9c75aee61d37b7fdfc55f2d4b7bee7e9d724))
+
+
+### Fixes
+
+* add missing ContentNotFound definition for filecoin offer failure ([c0b97bf](https://github.com/storacha/upload-service/commit/c0b97bf42d87b49d7de11119f9eb6166ab8d97d0))
+* add missing filecoin submit success and failure types ([c0b97bf](https://github.com/storacha/upload-service/commit/c0b97bf42d87b49d7de11119f9eb6166ab8d97d0))
+* capabilities should export blob caps ([#1376](https://github.com/storacha/upload-service/issues/1376)) ([460729e](https://github.com/storacha/upload-service/commit/460729ec296ac2656b264af442b6d3bc25aa8847))
+* client tests ([b0d9c3f](https://github.com/storacha/upload-service/commit/b0d9c3f258d37701487ef02f70a93e2dd1a18775))
+* fix arethetypesworking errors in all packages ([#1004](https://github.com/storacha/upload-service/issues/1004)) ([2e2936a](https://github.com/storacha/upload-service/commit/2e2936a3831389dd13be5be5146a04e2b15553c5))
+* issue where typedoc docs would only show full docs for w3up-client ([#1141](https://github.com/storacha/upload-service/issues/1141)) ([0b8d3f3](https://github.com/storacha/upload-service/commit/0b8d3f3b52918b1b4d3b76ea6fea3fb0c837cd73))
+* migrate repo ([#1389](https://github.com/storacha/upload-service/issues/1389)) ([475a287](https://github.com/storacha/upload-service/commit/475a28743ff9f7138b46dfe4227d3c80ed75a6a2))
+* one more tweak to the `PlanStorage` interface ([#1280](https://github.com/storacha/upload-service/issues/1280)) ([5a44565](https://github.com/storacha/upload-service/commit/5a44565feb33fc08102cd2559a2f22fb0476e86b))
+* package metadata ([#1161](https://github.com/storacha/upload-service/issues/1161)) ([b8a1cc2](https://github.com/storacha/upload-service/commit/b8a1cc2e125a91be582998bda295e1ae1caab087))
+* put access.session back ([#1100](https://github.com/storacha/upload-service/issues/1100)) ([10a1a4b](https://github.com/storacha/upload-service/commit/10a1a4bfc5ec79ea0b7b2049fd7d1953ca0810ef))
+* rename blob and index client capabilities ([#1478](https://github.com/storacha/upload-service/issues/1478)) ([17e3a31](https://github.com/storacha/upload-service/commit/17e3a3161c6585b1844abcf7ed27252fa8580870))
+* repo URLs ([#1550](https://github.com/storacha/upload-service/issues/1550)) ([e02ddf3](https://github.com/storacha/upload-service/commit/e02ddf3696553b03f8d2f7316de0a99a9303a60f))
+* tests ([b179910](https://github.com/storacha/upload-service/commit/b179910a3b5259a1da0607340d23669c30e34c9e))
+* trigger capabilities release ([#1399](https://github.com/storacha/upload-service/issues/1399)) ([7d9ab35](https://github.com/storacha/upload-service/commit/7d9ab354d194b751bb7f34ffa2f74e7465cb40e2))
+* type errors ([c0b97bf](https://github.com/storacha/upload-service/commit/c0b97bf42d87b49d7de11119f9eb6166ab8d97d0))
+* update data-segment dep ([228ff79](https://github.com/storacha/upload-service/commit/228ff7933219a0bf9ead371bb845d20a4859fda5))
+* upgrade @ucanto/validator with bugfix ([#1151](https://github.com/storacha/upload-service/issues/1151)) ([d4e961b](https://github.com/storacha/upload-service/commit/d4e961bab09e88245e7d9323146849271e78eb57))
+* upgrade ucanto core ([#1127](https://github.com/storacha/upload-service/issues/1127)) ([5ce4d22](https://github.com/storacha/upload-service/commit/5ce4d2292d7e980da4a2ea0f1583f608a81157d2))
+* upgrade ucanto in filecoin api ([c95fb54](https://github.com/storacha/upload-service/commit/c95fb54cdb04f50ff78e5113e70d73c1cd6d8b47))
+* upgrade ucanto libs and format filecoin api ([#1359](https://github.com/storacha/upload-service/issues/1359)) ([87ca098](https://github.com/storacha/upload-service/commit/87ca098186fe204ff3409a2684719f1c54148c97))
+* upload API test fixes ([6b0d72d](https://github.com/storacha/upload-service/commit/6b0d72dee3dc9ce5320ad8de333a718d644b5c3d))
+
+
+### Other Changes
+
+* Add `pnpm dev` to watch-build all packages ([#1533](https://github.com/storacha/upload-service/issues/1533)) ([07970ef](https://github.com/storacha/upload-service/commit/07970efd443149158ebbfb2c4e745b5007eb9407))
+* **main:** release capabilities 10.1.0 ([#979](https://github.com/storacha/upload-service/issues/979)) ([bdd3970](https://github.com/storacha/upload-service/commit/bdd39707532ef3f3a38092c0de43a50b8c0ebe66))
+* **main:** release capabilities 10.2.0 ([#983](https://github.com/storacha/upload-service/issues/983)) ([a906488](https://github.com/storacha/upload-service/commit/a906488c8cc36cc981f8703fc156b619fd492e34))
+* **main:** release capabilities 11.0.0 ([#994](https://github.com/storacha/upload-service/issues/994)) ([76b0489](https://github.com/storacha/upload-service/commit/76b048996243cc7bdda62da93342caac13879fa8))
+* **main:** release capabilities 11.0.1 ([#1008](https://github.com/storacha/upload-service/issues/1008)) ([37cdc5a](https://github.com/storacha/upload-service/commit/37cdc5a0662420cb91647559767017d480e5b3d1))
+* **main:** release capabilities 11.1.0 ([#1026](https://github.com/storacha/upload-service/issues/1026)) ([7fdb541](https://github.com/storacha/upload-service/commit/7fdb541fb564dd53dccfcbb318e47ca0f7911476))
+* **main:** release capabilities 11.2.0 ([#1084](https://github.com/storacha/upload-service/issues/1084)) ([0e7b6dc](https://github.com/storacha/upload-service/commit/0e7b6dc17256b50ae05ad9d41b8bd97274f2628d))
+* **main:** release capabilities 11.3.0 ([#1098](https://github.com/storacha/upload-service/issues/1098)) ([7d671bd](https://github.com/storacha/upload-service/commit/7d671bd1ee4ce794c792fdd89fa42399bc7b96a8))
+* **main:** release capabilities 11.3.1 ([#1101](https://github.com/storacha/upload-service/issues/1101)) ([20b5b35](https://github.com/storacha/upload-service/commit/20b5b35a518f7d992d33f0ccf82e257ee61025b0))
+* **main:** release capabilities 11.4.0 ([#1105](https://github.com/storacha/upload-service/issues/1105)) ([1b6210f](https://github.com/storacha/upload-service/commit/1b6210f853c66f8b4aec9b4ff1ecd08316bd6d62))
+* **main:** release capabilities 11.4.1 ([#1131](https://github.com/storacha/upload-service/issues/1131)) ([a5b7154](https://github.com/storacha/upload-service/commit/a5b7154f4702c912fce7bb514a4a27eebe8da7a6))
+* **main:** release capabilities 12.0.0 ([#1137](https://github.com/storacha/upload-service/issues/1137)) ([bb23e9f](https://github.com/storacha/upload-service/commit/bb23e9f8f7a76686b010b50f01739accf642df8b))
+* **main:** release capabilities 12.0.1 ([#1147](https://github.com/storacha/upload-service/issues/1147)) ([d1a9c78](https://github.com/storacha/upload-service/commit/d1a9c782ee79a04c7b6804b6dee70aea2f93de14))
+* **main:** release capabilities 12.0.2 ([#1152](https://github.com/storacha/upload-service/issues/1152)) ([b9d7ff5](https://github.com/storacha/upload-service/commit/b9d7ff5008db1db0c6f552871b091856f2f9de39))
+* **main:** release capabilities 12.0.3 ([#1163](https://github.com/storacha/upload-service/issues/1163)) ([ec5c385](https://github.com/storacha/upload-service/commit/ec5c3855cd7eb64fe9114a2f116fcd52956a0ae6))
+* **main:** release capabilities 12.1.0 ([#1195](https://github.com/storacha/upload-service/issues/1195)) ([a21c1a5](https://github.com/storacha/upload-service/commit/a21c1a524bf5d9941b877f1d6f7707ab83499736))
+* **main:** release capabilities 13.0.0 ([#1230](https://github.com/storacha/upload-service/issues/1230)) ([3d5b3ef](https://github.com/storacha/upload-service/commit/3d5b3ef93349a0d0c1b7e1b198e3f400a82c0f72))
+* **main:** release capabilities 13.1.0 ([#1257](https://github.com/storacha/upload-service/issues/1257)) ([85adc9a](https://github.com/storacha/upload-service/commit/85adc9a7dcdf66534e0c44997658f18bae36ab67))
+* **main:** release capabilities 13.1.1 ([#1283](https://github.com/storacha/upload-service/issues/1283)) ([31c38e9](https://github.com/storacha/upload-service/commit/31c38e9d6f5eda4c98dfa7441dc8fe98c56985dc))
+* **main:** release capabilities 13.2.0 ([#1315](https://github.com/storacha/upload-service/issues/1315)) ([0505458](https://github.com/storacha/upload-service/commit/0505458d27da4e3233b1ecef1b3090a1f2cf5155))
+* **main:** release capabilities 13.2.1 ([#1362](https://github.com/storacha/upload-service/issues/1362)) ([26b5751](https://github.com/storacha/upload-service/commit/26b5751e36fb609e565e212e03bb2b8fced31e9e))
+* **main:** release capabilities 13.3.0 ([#1366](https://github.com/storacha/upload-service/issues/1366)) ([d6fbc4a](https://github.com/storacha/upload-service/commit/d6fbc4a4ac05d071cda9701a68fe0776a97144ae))
+* **main:** release capabilities 13.3.1 ([#1377](https://github.com/storacha/upload-service/issues/1377)) ([149f592](https://github.com/storacha/upload-service/commit/149f5920effc3e994168082dbb6dc614418b8a63))
+* **main:** release capabilities 14.0.0 ([#1386](https://github.com/storacha/upload-service/issues/1386)) ([69bfc08](https://github.com/storacha/upload-service/commit/69bfc0869afaad1dc09bf0d6b2e891c786ffc6ef))
+* **main:** release capabilities 14.0.1 ([#1395](https://github.com/storacha/upload-service/issues/1395)) ([a76c970](https://github.com/storacha/upload-service/commit/a76c970446c347ea5aed7e7806f6039683038283))
+* **main:** release capabilities 14.0.2 ([#1400](https://github.com/storacha/upload-service/issues/1400)) ([7b46852](https://github.com/storacha/upload-service/commit/7b4685294d1ab40a3da71053af2481a2376d76fe))
+* **main:** release capabilities 15.0.0 ([#1412](https://github.com/storacha/upload-service/issues/1412)) ([ec90b81](https://github.com/storacha/upload-service/commit/ec90b810833ae65810a4327f0e80b52722b137de))
+* **main:** release capabilities 16.0.0 ([#1419](https://github.com/storacha/upload-service/issues/1419)) ([50e3934](https://github.com/storacha/upload-service/commit/50e39340b9ca761d0fbb3a783d2c32120483db52))
+* **main:** release capabilities 17.0.0 ([#1428](https://github.com/storacha/upload-service/issues/1428)) ([6ee21fd](https://github.com/storacha/upload-service/commit/6ee21fdb37e33395eefc755eec8aefb81622d4cb))
+* **main:** release capabilities 17.1.0 ([#1447](https://github.com/storacha/upload-service/issues/1447)) ([8ee1fd9](https://github.com/storacha/upload-service/commit/8ee1fd9d71a9a8897be25826f0945b310acc9100))
+* **main:** release capabilities 17.1.1 ([#1483](https://github.com/storacha/upload-service/issues/1483)) ([5394ed5](https://github.com/storacha/upload-service/commit/5394ed5f77baf6f16e9d0fb5b5e6f2f8e823ecf2))
+* **main:** release capabilities 17.2.0 ([#1494](https://github.com/storacha/upload-service/issues/1494)) ([99876a5](https://github.com/storacha/upload-service/commit/99876a5a3f936a43e838a5fc847761e24bc43abc))
+* **main:** release capabilities 17.3.0 ([#1503](https://github.com/storacha/upload-service/issues/1503)) ([891c2a5](https://github.com/storacha/upload-service/commit/891c2a56096b3565feb842bb6be16ceaec4df1f8))
+* **main:** release capabilities 17.4.0 ([#1559](https://github.com/storacha/upload-service/issues/1559)) ([feaea7a](https://github.com/storacha/upload-service/commit/feaea7a0736dbfbb23114d1693f8d70e4eafdc3f))
+* no longer depends on hd-scripts, packages use/configure eslint directly, fixes warnings from npm lint script ([#1058](https://github.com/storacha/upload-service/issues/1058)) ([ebdb99b](https://github.com/storacha/upload-service/commit/ebdb99b0d3fc912f93ace3d533b915f844b35856))
+* package renames ([0f797ed](https://github.com/storacha/upload-service/commit/0f797ed298b570dd649aa18055f801b0ab6fbfd8))
+
 ## [17.4.0](https://github.com/storacha/w3up/compare/capabilities-v17.3.0...capabilities-v17.4.0) (2024-10-24)
 
 
