@@ -486,9 +486,6 @@ importers:
       '@web-std/blob':
         specifier: ^3.0.5
         version: 3.0.5
-      '@web3-storage/sigv4':
-        specifier: ^1.0.2
-        version: 1.0.2
       is-subset:
         specifier: ^0.1.1
         version: 0.1.1
@@ -2369,9 +2366,6 @@ packages:
 
   '@web3-storage/data-segment@5.3.0':
     resolution: {integrity: sha512-zFJ4m+pEKqtKatJNsFrk/2lHeFSbkXZ6KKXjBe7/2ayA9wAar7T/unewnOcZrrZTnCWmaxKsXWqdMFy9bXK9dw==}
-
-  '@web3-storage/sigv4@1.0.2':
-    resolution: {integrity: sha512-ZUXKK10NmuQgPkqByhb1H3OQxkIM0CIn2BMPhGQw7vQw8WIzrBkk9IJiAVfJ/UVBFrf6uzPbx2lEBLt4diCMnQ==}
 
   '@webassemblyjs/ast@1.12.1':
     resolution: {integrity: sha512-EKfMUOPRRUTy5UII4qJDGPpqfwjOmZ5jeGFwid9mnoqIFK+e0vqoi1qH56JpmZSzEL53jKnNzScdmftJyG5xWg==}
@@ -9709,10 +9703,6 @@ snapshots:
       '@ipld/dag-cbor': 9.2.2
       multiformats: 13.3.1
       sync-multihash-sha2: 1.0.0
-
-  '@web3-storage/sigv4@1.0.2':
-    dependencies:
-      '@noble/hashes': 1.5.0
 
   '@webassemblyjs/ast@1.12.1':
     dependencies:
