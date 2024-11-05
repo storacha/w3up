@@ -5,11 +5,12 @@ import { Assert } from '@web3-storage/content-claims/capability'
 import { base58btc } from 'multiformats/bases/base58'
 import { sha256 } from 'multiformats/hashes/sha2'
 import * as Digest from 'multiformats/hashes/digest'
-import { ok, error, Failure } from '@ucanto/core'
+import { ok, error } from '@ucanto/core'
 import { ed25519 } from '@ucanto/principal'
 import { CAR, HTTP } from '@ucanto/transport'
 import * as Server from '@ucanto/server'
 import { connect } from '@ucanto/client'
+import { AllocatedMemoryNotWrittenError, BlobSizeLimitExceededError } from '../../src/blob.js'
 
 /**
  * @typedef {{
@@ -60,7 +61,7 @@ const createService = ({
         const digest = Digest.decode(capability.nb.blob.digest)
         const checksum = base64pad.baseEncode(digest.digest)
         if (capability.nb.blob.size > MaxUploadSize) {
-          return error(new BlobSizeLimitExceededError(capability.nb.blob.size))
+          return error(new BlobSizeLimitExceededError(capability.nb.blob.size, MaxUploadSize))
         }
         if (await contentStore.has(digest)) {
           return ok({ size: 0 })
@@ -317,36 +318,6 @@ export class StorageNode {
         }
       })
     })
-  }
-}
-
-export class AllocatedMemoryNotWrittenError extends Failure {
-  static name = 'AllocatedMemoryHadNotBeenWrittenTo'
-
-  get name() {
-    return AllocatedMemoryNotWrittenError.name
-  }
-
-  describe() {
-    return 'Blob not found'
-  }
-}
-
-export class BlobSizeLimitExceededError extends Failure {
-  static name = 'BlobSizeOutsideOfSupportedRange'
-
-  get name() {
-    return BlobSizeLimitExceededError.name
-  }
-
-  /** @param {number} size */
-  constructor(size) {
-    super()
-    this.size = size
-  }
-
-  describe() {
-    return `Blob of ${this.size} bytes, exceeds size limit of ${MaxUploadSize} bytes`
   }
 }
 

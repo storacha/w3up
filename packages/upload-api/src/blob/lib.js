@@ -56,3 +56,61 @@ export class BlobNotFound extends Failure {
     return this.#digest.bytes
   }
 }
+
+export class EntryNotFound extends Failure {
+  static name = /** @type {const} */ ('EntryNotFound')
+
+  get reason() {
+    return this.message
+  }
+
+  get name() {
+    return EntryNotFound.name
+  }
+}
+
+export class EntryExists extends Failure {
+  static name = /** @type {const} */ ('EntryExists')
+
+  get reason() {
+    return this.message
+  }
+
+  get name() {
+    return EntryExists.name
+  }
+}
+
+export class AllocatedMemoryNotWrittenError extends Failure {
+  static name = /** @type {const} */ ('AllocatedMemoryHadNotBeenWrittenTo')
+
+  get name() {
+    return AllocatedMemoryNotWrittenError.name
+  }
+
+  describe() {
+    return 'Blob not found'
+  }
+}
+
+export class BlobSizeLimitExceededError extends Failure {
+  static name = /** @type {const} */ ('BlobSizeOutsideOfSupportedRange')
+
+  get name() {
+    return BlobSizeLimitExceededError.name
+  }
+
+  /**
+   * @param {number} size
+   * @param {number} max
+   */
+  constructor(size, max) {
+    super()
+    this.size = size
+    this.max = max
+  }
+
+  describe() {
+    return `Blob of ${this.size} bytes, exceeds size limit of ${this.max} bytes`
+  }
+}

@@ -3,12 +3,11 @@ import { sha256 } from 'multiformats/hashes/sha2'
 import { ed25519 } from '@ucanto/principal'
 import { Receipt } from '@ucanto/core'
 import * as BlobCapabilities from '@storacha/capabilities/space/blob'
-
 import { createServer, connect } from '../../src/lib.js'
 import { alice, registerSpace } from '../util.js'
 import { createConcludeInvocation } from '../../src/ucan/conclude.js'
 import { parseBlobAddReceiptNext, uploadBlob } from '../helpers/blob.js'
-import { BlobSizeLimitExceededError } from '../external-service/storage-node.js'
+import { BlobSizeLimitExceededError } from '../../src/blob.js'
 
 /**
  * @type {API.Tests}

@@ -2,7 +2,7 @@ import * as API from '../../src/types.js'
 import { sha256 } from 'multiformats/hashes/sha2'
 import { equals } from 'multiformats/bytes'
 import { alice, bob, randomCID, registerSpace } from '../util.js'
-import { EntryExists, EntryNotFound } from './blob-registry.js'
+import { EntryExists, EntryNotFound } from '../../src/blob.js'
 
 /**
  * @type {API.Tests}

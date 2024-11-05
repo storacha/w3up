@@ -1,6 +1,7 @@
 import * as API from '../../src/types.js'
-import { ok, error, Failure } from '@ucanto/core'
+import { ok, error } from '@ucanto/core'
 import { equals } from 'multiformats/bytes'
+import { EntryExists, EntryNotFound } from '../../src/blob.js'
 
 /** @implements {API.BlobAPI.Registry} */
 export class Registry {
@@ -73,29 +74,5 @@ export class Registry {
       cursor: after,
       results,
     })
-  }
-}
-
-export class EntryNotFound extends Failure {
-  static name = /** @type {const} */ ('EntryNotFound')
-
-  get reason() {
-    return this.message
-  }
-
-  get name() {
-    return EntryNotFound.name
-  }
-}
-
-export class EntryExists extends Failure {
-  static name = /** @type {const} */ ('EntryExists')
-
-  get reason() {
-    return this.message
-  }
-
-  get name() {
-    return EntryExists.name
   }
 }

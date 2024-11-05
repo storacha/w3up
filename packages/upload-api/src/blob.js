@@ -4,7 +4,13 @@ import { blobRemoveProvider } from './blob/remove.js'
 import { blobGetProvider } from './blob/get.js'
 import * as API from './types.js'
 
-export { BlobNotFound } from './blob/lib.js'
+export {
+  BlobNotFound,
+  EntryExists,
+  EntryNotFound,
+  BlobSizeLimitExceededError,
+  AllocatedMemoryNotWrittenError,
+} from './blob/lib.js'
 
 /**
  * @param {API.BlobServiceContext} context
