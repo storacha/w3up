@@ -3,6 +3,18 @@
 ## 1.0.0 (2024-11-05)
 
 
+### Fixes
+
+* bootstrap sha ([cdf6737](https://github.com/storacha/upload-service/commit/cdf67371ee9df3a60f7fea90c310179b20ee2b0b))
+
+
+### Other Changes
+
+* **main:** release did-mailto 1.0.0 ([#7](https://github.com/storacha/upload-service/issues/7)) ([2f7ab28](https://github.com/storacha/upload-service/commit/2f7ab286a7fd22249ed3ee2bd05b6a5d22e69cf0))
+
+## 1.0.0 (2024-11-05)
+
+
 ### Features
 
 * add usage/report capability ([#1079](https://github.com/storacha/upload-service/issues/1079)) ([6418b4b](https://github.com/storacha/upload-service/commit/6418b4b22329a118fb258928bd9a6a45ced5ce45))
