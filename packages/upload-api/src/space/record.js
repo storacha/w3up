@@ -1,17 +1,17 @@
 import * as API from '../types.js'
 import * as Provider from '@ucanto/server'
-import { Usage } from '@web3-storage/capabilities'
+import { Space } from '@web3-storage/capabilities'
 
-/** @param {API.UsageServiceContext} context */
+/** @param {API.SpaceServiceContext & API.UsageServiceContext} context */
 export const provide = (context) =>
-  Provider.provide(Usage.record, (input) => record(input, context))
+  Provider.provide(Space.egressRecord, (input) => egressRecord(input, context))
 
 /**
- * @param {API.Input<Usage.record>} input
- * @param {API.UsageServiceContext} context
+ * @param {API.Input<Space.egressRecord>} input
+ * @param {API.SpaceServiceContext & API.UsageServiceContext} context
  * @returns {Promise<API.Result<API.EgressRecordSuccess, API.EgressRecordFailure>>}
  */
-const record = async ({ capability, invocation }, context) => {
+const egressRecord = async ({ capability, invocation }, context) => {
   const provider = /** @type {`did:web:${string}`} */ (
     invocation.audience.did()
   )

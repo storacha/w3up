@@ -40,20 +40,3 @@ export const report = capability({
     )
   },
 })
-
-/**
- * Capability can be invoked by an agent to record usage data for a given resource.
- */
-export const record = capability({
-  can: 'usage/record',
-  with: SpaceDID,
-  nb: Schema.struct({
-    /** CID of the resource that was served. */
-    resource: Schema.link(),
-    /** Amount of bytes served. */
-    bytes: Schema.integer().greaterThan(0),
-    /** Timestamp of the event in seconds after Unix epoch. */
-    servedAt: Schema.integer().greaterThan(-1),
-  }),
-  derives: equalWith,
-})
