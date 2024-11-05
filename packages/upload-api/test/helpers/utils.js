@@ -42,10 +42,10 @@ export const w3Signer = ed25519.parse(
 )
 export const w3 = w3Signer.withDID('did:web:test.web3.storage')
 
-export const freewaySigner = ed25519.parse(
+export const gatewaySigner = ed25519.parse(
   'MgCaNpGXCEX0+BxxE4SjSStrxU9Ru/Im+HGNQ/JJx3lDoI+0B3NWjWW3G8OzjbazZjanjM3kgfcZbvpyxv20jHtmcTtg='
 )
-export const freeway = freewaySigner.withDID('did:web:freeway.web3.storage')
+export const gateway = gatewaySigner.withDID('did:web:w3s.link')
 
 /**
  * Creates a server for the given service.

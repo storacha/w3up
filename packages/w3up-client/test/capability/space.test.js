@@ -2,7 +2,7 @@ import { AgentData } from '@web3-storage/access/agent'
 import { Client } from '../../src/client.js'
 import * as Test from '../test.js'
 import { Space } from '@web3-storage/capabilities'
-import { freewaySigner } from '../../../upload-api/test/helpers/utils.js'
+import { gatewaySigner } from '../../../upload-api/test/helpers/utils.js'
 import { randomCAR } from '../helpers/random.js'
 
 export const SpaceClient = Test.withContext({
@@ -70,7 +70,7 @@ export const SpaceClient = Test.withContext({
       // 2. Creates a new agent using freewaySigner as the principal
       const freewayService = new Client(
         await AgentData.create({
-          principal: freewaySigner,
+          principal: gatewaySigner,
         }),
         {
           // @ts-ignore
@@ -82,7 +82,7 @@ export const SpaceClient = Test.withContext({
       )
 
       // 3. Alice delegates to the Gateway the ability to record egress
-      const recordEgressGatewayDelegation = await Space.recordEgress.delegate({
+      const egressRecordGatewayDelegation = await Space.egressRecord.delegate({
         issuer: alice.agent.issuer,
         audience: freewayService,
         with: space.did(),
@@ -91,7 +91,7 @@ export const SpaceClient = Test.withContext({
       })
 
       const resultDelegation2 = await alice.capability.access.delegate({
-        delegations: [recordEgressGatewayDelegation],
+        delegations: [egressRecordGatewayDelegation],
       })
       assert.ok(resultDelegation2.ok)
 
@@ -104,7 +104,7 @@ export const SpaceClient = Test.withContext({
             d.issuer.did() === alice.did() &&
             d.audience.did() === freewayService.did() &&
             d.capabilities.some(
-              (c) => c.can === Space.recordEgress.can && c.with === space.did()
+              (c) => c.can === Space.egressRecord.can && c.with === space.did()
             )
         )
       )
@@ -122,7 +122,7 @@ export const SpaceClient = Test.withContext({
           bytes: car.size,
           servedAt: new Date().toISOString(),
         }
-        const egressRecord = await freewayService.capability.space.recordEgress(
+        const egressRecord = await freewayService.capability.space.egressRecord(
           egressData,
           {
             proofs: await freewayService.proofs(),
@@ -180,7 +180,7 @@ export const SpaceClient = Test.withContext({
       // 2. Creates a new agent using freewaySigner as the principal
       const freewayService = new Client(
         await AgentData.create({
-          principal: freewaySigner,
+          principal: gatewaySigner,
         }),
         {
           // @ts-ignore
@@ -232,7 +232,7 @@ export const SpaceClient = Test.withContext({
           bytes: car.size,
           servedAt: new Date().toISOString(),
         }
-        const egressRecord = await freewayService.capability.space.recordEgress(
+        const egressRecord = await freewayService.capability.space.egressRecord(
           egressData,
           {
             proofs: await freewayService.proofs(),
@@ -290,7 +290,7 @@ export const SpaceClient = Test.withContext({
         // 2. Creates a new agent using freewaySigner as the principal
         const freewayService = new Client(
           await AgentData.create({
-            principal: freewaySigner,
+            principal: gatewaySigner,
           }),
           {
             // @ts-ignore
@@ -347,7 +347,7 @@ export const SpaceClient = Test.withContext({
             servedAt: new Date().toISOString(),
           }
           const egressRecord =
-            await freewayService.capability.space.recordEgress(egressData, {
+            await freewayService.capability.space.egressRecord(egressData, {
               proofs: await freewayService.proofs(),
             })
           assert.ok(egressRecord, 'egressRecord should be returned')
@@ -402,7 +402,7 @@ export const SpaceClient = Test.withContext({
         // 2. Creates a new agent using freewaySigner as the principal
         const freewayService = new Client(
           await AgentData.create({
-            principal: freewaySigner,
+            principal: gatewaySigner,
           }),
           {
             // @ts-ignore
@@ -414,7 +414,7 @@ export const SpaceClient = Test.withContext({
         )
 
         // 3. Alice delegates to the Gateway the ability to record egress
-        const recordEgressGatewayDelegation = await Space.recordEgress.delegate(
+        const egressRecordGatewayDelegation = await Space.egressRecord.delegate(
           {
             issuer: alice.agent.issuer,
             audience: freewayService,
@@ -425,7 +425,7 @@ export const SpaceClient = Test.withContext({
         )
 
         const resultDelegation2 = await alice.capability.access.delegate({
-          delegations: [recordEgressGatewayDelegation],
+          delegations: [egressRecordGatewayDelegation],
         })
         assert.ok(resultDelegation2.ok)
 
@@ -440,7 +440,7 @@ export const SpaceClient = Test.withContext({
               d.audience.did() === freewayService.did() &&
               d.capabilities.some(
                 (c) =>
-                  c.can === Space.recordEgress.can && c.with === space.did()
+                  c.can === Space.egressRecord.can && c.with === space.did()
               )
           )
         )
@@ -459,7 +459,7 @@ export const SpaceClient = Test.withContext({
             servedAt: new Date().toISOString(),
           }
           const egressRecord =
-            await freewayService.capability.space.recordEgress(egressData, {
+            await freewayService.capability.space.egressRecord(egressData, {
               proofs: await freewayService.proofs(),
             })
           assert.ok(egressRecord, 'egressRecord should be returned')
@@ -514,7 +514,7 @@ export const SpaceClient = Test.withContext({
       // 2. Creates a new agent using freewaySigner as the principal
       const freewayService = new Client(
         await AgentData.create({
-          principal: freewaySigner,
+          principal: gatewaySigner,
         }),
         {
           // @ts-ignore
@@ -526,7 +526,7 @@ export const SpaceClient = Test.withContext({
       )
 
       // 3. Alice delegates to the Gateway the ability to record egress but without proofs
-      const recordEgressGatewayDelegation = await Space.recordEgress.delegate({
+      const egressRecordGatewayDelegation = await Space.egressRecord.delegate({
         issuer: alice.agent.issuer,
         audience: freewayService,
         with: space.did(),
@@ -535,7 +535,7 @@ export const SpaceClient = Test.withContext({
       })
 
       const resultDelegation2 = await alice.capability.access.delegate({
-        delegations: [recordEgressGatewayDelegation],
+        delegations: [egressRecordGatewayDelegation],
       })
       assert.ok(resultDelegation2.ok)
 
@@ -548,7 +548,7 @@ export const SpaceClient = Test.withContext({
             d.issuer.did() === alice.did() &&
             d.audience.did() === freewayService.did() &&
             d.capabilities.some(
-              (c) => c.can === Space.recordEgress.can && c.with === space.did()
+              (c) => c.can === Space.egressRecord.can && c.with === space.did()
             )
         )
       )
@@ -558,7 +558,7 @@ export const SpaceClient = Test.withContext({
 
       // 6. FreewayService attempts to invoke egress/record without having the delegation
       try {
-        await freewayService.capability.space.recordEgress(
+        await freewayService.capability.space.egressRecord(
           {
             space: space.did(),
             resource: car.cid.link(),
@@ -572,7 +572,7 @@ export const SpaceClient = Test.withContext({
         assert.equal(
           // @ts-ignore
           error.message,
-          `failed ${Space.recordEgress.can} invocation`,
+          `failed ${Space.egressRecord.can} invocation`,
           'error message should be the same'
         )
       }

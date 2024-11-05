@@ -79,7 +79,7 @@ export const contentServe = capability({
  * Capability can be invoked by an agent to record egress data for a given resource.
  * It can be derived from any of the `space/content/serve/*` capability that has matching `with`.
  */
-export const recordEgress = capability({
+export const egressRecord = capability({
   can: 'space/content/serve/egress/record',
   with: SpaceDID,
   nb: Schema.struct({

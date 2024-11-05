@@ -37,8 +37,8 @@ export class SpaceClient extends Base {
    * @param {API.Delegation[]} [options.proofs]
    * @returns {Promise<API.EgressRecordSuccess>}
    */
-  async recordEgress(egressData, options) {
-    const out = await recordEgress(
+  async egressRecord(egressData, options) {
+    const out = await egressRecord(
       { agent: this.agent },
       { ...egressData },
       { ...options }
@@ -46,7 +46,7 @@ export class SpaceClient extends Base {
 
     if (!out.ok) {
       throw new Error(
-        `failed ${SpaceCapabilities.recordEgress.can} invocation`,
+        `failed ${SpaceCapabilities.egressRecord.can} invocation`,
         {
           cause: out.error,
         }
@@ -70,12 +70,12 @@ export class SpaceClient extends Base {
  * @param {string} [options.nonce]
  * @param {API.Delegation[]} [options.proofs]
  */
-export const recordEgress = async (
+export const egressRecord = async (
   { agent },
   { space, resource, bytes, servedAt },
   { nonce, proofs = [] }
 ) => {
-  const receipt = await agent.invokeAndExecute(SpaceCapabilities.recordEgress, {
+  const receipt = await agent.invokeAndExecute(SpaceCapabilities.egressRecord, {
     with: space,
     proofs,
     nonce,

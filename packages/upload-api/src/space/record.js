@@ -4,14 +4,14 @@ import { Space } from '@web3-storage/capabilities'
 
 /** @param {API.SpaceServiceContext & API.UsageServiceContext} context */
 export const provide = (context) =>
-  Provider.provide(Space.recordEgress, (input) => recordEgress(input, context))
+  Provider.provide(Space.egressRecord, (input) => egressRecord(input, context))
 
 /**
- * @param {API.Input<Space.recordEgress>} input
+ * @param {API.Input<Space.egressRecord>} input
  * @param {API.SpaceServiceContext & API.UsageServiceContext} context
  * @returns {Promise<API.Result<API.EgressRecordSuccess, API.EgressRecordFailure>>}
  */
-const recordEgress = async ({ capability, invocation }, context) => {
+const egressRecord = async ({ capability, invocation }, context) => {
   const provider = /** @type {`did:web:${string}`} */ (
     invocation.audience.did()
   )

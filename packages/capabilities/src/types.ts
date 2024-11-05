@@ -131,7 +131,7 @@ export type UsageReport = InferInvokedCapability<typeof UsageCaps.report>
 export type UsageReportSuccess = Record<ProviderDID, UsageData>
 export type UsageReportFailure = Ucanto.Failure
 
-export type EgressRecord = InferInvokedCapability<typeof SpaceCaps.recordEgress>
+export type EgressRecord = InferInvokedCapability<typeof SpaceCaps.egressRecord>
 export type EgressRecordSuccess = {
   space: SpaceDID
   resource: UnknownLink
