@@ -14,5 +14,5 @@ export const createService = (ctx) => ({
   info: Provider.provide(Space.info, (input) => info(input, ctx)),
   blob: createBlobService(ctx),
   index: createIndexService(ctx),
-  content: { egress: { record: provideRecordEgress(ctx) } },
+  content: { serve: { egress: { record: provideRecordEgress(ctx) } } },
 })

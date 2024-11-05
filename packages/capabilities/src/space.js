@@ -65,32 +65,30 @@ export const allocate = capability({
 })
 
 /**
- * The capability grants permission for all operations or actions that fall under the "space/content" namespace.
+ * The capability grants permission for all content serve operations that fall under the "space/content/serve" namespace.
  * It can be derived from any of the `space/*` capability that has matching `with`.
  */
-export const spaceContent = capability({
-  can: 'space/content/*',
+
+export const contentServe = capability({
+  can: 'space/content/serve/*',
   with: SpaceDID,
   derives: equalWith,
 })
 
 /**
  * Capability can be invoked by an agent to record egress data for a given resource.
- * It can be derived from any of the `space/content/*` capability that has matching `with`.
+ * It can be derived from any of the `space/content/serve/*` capability that has matching `with`.
  */
-export const recordEgress = spaceContent.derive({
-  to: capability({
-    can: 'space/content/egress/record',
-    with: SpaceDID,
-    nb: Schema.struct({
-      /** CID of the resource that was served. */
-      resource: Schema.link(),
-      /** Amount of bytes served. */
-      bytes: Schema.integer().greaterThan(0),
-      /** Timestamp of the event in seconds after Unix epoch. */
-      servedAt: Schema.integer().greaterThan(-1),
-    }),
-    derives: equalWith,
+export const recordEgress = capability({
+  can: 'space/content/serve/egress/record',
+  with: SpaceDID,
+  nb: Schema.struct({
+    /** CID of the resource that was served. */
+    resource: Schema.link(),
+    /** Amount of bytes served. */
+    bytes: Schema.integer().greaterThan(0),
+    /** Timestamp of the event in seconds after Unix epoch. */
+    servedAt: Schema.integer().greaterThan(-1),
   }),
   derives: equalWith,
 })

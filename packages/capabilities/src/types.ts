@@ -132,7 +132,13 @@ export type UsageReportSuccess = Record<ProviderDID, UsageData>
 export type UsageReportFailure = Ucanto.Failure
 
 export type EgressRecord = InferInvokedCapability<typeof SpaceCaps.recordEgress>
-export type EgressRecordSuccess = Unit
+export type EgressRecordSuccess = {
+  space: SpaceDID
+  resource: UnknownLink
+  bytes: number
+  servedAt: ISO8601Date
+  cause: UnknownLink
+}
 export type EgressRecordFailure = ConsumerNotFound | Ucanto.Failure
 
 export interface UsageData {

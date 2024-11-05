@@ -35,6 +35,7 @@ export class SpaceClient extends Base {
    * @param {object} [options]
    * @param {string} [options.nonce]
    * @param {API.Delegation[]} [options.proofs]
+   * @returns {Promise<API.EgressRecordSuccess>}
    */
   async recordEgress(egressData, options) {
     const out = await recordEgress(
@@ -52,7 +53,7 @@ export class SpaceClient extends Base {
       )
     }
 
-    return out.ok
+    return /** @type {API.EgressRecordSuccess} */ (out.ok)
   }
 }
 
@@ -68,7 +69,6 @@ export class SpaceClient extends Base {
  * @param {object} options
  * @param {string} [options.nonce]
  * @param {API.Delegation[]} [options.proofs]
- * @returns {Promise<API.Result<API.Unit, API.EgressRecordFailure>>}
  */
 export const recordEgress = async (
   { agent },
