@@ -1,5 +1,19 @@
 # Changelog
 
+## 1.0.0 (2024-11-05)
+
+
+### Features
+
+* remove store protocol ([d59ec88](https://github.com/storacha/upload-service/commit/d59ec883ace9c3f084772f9520b6df81cc13b7af))
+* remove store protocol ([#13](https://github.com/storacha/upload-service/issues/13)) ([0028049](https://github.com/storacha/upload-service/commit/0028049f0bd3fcb816968687694c4611a5147148))
+
+
+### Other Changes
+
+* formatter ([f4f5f5a](https://github.com/storacha/upload-service/commit/f4f5f5accc0c80f3dfb1b6916d04df0e594c89af))
+* remove unused dependency ([e60c74d](https://github.com/storacha/upload-service/commit/e60c74dbbd2449a07a7e23671c82aa664d8b82b3))
+
 ## [18.1.0](https://github.com/storacha/w3up/compare/upload-api-v18.0.3...upload-api-v18.1.0) (2024-10-24)
 
 
