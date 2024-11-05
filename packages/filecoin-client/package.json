@@ -55,20 +55,20 @@
   ],
   "dependencies": {
     "@ipld/dag-ucan": "^3.4.0",
+    "@storacha/capabilities": "workspace:^",
     "@ucanto/client": "^9.0.1",
     "@ucanto/core": "^10.0.1",
     "@ucanto/interface": "^10.0.1",
-    "@ucanto/transport": "^9.1.1",
-    "@storacha/capabilities": "workspace:^"
+    "@ucanto/transport": "^9.1.1"
   },
   "devDependencies": {
     "@ipld/dag-json": "^10.1.4",
+    "@storacha/eslint-config": "workspace:^",
     "@types/assert": "^1.5.6",
     "@types/mocha": "^10.0.1",
     "@ucanto/principal": "^9.0.1",
     "@ucanto/server": "^10.0.0",
     "@web3-storage/data-segment": "^4.0.0",
-    "@storacha/eslint-config": "workspace:^",
     "assert": "^2.0.0",
     "c8": "^7.13.0",
     "hundreds": "^0.0.9",

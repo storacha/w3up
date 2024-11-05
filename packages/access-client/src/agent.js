@@ -577,7 +577,7 @@ export class Agent {
       // @ts-ignore
       capability: cap.create({
         with: space,
-        nb: options.nb,
+        nb: 'nb' in options ? options.nb : undefined,
       }),
       issuer: this.issuer,
       proofs: [...proofs],

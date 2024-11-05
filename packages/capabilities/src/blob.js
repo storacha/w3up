@@ -1,177 +1,89 @@
 /**
  * Blob Capabilities.
  *
- * Blob is a fixed size byte array addressed by the multihash.
- * Usually blobs are used to represent set of IPLD blocks at different byte ranges.
+ * The blob protocol allows authorized agents allocate memory space on a storage
+ * node and subsequently verify the content has been accepted by / delivered to
+ * said node.
  *
  * These can be imported directly with:
  * ```js
- * import * as Blob from '@storacha/capabilities/blob'
+ * import * as Index from '@storacha/capabilities/blob'
  * ```
  *
  * @module
+ * @see https://github.com/storacha/specs/blob/main/w3-blob.md
  */
-import { equals } from 'uint8arrays/equals'
-import { capability, Schema, fail, ok } from '@ucanto/validator'
-import { equalBlob, equalWith, SpaceDID } from './utils.js'
-
-/**
- * Agent capabilities for Blob protocol
- */
+import { capability, Schema, Link, ok } from '@ucanto/validator'
+import { content } from './space/blob.js'
+import {
+  equalBlob,
+  equalWith,
+  SpaceDID,
+  and,
+  equal,
+  checkLink,
+  Await,
+} from './utils.js'
 
 /**
  * Capability can only be delegated (but not invoked) allowing audience to
- * derived any `space/blob/` prefixed capability for the (memory) space identified
- * by DID in the `with` field.
+ * derive any `blob/` prefixed capability.
  */
 export const blob = capability({
-  can: 'space/blob/*',
-  /**
-   * DID of the (memory) space where Blob is intended to
-   * be stored.
-   */
-  with: SpaceDID,
+  can: 'blob/*',
+  /** Storage provider DID. */
+  with: Schema.did(),
   derives: equalWith,
 })
 
 /**
- * Blob description for being ingested by the service.
+ * The `blob/allocate` capability can be invoked to create a memory address on a
+ * storage node where blob content can be written via a HTTP PUT request.
  */
-export const content = Schema.struct({
-  /**
-   * A multihash digest of the blob payload bytes, uniquely identifying blob.
-   */
-  digest: Schema.bytes(),
-  /**
-   * Number of bytes contained by this blob. Service will provision write target
-   * for this exact size. Attempt to write a larger Blob file will fail.
-   */
-  size: Schema.integer(),
-})
-
-/**
- * `space/blob/add` capability allows agent to store a Blob into a (memory) space
- * identified by did:key in the `with` field. Agent should compute blob multihash
- * and size and provide it under `nb.blob` field, allowing a service to provision
- * a write location for the agent to PUT desired Blob into.
- */
-export const add = capability({
-  can: 'space/blob/add',
-  /**
-   * DID of the (memory) space where Blob is intended to
-   * be stored.
-   */
-  with: SpaceDID,
+export const allocate = capability({
+  can: 'blob/allocate',
+  /** Storage provider DID. */
+  with: Schema.did(),
   nb: Schema.struct({
-    /**
-     * Blob to be added on the space.
-     */
+    /** Blob to allocate. */
     blob: content,
+    /** Link to the add blob task that initiated the allocation. */
+    cause: Schema.link({ version: 1 }),
+    /** DID of the user space where the allocation takes place. */
+    space: SpaceDID,
   }),
-  derives: equalBlob,
+  derives: (claimed, delegated) =>
+    and(equalWith(claimed, delegated)) ||
+    and(equalBlob(claimed, delegated)) ||
+    and(checkLink(claimed.nb.cause, delegated.nb.cause, 'cause')) ||
+    and(equal(claimed.nb.space, delegated.nb.space, 'space')) ||
+    ok({}),
 })
 
 /**
- * Capability can be used to remove the stored Blob from the (memory)
- * space identified by `with` field.
+ * The `blob/accept` capability invocation should either succeed when content is
+ * delivered on allocated address or fail if no content is allocation expires
+ * without content being delivered.
  */
-export const remove = capability({
-  can: 'space/blob/remove',
-  /**
-   * DID of the (memory) space where Blob is stored.
-   */
-  with: SpaceDID,
+export const accept = capability({
+  can: 'blob/accept',
+  /** Storage provider DID. */
+  with: Schema.did(),
   nb: Schema.struct({
-    /**
-     * A multihash digest of the blob payload bytes, uniquely identifying blob.
-     */
-    digest: Schema.bytes(),
+    /** Blob to accept. */
+    blob: content,
+    /** DID of the user space where allocation took place. */
+    space: SpaceDID,
+    /** This task is blocked on `http/put` receipt available */
+    _put: Await,
   }),
-  derives: (claimed, delegated) => {
-    if (claimed.with !== delegated.with) {
-      return fail(
-        `Expected 'with: "${delegated.with}"' instead got '${claimed.with}'`
-      )
-    } else if (
-      delegated.nb.digest &&
-      !equals(delegated.nb.digest, claimed.nb.digest)
-    ) {
-      return fail(
-        `Link ${
-          claimed.nb.digest ? `${claimed.nb.digest}` : ''
-        } violates imposed ${delegated.nb.digest} constraint.`
-      )
-    }
-    return ok({})
-  },
-})
-
-/**
- * Capability can be invoked to request a list of stored Blobs in the
- * (memory) space identified by `with` field.
- */
-export const list = capability({
-  can: 'space/blob/list',
-  /**
-   * DID of the (memory) space where Blobs to be listed are stored.
-   */
-  with: SpaceDID,
-  nb: Schema.struct({
-    /**
-     * A pointer that can be moved back and forth on the list.
-     * It can be used to paginate a list for instance.
-     */
-    cursor: Schema.string().optional(),
-    /**
-     * Maximum number of items per page.
-     */
-    size: Schema.integer().optional(),
-  }),
-  derives: (claimed, delegated) => {
-    if (claimed.with !== delegated.with) {
-      return fail(
-        `Expected 'with: "${delegated.with}"' instead got '${claimed.with}'`
-      )
-    }
-    return ok({})
-  },
-})
-
-/**
- * Capability can be used to get the stored Blob from the (memory)
- * space identified by `with` field.
- */
-export const get = capability({
-  can: 'space/blob/get/0/1',
-  /**
-   * DID of the (memory) space where Blob is stored.
-   */
-  with: SpaceDID,
-  nb: Schema.struct({
-    /**
-     * A multihash digest of the blob payload bytes, uniquely identifying blob.
-     */
-    digest: Schema.bytes(),
-  }),
-  derives: (claimed, delegated) => {
-    if (claimed.with !== delegated.with) {
-      return fail(
-        `Expected 'with: "${delegated.with}"' instead got '${claimed.with}'`
-      )
-    } else if (
-      delegated.nb.digest &&
-      !equals(delegated.nb.digest, claimed.nb.digest)
-    ) {
-      return fail(
-        `Link ${
-          claimed.nb.digest ? `${claimed.nb.digest}` : ''
-        } violates imposed ${delegated.nb.digest} constraint.`
-      )
-    }
-    return ok({})
-  },
+  derives: (claimed, delegated) =>
+    and(equalWith(claimed, delegated)) ||
+    and(equalBlob(claimed, delegated)) ||
+    and(equal(claimed.nb.space, delegated.nb.space, 'space')) ||
+    ok({}),
 })
 
 // ⚠️ We export imports here so they are not omitted in generated typedefs
 // @see https://github.com/microsoft/TypeScript/issues/51548
-export { Schema }
+export { Schema, Link }

@@ -11,6 +11,10 @@ const server = createServer(async (req, res) => {
   res.setHeader('Access-Control-Allow-Methods', '*')
   res.setHeader('Access-Control-Allow-Headers', '*')
   if (req.method === 'OPTIONS') return res.end()
+  if (req.method === 'POST' && req.url === '/reset') {
+    data.clear()
+    return res.end()
+  }
 
   res.statusCode = status
   if (status === 200) {

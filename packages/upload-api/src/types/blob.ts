@@ -1,46 +1,61 @@
 import type {
   UnknownLink,
+  Link,
   Invocation,
   Result,
   Failure,
-  DID,
-  URI,
+  Capability,
+  ServiceMethod,
+  UCANOptions,
+  IssuedInvocationView,
+  ConnectionView,
+  Principal,
+  Unit,
 } from '@ucanto/interface'
 import {
   Multihash,
-  BlobListItem,
-  BlobRemoveSuccess,
-  BlobGetSuccess,
+  BlobItem as Entry,
+  BlobAllocate,
+  BlobAccept,
+  BlobAllocateSuccess,
+  BlobAcceptSuccess,
 } from '@storacha/capabilities/types'
 import { MultihashDigest } from 'multiformats'
-
-import { RecordKeyConflict, ListResponse } from '../types.js'
+import { ListResponse, SpaceDID } from '../types.js'
 import { Storage } from './storage.js'
+
+export type { Entry }
+
+/** Indicates an entry was not found that matches the passed details. */
+export interface EntryNotFound extends Failure {
+  name: 'EntryNotFound'
+}
+
+/** Indicates an entry has already been registered for the passed details. */
+export interface EntryExists extends Failure {
+  name: 'EntryExists'
+}
 
 export type TasksStorage = Storage<UnknownLink, Invocation>
 
-export interface AllocationsStorage {
-  get: (
-    space: DID,
+export interface Registry {
+  /** Lookup an existing registration. */
+  find: (
+    space: SpaceDID,
     digest: MultihashDigest
-  ) => Promise<Result<BlobGetSuccess, Failure>>
-  exists: (
-    space: DID,
-    digest: MultihashDigest
-  ) => Promise<Result<boolean, Failure>>
-  /** Inserts an item in the table if it does not already exist. */
-  insert: (
-    item: BlobAddInput
-  ) => Promise<Result<BlobAddOutput, RecordKeyConflict>>
-  list: (
-    space: DID,
+  ) => Promise<Result<Entry, EntryNotFound>>
+  /** Adds an item into the registry if it does not already exist. */
+  register: (item: RegistrationData) => Promise<Result<Unit, EntryExists>>
+  /** List entries in the registry for a given space. */
+  entries: (
+    space: SpaceDID,
     options?: ListOptions
-  ) => Promise<Result<ListResponse<BlobListItem>, Failure>>
-  /** Removes an item from the table, returning zero on size if non existent. */
-  remove: (
-    space: DID,
+  ) => Promise<Result<ListResponse<Entry>, Failure>>
+  /** Removes an item from the registry if it exists. */
+  deregister: (
+    space: SpaceDID,
     digest: MultihashDigest
-  ) => Promise<Result<BlobRemoveSuccess, Failure>>
+  ) => Promise<Result<Unit, EntryNotFound>>
 }
 
 export interface ListOptions {
@@ -53,34 +68,62 @@ export interface BlobModel {
   size: number
 }
 
-export interface BlobAddInput {
-  space: DID
-  cause: UnknownLink
+export interface RegistrationData {
+  space: SpaceDID
+  cause: Link
   blob: BlobModel
 }
 
-export interface BlobAddOutput extends Omit<BlobAddInput, 'space' | 'cause'> {}
+export interface BlobService {
+  blob: {
+    allocate: ServiceMethod<BlobAllocate, BlobAllocateSuccess, Failure>
+    accept: ServiceMethod<BlobAccept, BlobAcceptSuccess, Failure>
+  }
+}
 
-export interface BlobsStorage {
-  has: (content: MultihashDigest) => Promise<Result<boolean, Failure>>
-  createUploadUrl: (
-    content: MultihashDigest,
-    size: number,
-    /**
-     * The number of seconds before the presigned URL expires
-     */
-    expiresIn: number
-  ) => Promise<
-    Result<
-      {
-        url: URL
-        headers: {
-          'x-amz-checksum-sha256': string
-          'content-length': string
-        } & Record<string, string>
-      },
-      Failure
-    >
-  >
-  createDownloadUrl: (content: MultihashDigest) => Promise<Result<URI, Failure>>
+export interface Configuration<C extends Capability> extends UCANOptions {
+  /** Connection to the storage node. */
+  connection: ConnectionView<BlobService>
+  /** Invocation to execute. */
+  invocation: IssuedInvocationView<C>
+}
+
+/**
+ * An unavailable proof error is returned when the routing does not have a
+ * valid unexpired and unrevoked proof available.
+ */
+export interface ProofUnavailable extends Failure {
+  name: 'ProofUnavailable'
+}
+
+/**
+ * An unavailable candidate error is returned when there are no candidates
+ * willing to allocate space for the given blob.
+ */
+export interface CandidateUnavailable extends Failure {
+  name: 'CandidateUnavailable'
+}
+
+/**
+ * The routing service is responsible for selecting storage nodes to allocate
+ * blobs with.
+ */
+export interface RoutingService {
+  /**
+   * Selects a candidate for blob allocation from the current list of available
+   * storage nodes.
+   */
+  selectStorageProvider(
+    digest: MultihashDigest,
+    size: number
+  ): Promise<Result<Principal, CandidateUnavailable | Failure>>
+  /**
+   * Returns information required to make an invocation to the requested storage
+   * node.
+   */
+  configureInvocation<C extends BlobAllocate | BlobAccept>(
+    provider: Principal,
+    capability: C,
+    options?: Omit<UCANOptions, 'audience'>
+  ): Promise<Result<Configuration<C>, ProofUnavailable | Failure>>
 }

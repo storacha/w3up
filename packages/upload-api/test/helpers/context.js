@@ -49,7 +49,10 @@ export const createContext = async (
   } = getFilecoinStoreImplementations()
   const email = Email.debug()
 
-  const externalServices = await getExternalServiceImplementations(options)
+  const externalServices = await getExternalServiceImplementations({
+    ...options,
+    serviceID: id,
+  })
 
   /** @type { import('../../src/types.js').UcantoServerContext } */
   const serviceContext = {
@@ -61,7 +64,6 @@ export const createContext = async (
     url: new URL('http://localhost:8787'),
     ...serviceStores,
     ...externalServices,
-    getServiceConnection: () => connection,
     ...createRevocationChecker({
       revocationsStorage: serviceStores.revocationsStorage,
     }),
@@ -115,6 +117,7 @@ export const createContext = async (
 export const cleanupContext = (context) =>
   Promise.all([
     context.carStoreBucket.deactivate(),
-    context.blobsStorage.deactivate(),
     context.claimsService.deactivate(),
+    // @ts-expect-error
+    ...context.storageProviders.map((p) => p.deactivate()),
   ])

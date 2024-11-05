@@ -37,6 +37,10 @@
       "types": "./dist/test/helpers/*.d.ts",
       "import": "./test/helpers/*.js"
     },
+    "./blob": {
+      "types": "./dist/src/blob.d.ts",
+      "import": "./src/blob.js"
+    },
     "./filecoin": {
       "types": "./dist/src/filecoin/index.d.ts",
       "import": "./src/filecoin/index.js"
@@ -57,9 +61,13 @@
       "types": "./dist/src/filecoin/dealer.d.ts",
       "import": "./src/filecoin/dealer.js"
     },
-    "./index": {
-      "types": "./dist/src/index/index.d.ts",
-      "import": "./src/index/index.js"
+    "./space/index": {
+      "types": "./dist/src/space/index.d.ts",
+      "import": "./src/space/index.js"
+    },
+    "./space/blob": {
+      "types": "./dist/src/space/blob.d.ts",
+      "import": "./src/space/blob.js"
     },
     "./web3.storage/blob": {
       "types": "./dist/src/web3.storage/blob.d.ts",
@@ -101,10 +109,10 @@
     "uint8arrays": "^5.0.3"
   },
   "devDependencies": {
+    "@storacha/eslint-config": "workspace:^",
     "@types/assert": "^1.5.6",
     "@types/mocha": "^10.0.0",
     "@types/node": "^20.8.4",
-    "@storacha/eslint-config": "workspace:^",
     "assert": "^2.0.0",
     "mocha": "^10.2.0",
     "playwright-test": "^12.3.4",

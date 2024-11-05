@@ -1,8 +1,8 @@
 import * as API from '../../src/types.js'
 import { ed25519 } from '@ucanto/principal'
 import { Delegation, Receipt } from '@ucanto/core'
-import * as W3sBlobCapabilities from '@storacha/capabilities/web3.storage/blob'
 import * as BlobCapabilities from '@storacha/capabilities/blob'
+import * as SpaceBlobCapabilities from '@storacha/capabilities/space/blob'
 import * as HTTPCapabilities from '@storacha/capabilities/http'
 import * as UCAN from '@storacha/capabilities/ucan'
 import {
@@ -22,7 +22,7 @@ export function parseBlobAddReceiptNext(receipt) {
   // @ts-expect-error read only effect
   const forkInvocations = receipt.fx.fork
   const allocateTask = forkInvocations.find(
-    (fork) => fork.capabilities[0].can === W3sBlobCapabilities.allocate.can
+    (fork) => fork.capabilities[0].can === BlobCapabilities.allocate.can
   )
   const concludefxs = forkInvocations.filter(
     (fork) => fork.capabilities[0].can === UCAN.conclude.can
@@ -31,7 +31,7 @@ export function parseBlobAddReceiptNext(receipt) {
     (fork) => fork.capabilities[0].can === HTTPCapabilities.put.can
   )
   const acceptTask = forkInvocations.find(
-    (fork) => fork.capabilities[0].can === W3sBlobCapabilities.accept.can
+    (fork) => fork.capabilities[0].can === BlobCapabilities.accept.can
   )
 
   if (!allocateTask || !concludefxs.length || !putTask || !acceptTask) {
@@ -90,27 +90,25 @@ export function parseBlobAddReceiptNext(receipt) {
 }
 
 /**
- * @param {API.UcantoServerTestContext} context
  * @param {object} config
  * @param {API.ConnectionView<API.Service>} config.connection
  * @param {API.Signer} config.issuer
  * @param {API.Verifier} config.audience
  * @param {API.SpaceDID} config.with
  * @param {API.Delegation[]} config.proofs
- * @param {{ cid: API.UnknownLink, bytes: Uint8Array }} content
+ * @param {{ digest: API.MultihashDigest, bytes: Uint8Array }} content
  */
 export const uploadBlob = async (
-  context,
   { connection, issuer, audience, with: resource, proofs },
   content
 ) => {
-  const blobAdd = BlobCapabilities.add.invoke({
+  const blobAdd = SpaceBlobCapabilities.add.invoke({
     issuer,
     audience,
     with: resource,
     nb: {
       blob: {
-        digest: content.cid.multihash.bytes,
+        digest: content.digest.bytes,
         size: content.bytes.length,
       },
     },
@@ -146,7 +144,7 @@ export const uploadBlob = async (
     with: derivedSigner.toDIDKey(),
     nb: {
       body: {
-        digest: content.cid.multihash.bytes,
+        digest: content.digest.bytes,
         size: content.bytes.length,
       },
       url: {

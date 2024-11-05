@@ -2,48 +2,6 @@ import { Failure } from '@ucanto/server'
 import { base58btc } from 'multiformats/bases/base58'
 import * as API from '../types.js'
 
-export const AllocatedMemoryHadNotBeenWrittenToName =
-  'AllocatedMemoryHadNotBeenWrittenTo'
-export class AllocatedMemoryHadNotBeenWrittenTo extends Failure {
-  get name() {
-    return AllocatedMemoryHadNotBeenWrittenToName
-  }
-
-  describe() {
-    return `Blob not found`
-  }
-}
-
-export const BlobSizeOutsideOfSupportedRangeName =
-  'BlobSizeOutsideOfSupportedRange'
-export class BlobSizeOutsideOfSupportedRange extends Failure {
-  /**
-   * @param {number} blobSize
-   * @param {number} maxUploadSize
-   */
-  constructor(blobSize, maxUploadSize) {
-    super()
-    this.blobSize = blobSize
-    this.maxUploadSize = maxUploadSize
-  }
-
-  get name() {
-    return BlobSizeOutsideOfSupportedRangeName
-  }
-
-  describe() {
-    return `Blob size ${this.blobSize} exceeded maximum size limit: ${this.maxUploadSize}, consider splitting it into blobs that fit limit.`
-  }
-
-  toJSON() {
-    return {
-      ...super.toJSON(),
-      maxUploadSize: this.maxUploadSize,
-      blobSize: this.blobSize,
-    }
-  }
-}
-
 export const AwaitErrorName = 'AwaitError'
 
 /**
@@ -96,23 +54,5 @@ export class BlobNotFound extends Failure {
   }
   get digest() {
     return this.#digest.bytes
-  }
-}
-
-export class UnsupportedCapability extends Failure {
-  /**
-   * @param {object} source
-   * @param {API.Capability} source.capability
-   */
-  constructor({ capability: { with: subject, can } }) {
-    super()
-
-    this.capability = { with: subject, can }
-  }
-  get name() {
-    return /** @type {const} */ ('UnsupportedCapability')
-  }
-  describe() {
-    return `${this.capability.with} does not have a "${this.capability.can}" capability provider`
   }
 }

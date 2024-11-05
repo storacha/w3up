@@ -1,19 +1,19 @@
 import * as Server from '@ucanto/server'
-import * as Blob from '@storacha/capabilities/blob'
+import * as SpaceBlob from '@storacha/capabilities/space/blob'
 import * as Digest from 'multiformats/hashes/digest'
 import * as API from '../types.js'
 import { BlobNotFound } from './lib.js'
 
 /**
  * @param {API.BlobServiceContext} context
- * @returns {API.ServiceMethod<API.BlobGet, API.BlobGetSuccess, API.BlobGetFailure>}
+ * @returns {API.ServiceMethod<API.SpaceBlobGet, API.SpaceBlobGetSuccess, API.SpaceBlobGetFailure>}
  */
 export function blobGetProvider(context) {
-  return Server.provide(Blob.get, async ({ capability }) => {
+  return Server.provide(SpaceBlob.get, async ({ capability }) => {
     const digest = Digest.decode(capability.nb.digest)
     const space = Server.DID.parse(capability.with).did()
-    const res = await context.allocationsStorage.get(space, digest)
-    if (res.error && res.error.name === 'RecordNotFound') {
+    const res = await context.registry.find(space, digest)
+    if (res.error && res.error.name === 'EntryNotFound') {
       return Server.error(new BlobNotFound(digest))
     }
     return res

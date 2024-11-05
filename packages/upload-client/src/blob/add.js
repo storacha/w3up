@@ -2,8 +2,8 @@ import { ed25519 } from '@ucanto/principal'
 import { conclude } from '@storacha/capabilities/ucan'
 import * as UCAN from '@storacha/capabilities/ucan'
 import { Delegation, Receipt } from '@ucanto/core'
-import * as W3sBlobCapabilities from '@storacha/capabilities/web3.storage/blob'
 import * as BlobCapabilities from '@storacha/capabilities/blob'
+import * as SpaceBlobCapabilities from '@storacha/capabilities/space/blob'
 import * as HTTPCapabilities from '@storacha/capabilities/http'
 import { SpaceDID } from '@storacha/capabilities/utils'
 import retry, { AbortError } from 'p-retry'
@@ -51,7 +51,7 @@ function parseBlobAddReceiptNext(receipt) {
   // @ts-expect-error read only effect
   const forkInvocations = receipt.fx.fork
   const allocateTask = forkInvocations.find(
-    (fork) => fork.capabilities[0].can === W3sBlobCapabilities.allocate.can
+    (fork) => fork.capabilities[0].can === BlobCapabilities.allocate.can
   )
   const concludefxs = forkInvocations.filter(
     (fork) => fork.capabilities[0].can === UCAN.conclude.can
@@ -60,7 +60,7 @@ function parseBlobAddReceiptNext(receipt) {
     (fork) => fork.capabilities[0].can === HTTPCapabilities.put.can
   )
   const acceptTask = forkInvocations.find(
-    (fork) => fork.capabilities[0].can === W3sBlobCapabilities.accept.can
+    (fork) => fork.capabilities[0].can === BlobCapabilities.accept.can
   )
 
   /* c8 ignore next 3 */
@@ -181,7 +181,7 @@ export async function add(
 
   const result = await retry(
     async () => {
-      return await BlobCapabilities.add
+      return await SpaceBlobCapabilities.add
         .invoke({
           issuer,
           /* c8 ignore next */
@@ -200,7 +200,7 @@ export async function add(
   )
 
   if (!result.out.ok) {
-    throw new Error(`failed ${BlobCapabilities.add.can} invocation`, {
+    throw new Error(`failed ${SpaceBlobCapabilities.add.can} invocation`, {
       cause: result.out.error,
     })
   }
@@ -210,7 +210,7 @@ export async function add(
   const { receipt: allocateReceipt } = nextTasks.allocate
   /* c8 ignore next 5 */
   if (!allocateReceipt.out.ok) {
-    throw new Error(`failed ${BlobCapabilities.add.can} invocation`, {
+    throw new Error(`failed ${SpaceBlobCapabilities.add.can} invocation`, {
       cause: allocateReceipt.out.error,
     })
   }
@@ -291,7 +291,7 @@ export async function add(
     )
     const ucanConclude = await httpPutConcludeInvocation.execute(conn)
     if (!ucanConclude.out.ok) {
-      throw new Error(`failed ${BlobCapabilities.add.can} invocation`, {
+      throw new Error(`failed ${SpaceBlobCapabilities.add.can} invocation`, {
         cause: result.out.error,
       })
     }
@@ -320,7 +320,7 @@ export async function add(
 }
 
 /** Returns the ability used by an invocation. */
-export const ability = BlobCapabilities.add.can
+export const ability = SpaceBlobCapabilities.add.can
 
 /**
  * Returns required input to the invocation.

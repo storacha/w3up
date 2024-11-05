@@ -37,9 +37,7 @@ export const add = async (
     }
   }
   const accountMailtoDID =
-    /** @type {import('@storacha/did-mailto/types').DidMailto} */ (
-      accountDID
-    )
+    /** @type {import('@storacha/did-mailto/types').DidMailto} */ (accountDID)
   const rateLimitResult = await ensureRateLimitAbove(
     rateLimits,
     [mailtoDidToDomain(accountMailtoDID), mailtoDidToEmail(accountMailtoDID)],

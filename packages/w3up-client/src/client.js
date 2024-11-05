@@ -5,8 +5,8 @@ import {
   Receipt,
 } from '@storacha/upload-client'
 import {
-  Blob as BlobCapabilities,
-  Index as IndexCapabilities,
+  SpaceBlob as BlobCapabilities,
+  SpaceIndex as IndexCapabilities,
   Upload as UploadCapabilities,
   Filecoin as FilecoinCapabilities,
 } from '@storacha/capabilities'

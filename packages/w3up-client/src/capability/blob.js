@@ -1,5 +1,5 @@
 import { Blob } from '@storacha/upload-client'
-import { Blob as BlobCapabilities } from '@storacha/capabilities'
+import { SpaceBlob as BlobCapabilities } from '@storacha/capabilities'
 import { sha256 } from 'multiformats/hashes/sha2'
 import { Base } from '../base.js'
 

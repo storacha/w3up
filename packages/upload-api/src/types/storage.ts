@@ -1,8 +1,5 @@
 import type { Unit, Result } from '@ucanto/interface'
-import {
-  StorageGetError,
-  StoragePutError,
-} from '@storacha/capabilities/types'
+import { StorageGetError, StoragePutError } from '@storacha/capabilities/types'
 
 export type { StorageGetError, StoragePutError }
 

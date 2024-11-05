@@ -1,7 +1,7 @@
 import assert from 'assert'
 import { access } from '@ucanto/validator'
 import { Verifier } from '@ucanto/principal'
-import * as Index from '../../src/index/index.js'
+import * as SpaceIndex from '../../src/space/index.js'
 import * as Capability from '../../src/top.js'
 import {
   alice,
@@ -19,7 +19,7 @@ const top = async () =>
   })
 
 const index = async () =>
-  Index.index.delegate({
+  SpaceIndex.index.delegate({
     issuer: account,
     audience: alice,
     with: account.did(),
@@ -28,7 +28,7 @@ const index = async () =>
 
 describe('index capabilities', function () {
   it('space/index/add can be derived from *', async () => {
-    const add = Index.add.invoke({
+    const add = SpaceIndex.add.invoke({
       issuer: alice,
       audience: w3,
       with: account.did(),
@@ -39,7 +39,7 @@ describe('index capabilities', function () {
     })
 
     const result = await access(await add.delegate(), {
-      capability: Index.add,
+      capability: SpaceIndex.add,
       principal: Verifier,
       authority: w3,
       validateAuthorization,
@@ -57,7 +57,7 @@ describe('index capabilities', function () {
   })
 
   it('space/index/add can be derived from index/*', async () => {
-    const add = Index.add.invoke({
+    const add = SpaceIndex.add.invoke({
       issuer: alice,
       audience: w3,
       with: account.did(),
@@ -68,7 +68,7 @@ describe('index capabilities', function () {
     })
 
     const result = await access(await add.delegate(), {
-      capability: Index.add,
+      capability: SpaceIndex.add,
       principal: Verifier,
       authority: w3,
       validateAuthorization,
@@ -86,14 +86,14 @@ describe('index capabilities', function () {
   })
 
   it('space/index/add can be derived from index/* derived from *', async () => {
-    const index = await Index.index.delegate({
+    const index = await SpaceIndex.index.delegate({
       issuer: alice,
       audience: bob,
       with: account.did(),
       proofs: [await top()],
     })
 
-    const add = Index.add.invoke({
+    const add = SpaceIndex.add.invoke({
       issuer: bob,
       audience: w3,
       with: account.did(),
@@ -104,7 +104,7 @@ describe('index capabilities', function () {
     })
 
     const result = await access(await add.delegate(), {
-      capability: Index.add,
+      capability: SpaceIndex.add,
       principal: Verifier,
       authority: w3,
       validateAuthorization,
@@ -122,7 +122,7 @@ describe('index capabilities', function () {
   })
 
   it('space/index/add should fail when escalating index constraint', async () => {
-    const delegation = await Index.add.delegate({
+    const delegation = await SpaceIndex.add.delegate({
       issuer: alice,
       audience: bob,
       with: account.did(),
@@ -132,7 +132,7 @@ describe('index capabilities', function () {
       proofs: [await top()],
     })
 
-    const add = Index.add.invoke({
+    const add = SpaceIndex.add.invoke({
       issuer: bob,
       audience: w3,
       with: account.did(),
@@ -143,7 +143,7 @@ describe('index capabilities', function () {
     })
 
     const result = await access(await add.delegate(), {
-      capability: Index.add,
+      capability: SpaceIndex.add,
       principal: Verifier,
       authority: w3,
       validateAuthorization,

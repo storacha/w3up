@@ -4,11 +4,11 @@
 export class UsageStorage {
   /**
    * @param {import('./store-table.js').StoreTable} storeTable
-   * @param {import('./allocations-storage.js').AllocationsStorage} allocationsStorage
+   * @param {import('./blob-registry.js').Registry} blobRegistry
    */
-  constructor(storeTable, allocationsStorage) {
+  constructor(storeTable, blobRegistry) {
     this.storeTable = storeTable
-    this.allocationsStorage = allocationsStorage
+    this.blobRegistry = blobRegistry
     /**
      * @type {Record<import('../types.js').AccountDID, import('../types.js').EgressData>}
      */
@@ -21,10 +21,9 @@ export class UsageStorage {
         ...item,
         cause: item.invocation,
       })),
-      ...this.allocationsStorage.items.map((item) => ({
-        ...item,
-        size: item.blob.size,
-      })),
+      ...[...this.blobRegistry.data.entries()].flatMap(([space, entries]) =>
+        entries.map((e) => ({ space, size: e.blob.size, ...e }))
+      ),
     ]
   }
 

@@ -1,13 +1,15 @@
 import * as Server from '@ucanto/server'
-import { Receipt } from '@ucanto/core'
+import { Message, Receipt } from '@ucanto/core'
+import * as Transport from '@ucanto/transport/car'
 import { ed25519 } from '@ucanto/principal'
 import * as Blob from '@storacha/capabilities/blob'
-import * as W3sBlob from '@storacha/capabilities/web3.storage/blob'
+import * as SpaceBlob from '@storacha/capabilities/space/blob'
 import * as HTTP from '@storacha/capabilities/http'
 import * as API from '../types.js'
-
 import { createConcludeInvocation } from '../ucan/conclude.js'
 import { AwaitError } from './lib.js'
+import * as Digest from 'multiformats/hashes/digest'
+import { AgentMessage } from '../lib.js'
 
 /**
  * Derives did:key principal from (blob) multihash that can be used to
@@ -27,11 +29,11 @@ const conclude = (receipt, issuer, audience = issuer) =>
 
 /**
  * @param {API.BlobServiceContext} context
- * @returns {API.ServiceMethod<API.BlobAdd, API.BlobAddSuccess, API.BlobAddFailure>}
+ * @returns {API.ServiceMethod<API.SpaceBlobAdd, API.SpaceBlobAddSuccess, API.SpaceBlobAddFailure>}
  */
 export function blobAddProvider(context) {
   return Server.provideAdvanced({
-    capability: Blob.add,
+    capability: SpaceBlob.add,
     handler: async ({ capability, invocation }) => {
       const { with: space, nb } = capability
       const { blob } = nb
@@ -42,33 +44,40 @@ export function blobAddProvider(context) {
         space,
         cause: invocation.link(),
       })
+      if (allocation.error) {
+        return allocation
+      }
 
       const delivery = await put({
         blob,
-        allocation,
+        allocation: allocation.ok,
       })
 
       const acceptance = await accept({
         context,
+        provider: allocation.ok.provider,
         blob,
         space,
-        delivery,
+        delivery: delivery,
       })
+      if (acceptance.error) {
+        return acceptance
+      }
 
       // Create a result describing the this invocation workflow
       let result = Server.ok({
-        /** @type {API.BlobAddSuccess['site']} */
+        /** @type {API.SpaceBlobAddSuccess['site']} */
         site: {
-          'ucan/await': ['.out.ok.site', acceptance.task.link()],
+          'ucan/await': ['.out.ok.site', acceptance.ok.task.link()],
         },
       })
-        .fork(allocation.task)
+        .fork(allocation.ok.task)
         .fork(delivery.task)
-        .fork(acceptance.task)
+        .fork(acceptance.ok.task)
 
       // As a temporary solution we fork all add effects that add inline
       // receipts so they can be delivered to the client.
-      const fx = [...allocation.fx, ...delivery.fx, ...acceptance.fx]
+      const fx = [...allocation.ok.fx, ...delivery.fx, ...acceptance.ok.fx]
       for (const task of fx) {
         result = result.fork(task)
       }
@@ -89,21 +98,69 @@ export function blobAddProvider(context) {
  * @param {API.Link} allocate.cause
  */
 async function allocate({ context, blob, space, cause }) {
-  // 1. Create web3.storage/blob/allocate invocation and task
-  const allocate = W3sBlob.allocate.invoke({
-    issuer: context.id,
-    audience: context.id,
-    with: context.id.did(),
+  // First we check if space has storage provider associated. If it does not
+  // we return `InsufficientStorage` error as storage capacity is considered
+  // to be 0.
+  const provisioned = await context.provisionsStorage.hasStorageProvider(space)
+  if (provisioned.error) {
+    return provisioned
+  }
+
+  if (!provisioned.ok) {
+    return {
+      /** @type {API.AllocationError} */
+      error: {
+        name: 'InsufficientStorage',
+        message: `${space} has no storage provider`,
+      },
+    }
+  }
+
+  // 1. Create blob/allocate invocation and task
+  const { router } = context
+  const digest = Digest.decode(blob.digest)
+
+  const candidate = await router.selectStorageProvider(digest, blob.size)
+  if (candidate.error) {
+    return candidate
+  }
+
+  const cap = Blob.allocate.create({
+    with: candidate.ok.did(),
     nb: {
-      blob,
-      cause: cause,
+      blob: {
+        digest: blob.digest,
+        size: blob.size,
+      },
       space,
+      cause,
     },
+  })
+
+  const configure = await router.configureInvocation(candidate.ok, cap, {
     expiration: Infinity,
   })
-  const task = await allocate.delegate()
+  if (configure.error) {
+    return configure
+  }
 
-  const receipt = await allocate.execute(context.getServiceConnection())
+  const task = await configure.ok.invocation.delegate()
+  const receipt = await configure.ok.invocation.execute(configure.ok.connection)
+
+  // record the invocation and the receipt, so we can retrieve it later when we
+  // get a http/put receipt in ucan/conclude
+  const message = await Message.build({
+    invocations: [configure.ok.invocation],
+    receipts: [receipt],
+  })
+  const messageWrite = await context.agentStore.messages.write({
+    source: await Transport.outbound.encode(message),
+    data: message,
+    index: [...AgentMessage.index(message)],
+  })
+  if (messageWrite.error) {
+    return messageWrite
+  }
 
   // 4. Create `blob/allocate` receipt as conclude invocation to inline as effect
   const concludeAllocate = createConcludeInvocation(
@@ -112,11 +169,12 @@ async function allocate({ context, blob, space, cause }) {
     receipt
   )
 
-  return {
+  return Server.ok({
+    provider: candidate.ok,
     task,
     receipt,
     fx: [await concludeAllocate.delegate()],
-  }
+  })
 }
 
 /**
@@ -206,26 +264,32 @@ async function put({ blob, allocation }) {
  *
  * @param {object} input
  * @param {API.BlobServiceContext} input.context
+ * @param {API.Principal} input.provider
  * @param {API.BlobModel} input.blob
  * @param {API.DIDKey} input.space
  * @param {object} input.delivery
  * @param {API.Invocation<API.HTTPPut>} input.delivery.task
  * @param {API.Receipt|null} input.delivery.receipt
  */
-async function accept({ context, blob, space, delivery }) {
-  // 1. Create web3.storage/blob/accept invocation and task
-  const accept = W3sBlob.accept.invoke({
-    issuer: context.id,
-    audience: context.id,
-    with: context.id.did(),
+async function accept({ context, provider, blob, space, delivery }) {
+  // 1. Create blob/accept invocation and task
+  const cap = Blob.accept.create({
+    with: provider.did(),
     nb: {
       blob,
       space,
       _put: { 'ucan/await': ['.out.ok', delivery.task.link()] },
     },
+  })
+
+  const configure = await context.router.configureInvocation(provider, cap, {
     expiration: Infinity,
   })
-  const task = await accept.delegate()
+  if (configure.error) {
+    return configure
+  }
+
+  const task = await configure.ok.invocation.delegate()
 
   let receipt = null
 
@@ -245,12 +309,12 @@ async function accept({ context, blob, space, delivery }) {
   }
   // If put has already succeeded, we can execute `blob/accept` right away.
   else if (delivery.receipt?.out.ok) {
-    receipt = await accept.execute(context.getServiceConnection())
+    receipt = await configure.ok.invocation.execute(configure.ok.connection)
   }
 
-  return {
+  return Server.ok({
     task,
     receipt,
     fx: receipt ? [await conclude(receipt, context.id)] : [],
-  }
+  })
 }

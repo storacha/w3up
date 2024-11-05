@@ -4,8 +4,7 @@ import { Receipt } from '@ucanto/core'
 import { Assert } from '@web3-storage/content-claims/capability'
 import * as Server from '@ucanto/server'
 import * as HTTP from '@storacha/capabilities/http'
-import * as W3sBlobCapabilities from '@storacha/capabilities/web3.storage/blob'
-import { W3sBlob } from '@storacha/capabilities'
+import * as BlobCapabilities from '@storacha/capabilities/blob'
 import { createConcludeInvocation } from '../../src/blob/add.js'
 import { randomCAR } from './random.js'
 
@@ -119,7 +118,7 @@ const setupBlobAddResponse = async function (
   hasAcceptReceipt
 ) {
   const blob = invocation.capabilities[0].nb.blob
-  const blobAllocateTask = await W3sBlob.allocate
+  const blobAllocateTask = await BlobCapabilities.allocate
     .invoke({
       issuer,
       audience,
@@ -184,7 +183,7 @@ const setupBlobAddResponse = async function (
     blobPutReceipt
   ).delegate()
 
-  const blobAcceptTask = await W3sBlobCapabilities.accept
+  const blobAcceptTask = await BlobCapabilities.accept
     .invoke({
       issuer,
       audience,

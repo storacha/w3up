@@ -65,24 +65,18 @@ export interface DebugEmail extends Email {
 }
 
 import {
-  BlobAdd,
-  BlobAddSuccess,
-  BlobAddFailure,
-  BlobList,
-  BlobListSuccess,
-  BlobListFailure,
-  BlobRemove,
-  BlobRemoveSuccess,
-  BlobRemoveFailure,
-  BlobGet,
-  BlobGetSuccess,
-  BlobGetFailure,
-  BlobAllocate,
-  BlobAllocateSuccess,
-  BlobAllocateFailure,
-  BlobAccept,
-  BlobAcceptSuccess,
-  BlobAcceptFailure,
+  SpaceBlobAdd,
+  SpaceBlobAddSuccess,
+  SpaceBlobAddFailure,
+  SpaceBlobList,
+  SpaceBlobListSuccess,
+  SpaceBlobListFailure,
+  SpaceBlobRemove,
+  SpaceBlobRemoveSuccess,
+  SpaceBlobRemoveFailure,
+  SpaceBlobGet,
+  SpaceBlobGetSuccess,
+  SpaceBlobGetFailure,
   StoreAdd,
   StoreGet,
   StoreAddSuccess,
@@ -171,9 +165,9 @@ import {
   PlanCreateAdminSession,
   PlanCreateAdminSessionSuccess,
   PlanCreateAdminSessionFailure,
-  IndexAdd,
-  IndexAddSuccess,
-  IndexAddFailure,
+  SpaceIndexAdd,
+  SpaceIndexAddSuccess,
+  SpaceIndexAddFailure,
 } from '@storacha/capabilities/types'
 import * as Capabilities from '@storacha/capabilities'
 import { RevocationsStorage } from './types/revocations.js'
@@ -200,14 +194,17 @@ export type { SubscriptionsStorage }
 import { UsageStorage } from './types/usage.js'
 export type { UsageStorage }
 import { StorageGetError } from './types/storage.js'
-import { AllocationsStorage, BlobsStorage, BlobAddInput } from './types/blob.js'
-export type { AllocationsStorage, BlobsStorage, BlobAddInput }
-import { IPNIService, IndexServiceContext } from './types/index.js'
+import {
+  Registry as BlobRegistry,
+  Entry as BlobEntry,
+  RoutingService,
+} from './types/blob.js'
+export type { BlobRegistry, BlobEntry, RoutingService }
+import { IndexServiceContext } from './types/index.js'
 import { ClaimsClientConfig } from './types/content-claims.js'
 import { Claim } from '@web3-storage/content-claims/client/api'
 export type {
   IndexServiceContext,
-  IPNIService,
   BlobRetriever,
   BlobNotFound,
   ShardedDAGIndex,
@@ -219,7 +216,7 @@ export type {
   Service as ClaimsService,
 } from './types/content-claims.js'
 
-export interface Service extends StorefrontService, W3sService {
+export interface Service extends StorefrontService {
   store: {
     add: ServiceMethod<StoreAdd, StoreAddSuccess, Failure>
     get: ServiceMethod<StoreGet, StoreGetSuccess, StoreGetFailure>
@@ -326,15 +323,31 @@ export interface Service extends StorefrontService, W3sService {
   space: {
     info: ServiceMethod<SpaceInfo, SpaceInfoSuccess, SpaceInfoFailure>
     index: {
-      add: ServiceMethod<IndexAdd, IndexAddSuccess, IndexAddFailure>
+      add: ServiceMethod<
+        SpaceIndexAdd,
+        SpaceIndexAddSuccess,
+        SpaceIndexAddFailure
+      >
     }
     blob: {
-      add: ServiceMethod<BlobAdd, BlobAddSuccess, BlobAddFailure>
-      remove: ServiceMethod<BlobRemove, BlobRemoveSuccess, BlobRemoveFailure>
-      list: ServiceMethod<BlobList, BlobListSuccess, BlobListFailure>
+      add: ServiceMethod<SpaceBlobAdd, SpaceBlobAddSuccess, SpaceBlobAddFailure>
+      remove: ServiceMethod<
+        SpaceBlobRemove,
+        SpaceBlobRemoveSuccess,
+        SpaceBlobRemoveFailure
+      >
+      list: ServiceMethod<
+        SpaceBlobList,
+        SpaceBlobListSuccess,
+        SpaceBlobListFailure
+      >
       get: {
         0: {
-          1: ServiceMethod<BlobGet, BlobGetSuccess, BlobGetFailure>
+          1: ServiceMethod<
+            SpaceBlobGet,
+            SpaceBlobGetSuccess,
+            SpaceBlobGetFailure
+          >
         }
       }
     }
@@ -353,38 +366,14 @@ export interface Service extends StorefrontService, W3sService {
   }
 }
 
-export interface W3sService {
-  ['web3.storage']: {
-    blob: {
-      allocate: ServiceMethod<
-        BlobAllocate,
-        BlobAllocateSuccess,
-        BlobAllocateFailure
-      >
-      accept: ServiceMethod<BlobAccept, BlobAcceptSuccess, BlobAcceptFailure>
-    }
-  }
-}
-
 export type BlobServiceContext = SpaceServiceContext & {
   /**
    * Service signer
    */
   id: Signer
-  maxUploadSize: number
-  allocationsStorage: AllocationsStorage
-  blobsStorage: BlobsStorage
   agentStore: AgentStore
-  getServiceConnection: () => ConnectionView<Service>
-}
-
-export type W3ServiceContext = SpaceServiceContext & {
-  /**
-   * Service signer
-   */
-  id: Signer
-  allocationsStorage: AllocationsStorage
-  blobsStorage: BlobsStorage
+  router: RoutingService
+  registry: BlobRegistry
 }
 
 export type StoreServiceContext = SpaceServiceContext & {
@@ -460,16 +449,11 @@ export interface RevocationServiceContext {
 
 export interface ConcludeServiceContext {
   /**
-   * Service signer
-   */
-  id: Signer
-
-  /**
    * Store for invocations & receipts.
    */
   agentStore: AgentStore
-
-  getServiceConnection: () => ConnectionView<Service>
+  registry: BlobRegistry
+  router: RoutingService
 }
 
 export interface PlanServiceContext {
@@ -594,12 +578,7 @@ export interface UcantoServerTestContext
 
   grantAccess: (mail: { url: string | URL }) => Promise<void>
 
-  ipniService: IPNIService & {
-    query(digest: MultihashDigest): Promise<Result<Unit, RecordNotFound>>
-  }
-
   carStoreBucket: CarStoreBucket & Deactivator
-  blobsStorage: BlobsStorage & Deactivator
   claimsService: ClaimsClientConfig & ClaimReader & Deactivator
 }
 
