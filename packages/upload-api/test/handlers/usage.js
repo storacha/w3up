@@ -18,16 +18,19 @@ export const test = {
     const link = await CAR.codec.link(data)
     const size = data.byteLength
 
-    await uploadBlob({
-      connection,
-      issuer: alice,
-      audience: context.id,
-      with: spaceDid,
-      proofs: [proof],
-    }, {
-      digest: link.multihash,
-      bytes: data
-    })
+    await uploadBlob(
+      {
+        connection,
+        issuer: alice,
+        audience: context.id,
+        with: spaceDid,
+        proofs: [proof],
+      },
+      {
+        digest: link.multihash,
+        bytes: data,
+      }
+    )
 
     const usageReportRes = await Usage.report
       .invoke({

@@ -11,18 +11,18 @@ import { CAR, HTTP } from '@ucanto/transport'
 import * as Server from '@ucanto/server'
 import { connect } from '@ucanto/client'
 
-/** 
+/**
  * @typedef {{
-*   has: (digest: API.MultihashDigest) => Promise<boolean>
-*   get: (digest: API.MultihashDigest) => Promise<Uint8Array|undefined>
-*   set: (digest: API.MultihashDigest, bytes: Uint8Array) => Promise<boolean>
-* }} ContentStore
-* @typedef {{
-*   has: (digest: API.MultihashDigest) => Promise<boolean>
-*   add: (digest: API.MultihashDigest) => Promise<void>
-* }} AllocationStore
-* @typedef {import('../../src/types/blob.js').BlobService} BlobService
-*/
+ *   has: (digest: API.MultihashDigest) => Promise<boolean>
+ *   get: (digest: API.MultihashDigest) => Promise<Uint8Array|undefined>
+ *   set: (digest: API.MultihashDigest, bytes: Uint8Array) => Promise<boolean>
+ * }} ContentStore
+ * @typedef {{
+ *   has: (digest: API.MultihashDigest) => Promise<boolean>
+ *   add: (digest: API.MultihashDigest) => Promise<void>
+ * }} AllocationStore
+ * @typedef {import('../../src/types/blob.js').BlobService} BlobService
+ */
 
 export const MaxUploadSize = 127 * (1 << 25)
 
@@ -34,7 +34,9 @@ const contentKey = (digest) => {
 
 /** @param {string} key */
 const contentDigest = (key) =>
-  Digest.decode(base58btc.decode(key.split('/').pop()?.replace('.blob', '') ?? ''))
+  Digest.decode(
+    base58btc.decode(key.split('/').pop()?.replace('.blob', '') ?? '')
+  )
 
 /**
  * @param {{
@@ -45,7 +47,12 @@ const contentDigest = (key) =>
  * }} config
  * @returns {BlobService}
  */
-const createService = ({ baseURL, claimsService, contentStore, allocationStore }) => ({
+const createService = ({
+  baseURL,
+  claimsService,
+  contentStore,
+  allocationStore,
+}) => ({
   blob: {
     allocate: Server.provideAdvanced({
       capability: BlobCapabilities.allocate,
@@ -59,7 +66,9 @@ const createService = ({ baseURL, claimsService, contentStore, allocationStore }
           return ok({ size: 0 })
         }
 
-        const size = await allocationStore.has(digest) ? 0 : capability.nb.blob.size
+        const size = (await allocationStore.has(digest))
+          ? 0
+          : capability.nb.blob.size
         await allocationStore.add(digest)
 
         return ok({
@@ -80,13 +89,16 @@ const createService = ({ baseURL, claimsService, contentStore, allocationStore }
           return error(new AllocatedMemoryNotWrittenError())
         }
 
-        const receipt = await publishLocationCommitment({ claimsService }, {
-          space: capability.nb.space,
-          digest,
-          location:
-            /** @type {API.URI} */
-            (new URL(contentKey(digest), baseURL()).toString()),
-        })
+        const receipt = await publishLocationCommitment(
+          { claimsService },
+          {
+            space: capability.nb.space,
+            digest,
+            location:
+              /** @type {API.URI} */
+              (new URL(contentKey(digest), baseURL()).toString()),
+          }
+        )
         if (receipt.out.error) {
           return receipt.out
         }
@@ -117,21 +129,28 @@ export class BrowserStorageNode {
         return res.status === 200
           ? new Uint8Array(await res.arrayBuffer())
           : undefined
-      }
+      },
     }
-    
+
     const allocations = new Set()
     const allocationStore = {
       /** @param {API.MultihashDigest} digest */
       has: async (digest) => allocations.has(contentKey(digest)),
       /** @param {API.MultihashDigest} digest */
-      add: async (digest) => { allocations.add(contentKey(digest)) }
+      add: async (digest) => {
+        allocations.add(contentKey(digest))
+      },
     }
 
     const server = Server.create({
       id,
       codec: CAR.inbound,
-      service: createService({ baseURL: () => baseURL, claimsService, contentStore, allocationStore }),
+      service: createService({
+        baseURL: () => baseURL,
+        claimsService,
+        contentStore,
+        allocationStore,
+      }),
       // @ts-expect-error
       resolveDIDKey,
       validateAuthorization: () => ({ ok: {} }),
@@ -168,7 +187,7 @@ export class StorageNode {
     const id = await ed25519.generate()
     /** @type {URL} */
     let baseURL
-    
+
     const content = new Map()
     const contentStore = {
       /** @param {API.MultihashDigest} digest */
@@ -179,7 +198,9 @@ export class StorageNode {
        * @param {API.MultihashDigest} digest
        * @param {Uint8Array} bytes
        */
-      set: async (digest, bytes) => { content.set(contentKey(digest), bytes) }
+      set: async (digest, bytes) => {
+        content.set(contentKey(digest), bytes)
+      },
     }
 
     const allocations = new Set()
@@ -187,7 +208,9 @@ export class StorageNode {
       /** @param {API.MultihashDigest} digest */
       has: async (digest) => allocations.has(contentKey(digest)),
       /** @param {API.MultihashDigest} digest */
-      add: async (digest) => { allocations.add(contentKey(digest)) }
+      add: async (digest) => {
+        allocations.add(contentKey(digest))
+      },
     }
 
     const server = Server.create({
@@ -197,13 +220,13 @@ export class StorageNode {
         baseURL: () => baseURL,
         claimsService,
         contentStore,
-        allocationStore
+        allocationStore,
       }),
       // @ts-expect-error
       resolveDIDKey,
       validateAuthorization: () => ({ ok: {} }),
     })
-    
+
     const httpServer = http.createServer(async (request, response) => {
       try {
         const { pathname } = new URL(request.url ?? '/', baseURL)

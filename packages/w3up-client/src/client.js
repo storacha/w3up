@@ -485,7 +485,9 @@ export class Client extends Base {
     // Remove shards
     if (upload.shards?.length) {
       await Promise.allSettled(
-        upload.shards.map(shard => this.capability.blob.remove(shard.multihash))
+        upload.shards.map((shard) =>
+          this.capability.blob.remove(shard.multihash)
+        )
       )
     }
 
