@@ -3,11 +3,9 @@
 /** @implements {UsageStore} */
 export class UsageStorage {
   /**
-   * @param {import('./store-table.js').StoreTable} storeTable
    * @param {import('./blob-registry.js').Registry} blobRegistry
    */
-  constructor(storeTable, blobRegistry) {
-    this.storeTable = storeTable
+  constructor(blobRegistry) {
     this.blobRegistry = blobRegistry
     /**
      * @type {Record<import('../types.js').AccountDID, import('../types.js').EgressData>}
@@ -16,15 +14,9 @@ export class UsageStorage {
   }
 
   get items() {
-    return [
-      ...this.storeTable.items.map((item) => ({
-        ...item,
-        cause: item.invocation,
-      })),
-      ...[...this.blobRegistry.data.entries()].flatMap(([space, entries]) =>
-        entries.map((e) => ({ space, size: e.blob.size, ...e }))
-      ),
-    ]
+    return [...this.blobRegistry.data.entries()].flatMap(([space, entries]) =>
+      entries.map((e) => ({ space, size: e.blob.size, ...e }))
+    )
   }
 
   /**

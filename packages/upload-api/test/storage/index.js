@@ -1,6 +1,4 @@
 import { Registry as BlobRegistry } from './blob-registry.js'
-import { CarStoreBucket } from './car-store-bucket.js'
-import { StoreTable } from './store-table.js'
 import { UploadTable } from './upload-table.js'
 import { ProvisionsStorage } from './provisions-storage.js'
 import { DelegationsStorage } from './delegations-storage.js'
@@ -19,13 +17,11 @@ import * as AgentStore from './agent-store.js'
  * @param {{fail(error:unknown): unknown}} [options.assert]
  */
 export async function getServiceStorageImplementations(options) {
-  const storeTable = new StoreTable()
   const registry = new BlobRegistry()
   const uploadTable = new UploadTable()
-  const carStoreBucket = await CarStoreBucket.activate(options)
   const revocationsStorage = new RevocationsStorage()
   const plansStorage = new PlansStorage()
-  const usageStorage = new UsageStorage(storeTable, registry)
+  const usageStorage = new UsageStorage(registry)
   const provisionsStorage = new ProvisionsStorage(options.providers)
   const subscriptionsStorage = new SubscriptionsStorage(provisionsStorage)
   const delegationsStorage = new DelegationsStorage()
@@ -33,10 +29,8 @@ export async function getServiceStorageImplementations(options) {
   const agentStore = AgentStore.memory()
 
   return {
-    storeTable,
     registry,
     uploadTable,
-    carStoreBucket,
     revocationsStorage,
     plansStorage,
     usageStorage,

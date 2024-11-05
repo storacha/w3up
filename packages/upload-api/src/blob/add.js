@@ -5,10 +5,11 @@ import { ed25519 } from '@ucanto/principal'
 import * as Blob from '@storacha/capabilities/blob'
 import * as SpaceBlob from '@storacha/capabilities/space/blob'
 import * as HTTP from '@storacha/capabilities/http'
+import * as Digest from 'multiformats/hashes/digest'
 import * as API from '../types.js'
+import { allocate as spaceAllocate } from '../space-allocate.js'
 import { createConcludeInvocation } from '../ucan/conclude.js'
 import { AwaitError } from './lib.js'
-import * as Digest from 'multiformats/hashes/digest'
 import { AgentMessage } from '../lib.js'
 
 /**
@@ -101,19 +102,12 @@ async function allocate({ context, blob, space, cause }) {
   // First we check if space has storage provider associated. If it does not
   // we return `InsufficientStorage` error as storage capacity is considered
   // to be 0.
-  const provisioned = await context.provisionsStorage.hasStorageProvider(space)
+  const provisioned = await spaceAllocate(
+    { capability: { with: space } },
+    context
+  )
   if (provisioned.error) {
     return provisioned
-  }
-
-  if (!provisioned.ok) {
-    return {
-      /** @type {API.AllocationError} */
-      error: {
-        name: 'InsufficientStorage',
-        message: `${space} has no storage provider`,
-      },
-    }
   }
 
   // 1. Create blob/allocate invocation and task

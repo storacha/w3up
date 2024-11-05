@@ -40,18 +40,6 @@ import {
   SpaceIndexAdd,
   SpaceIndexAddSuccess,
   SpaceIndexAddFailure,
-  StoreAdd,
-  StoreAddSuccess,
-  StoreAddSuccessUpload,
-  StoreAddSuccessDone,
-  StoreGet,
-  StoreGetFailure,
-  StoreList,
-  StoreListSuccess,
-  StoreListItem,
-  StoreRemove,
-  StoreRemoveSuccess,
-  StoreRemoveFailure,
   UploadAdd,
   UploadAddSuccess,
   UploadList,
@@ -62,7 +50,6 @@ import {
   ListResponse,
   CARLink,
   PieceLink,
-  StoreGetSuccess,
   UploadGet,
   UploadGetSuccess,
   UploadGetFailure,
@@ -115,18 +102,6 @@ export type {
   SpaceIndexAdd,
   SpaceIndexAddSuccess,
   SpaceIndexAddFailure,
-  StoreAdd,
-  StoreAddSuccess,
-  StoreAddSuccessUpload,
-  StoreAddSuccessDone,
-  StoreGetSuccess,
-  StoreGetFailure,
-  StoreList,
-  StoreListSuccess,
-  StoreListItem,
-  StoreRemove,
-  StoreRemoveSuccess,
-  StoreRemoveFailure,
   UploadAdd,
   UploadAddSuccess,
   UploadGetSuccess,
@@ -196,12 +171,6 @@ export interface Service extends StorefrontService {
         SpaceIndexAddFailure
       >
     }
-  }
-  store: {
-    add: ServiceMethod<StoreAdd, StoreAddSuccess, Failure>
-    get: ServiceMethod<StoreGet, StoreGetSuccess, StoreGetFailure>
-    remove: ServiceMethod<StoreRemove, StoreRemoveSuccess, StoreRemoveFailure>
-    list: ServiceMethod<StoreList, StoreListSuccess, Failure>
   }
   upload: {
     add: ServiceMethod<UploadAdd, UploadAddSuccess, Failure>

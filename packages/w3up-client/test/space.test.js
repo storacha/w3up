@@ -1,10 +1,10 @@
 import * as Signer from '@ucanto/principal/ed25519'
-import * as StoreCapabilities from '@storacha/capabilities/store'
 import * as Test from './test.js'
 import { Space } from '../src/space.js'
 import * as Account from '../src/account.js'
 import * as Result from '../src/result.js'
 import { randomCAR } from './helpers/random.js'
+import { receiptsEndpoint } from './helpers/utils.js'
 
 /**
  * @type {Test.Suite}
@@ -38,11 +38,8 @@ export const testSpace = Test.withContext({
 
     const size = 1138
     const archive = await randomCAR(size)
-    await client.agent.invokeAndExecute(StoreCapabilities.add, {
-      nb: {
-        link: archive.cid,
-        size,
-      },
+    await client.capability.blob.add(new Blob([archive.bytes]), {
+      receiptsEndpoint,
     })
 
     const found = client.spaces().find((s) => s.did() === space.did())

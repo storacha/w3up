@@ -217,7 +217,6 @@
     "@types/mocha": "^10.0.1",
     "@ucanto/core": "^10.0.1",
     "@web-std/blob": "^3.0.5",
-    "@web3-storage/sigv4": "^1.0.2",
     "is-subset": "^0.1.1",
     "mocha": "^10.2.0",
     "typescript": "5.2.2"

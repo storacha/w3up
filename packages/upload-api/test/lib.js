@@ -1,12 +1,10 @@
 import * as AccessAuthorize from './handlers/access/authorize.js'
 import * as AccessClaim from './handlers/access/claim.js'
 import * as AccessDelegate from './handlers/access/delegate.js'
-import * as AdminStoreInspect from './handlers/admin/store/inspect.js'
 import * as AdminUploadInspect from './handlers/admin/upload/inspect.js'
 import * as RateLimitAdd from './handlers/rate-limit/add.js'
 import * as RateLimitList from './handlers/rate-limit/list.js'
 import * as RateLimitRemove from './handlers/rate-limit/remove.js'
-import * as Store from './handlers/store.js'
 import * as Blob from './handlers/blob.js'
 import * as Ucan from './handlers/ucan.js'
 import * as Subscription from './handlers/subscription.js'
@@ -27,7 +25,6 @@ export * as Context from './helpers/context.js'
 export * from './util.js'
 
 export const test = {
-  ...Store.test,
   ...Blob.test,
   ...Index.test,
   ...Upload.test,
@@ -48,12 +45,10 @@ export const handlerTests = {
   ...AccessAuthorize,
   ...AccessClaim,
   ...AccessDelegate,
-  ...AdminStoreInspect,
   ...AdminUploadInspect,
   ...RateLimitAdd,
   ...RateLimitList,
   ...RateLimitRemove,
-  ...Store.test,
   ...Blob.test,
   ...Index.test,
   ...Ucan.test,
@@ -64,7 +59,6 @@ export const handlerTests = {
 }
 
 export {
-  Store,
   Upload,
   Blob,
   Index,

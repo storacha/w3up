@@ -80,10 +80,6 @@
       "types": "./dist/src/capability/space.d.ts",
       "import": "./dist/src/capability/space.js"
     },
-    "./capability/store": {
-      "types": "./dist/src/capability/store.d.ts",
-      "import": "./dist/src/capability/store.js"
-    },
     "./capability/subscription": {
       "types": "./dist/src/capability/subscription.d.ts",
       "import": "./dist/src/capability/subscription.js"

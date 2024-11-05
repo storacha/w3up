@@ -17,7 +17,6 @@ import { Space } from './space.js'
 import { AgentDelegation } from './delegation.js'
 import { BlobClient } from './capability/blob.js'
 import { IndexClient } from './capability/index.js'
-import { StoreClient } from './capability/store.js'
 import { UploadClient } from './capability/upload.js'
 import { SpaceClient } from './capability/space.js'
 import { SubscriptionClient } from './capability/subscription.js'
@@ -35,7 +34,6 @@ export {
   FilecoinClient,
   IndexClient,
   PlanClient,
-  StoreClient,
   SpaceClient,
   SubscriptionClient,
   UploadClient,
@@ -58,7 +56,6 @@ export class Client extends Base {
       plan: new PlanClient(agentData, options),
       space: new SpaceClient(agentData, options),
       blob: new BlobClient(agentData, options),
-      store: new StoreClient(agentData, options),
       subscription: new SubscriptionClient(agentData, options),
       upload: new UploadClient(agentData, options),
       usage: new UsageClient(agentData, options),
@@ -488,24 +485,9 @@ export class Client extends Base {
     // Remove shards
     if (upload.shards?.length) {
       await Promise.allSettled(
-        upload.shards.map(async (shard) => {
-          try {
-            const res = await this.capability.blob.remove(shard.multihash)
-            /* c8 ignore start */
-            // if no size, the blob was not found, try delete from store
-            if (res.ok && res.ok.size === 0) {
-              await this.capability.store.remove(shard)
-            }
-          } catch (/** @type {any} */ error) {
-            // If not found, we can tolerate error as it may be a consecutive call for deletion where first failed
-            if (error?.cause?.name !== 'StoreItemNotFound') {
-              throw new Error(`failed to remove shard: ${shard}`, {
-                cause: error,
-              })
-            }
-            /* c8 ignore next 4 */
-          }
-        })
+        upload.shards.map((shard) =>
+          this.capability.blob.remove(shard.multihash)
+        )
       )
     }
 

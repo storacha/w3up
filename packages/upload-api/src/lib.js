@@ -6,7 +6,6 @@ import * as Types from './types.js'
 import * as Legacy from '@ucanto/transport/legacy'
 import * as CAR from '@ucanto/transport/car'
 import { create as createRevocationChecker } from './utils/revocation.js'
-import { createService as createStoreService } from './store.js'
 import { createService as createUploadService } from './upload.js'
 import { createService as createConsoleService } from './console.js'
 import { createService as createAccessService } from './access.js'
@@ -181,7 +180,6 @@ export const createService = (context) => ({
   'rate-limit': createRateLimitService(context),
   admin: createAdminService(context),
   space: createSpaceService(context),
-  store: createStoreService(context),
   subscription: createSubscriptionService(context),
   upload: createUploadService(context),
   ucan: createUcanService(context),

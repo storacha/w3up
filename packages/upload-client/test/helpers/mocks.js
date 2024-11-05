@@ -11,7 +11,6 @@ const notImplemented = () => {
  *    blob: Partial<import('../../src/types.js').Service['space']['blob']>
  *    index: Partial<import('../../src/types.js').Service['space']['index']>
  *   }>
- *   store: Partial<import('../../src/types.js').Service['store']>
  *   upload: Partial<import('../../src/types.js').Service['upload']>
  *   usage: Partial<import('../../src/types.js').Service['usage']>
  *   filecoin: Partial<import('@storacha/filecoin-client/storefront').StorefrontService['filecoin']>
@@ -37,12 +36,6 @@ export function mockService(impl) {
       index: {
         add: withCallCount(impl.space?.index?.add ?? notImplemented),
       },
-    },
-    store: {
-      add: withCallCount(impl.store?.add ?? notImplemented),
-      get: withCallCount(impl.store?.get ?? notImplemented),
-      list: withCallCount(impl.store?.list ?? notImplemented),
-      remove: withCallCount(impl.store?.remove ?? notImplemented),
     },
     upload: {
       add: withCallCount(impl.upload?.add ?? notImplemented),
