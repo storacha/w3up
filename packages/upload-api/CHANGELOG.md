@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.1](https://github.com/storacha/upload-service/compare/upload-api-v1.0.0...upload-api-v1.0.1) (2024-11-05)
+
+
+### Fixes
+
+* record upload add cause ([#28](https://github.com/storacha/upload-service/issues/28)) ([6fc4311](https://github.com/storacha/upload-service/commit/6fc4311e6b0e660ab885028368992422174934b7))
+
 ## 1.0.0 (2024-11-05)
 
 
