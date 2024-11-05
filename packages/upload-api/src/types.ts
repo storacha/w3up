@@ -180,12 +180,8 @@ export type { SubscriptionsStorage }
 import { UsageStorage } from './types/usage.js'
 export type { UsageStorage }
 import { StorageGetError } from './types/storage.js'
-import {
-  Registry as BlobRegistry,
-  Entry as BlobEntry,
-  RoutingService,
-} from './types/blob.js'
-export type { BlobRegistry, BlobEntry, RoutingService }
+import { Registry as BlobRegistry, RoutingService } from './types/blob.js'
+export type * as BlobAPI from './types/blob.js'
 import { IndexServiceContext } from './types/index.js'
 import { ClaimsClientConfig } from './types/content-claims.js'
 import { Claim } from '@web3-storage/content-claims/client/api'

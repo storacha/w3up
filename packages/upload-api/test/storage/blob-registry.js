@@ -2,14 +2,14 @@ import * as API from '../../src/types.js'
 import { ok, error, Failure } from '@ucanto/core'
 import { equals } from 'multiformats/bytes'
 
-/** @implements {API.BlobRegistry} */
+/** @implements {API.BlobAPI.Registry} */
 export class Registry {
   constructor() {
-    /** @type {Map<import('@storacha/access').SpaceDID, API.BlobEntry[]>} */
+    /** @type {Map<import('@storacha/access').SpaceDID, API.BlobAPI.Entry[]>} */
     this.data = new Map()
   }
 
-  /** @type {API.BlobRegistry['register']} */
+  /** @type {API.BlobAPI.Registry['register']} */
   async register({ space, cause, blob }) {
     const entries = this.data.get(space) ?? []
     if (entries.some((e) => equals(e.blob.digest, blob.digest))) {
@@ -20,7 +20,7 @@ export class Registry {
     return ok({})
   }
 
-  /** @type {API.BlobRegistry['find']} */
+  /** @type {API.BlobAPI.Registry['find']} */
   async find(space, digest) {
     const entries = this.data.get(space) ?? []
     const entry = entries.find((e) => equals(e.blob.digest, digest.bytes))
@@ -28,7 +28,7 @@ export class Registry {
     return ok(entry)
   }
 
-  /** @type {API.BlobRegistry['deregister']} */
+  /** @type {API.BlobAPI.Registry['deregister']} */
   async deregister(space, digest) {
     const entries = this.data.get(space) ?? []
     const entry = entries.find((e) => equals(e.blob.digest, digest.bytes))
@@ -40,7 +40,7 @@ export class Registry {
     return ok({})
   }
 
-  /** @type {API.BlobRegistry['entries']} */
+  /** @type {API.BlobAPI.Registry['entries']} */
   async entries(space, options) {
     const entries = this.data.get(space) ?? []
     const { cursor = '0', size = entries.length } = options ?? {}

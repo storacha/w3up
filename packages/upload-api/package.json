@@ -57,9 +57,6 @@
       "space": [
         "dist/src/space.d.ts"
       ],
-      "store": [
-        "dist/src/store.d.ts"
-      ],
       "subscription": [
         "dist/src/subscription.d.ts"
       ],
@@ -145,10 +142,6 @@
     "./space": {
       "types": "./dist/src/space.d.ts",
       "import": "./src/space.js"
-    },
-    "./store": {
-      "types": "./dist/src/store.d.ts",
-      "import": "./src/store.js"
     },
     "./subscription": {
       "types": "./dist/src/subscription.d.ts",
