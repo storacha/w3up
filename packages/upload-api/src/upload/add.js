@@ -32,7 +32,7 @@ export function uploadAddProvider(context) {
       root,
       shards,
       issuer,
-      invocation: invocation.cid,
+      cause: invocation.cid,
     })
   })
 }

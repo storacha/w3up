@@ -30,7 +30,7 @@ export class UploadTable {
    * @param {API.UploadAddInput} input
    * @returns {ReturnType<API.UploadTable['upsert']>}
    */
-  async upsert({ space, issuer, invocation, root, shards = [] }) {
+  async upsert({ space, issuer, cause, root, shards = [] }) {
     const time = new Date().toISOString()
     const item = this.items.find(
       (item) => item.space === space && item.root.toString() === root.toString()
@@ -52,7 +52,7 @@ export class UploadTable {
       this.items.unshift({
         space,
         issuer,
-        invocation,
+        cause,
         root,
         shards,
         insertedAt: time,
