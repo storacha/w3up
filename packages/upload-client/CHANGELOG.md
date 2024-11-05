@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.0.0 (2024-11-05)
+
+
+### Features
+
+* remove store protocol ([d59ec88](https://github.com/storacha/upload-service/commit/d59ec883ace9c3f084772f9520b6df81cc13b7af))
+* remove store protocol ([#13](https://github.com/storacha/upload-service/issues/13)) ([0028049](https://github.com/storacha/upload-service/commit/0028049f0bd3fcb816968687694c4611a5147148))
+
 ## [17.1.0](https://github.com/storacha/w3up/compare/upload-client-v17.0.1...upload-client-v17.1.0) (2024-10-24)
 
 
