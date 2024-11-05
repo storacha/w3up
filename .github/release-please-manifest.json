@@ -6,6 +6,6 @@
   "packages/capabilities": "1.0.0",
   "packages/upload-api": "0.0.0",
   "packages/upload-client": "1.0.0",
-  "packages/w3up-client": "0.0.0",
+  "packages/w3up-client": "1.0.0",
   "packages/did-mailto": "1.0.0"
 }
