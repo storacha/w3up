@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.2](https://github.com/storacha/upload-service/compare/upload-api-v1.0.1...upload-api-v1.0.2) (2024-11-05)
+
+
+### Fixes
+
+* re-export all blob types ([#30](https://github.com/storacha/upload-service/issues/30)) ([b10046b](https://github.com/storacha/upload-service/commit/b10046b6b8c6cace923081a3c0872522d98f723b))
+
 ## [1.0.1](https://github.com/storacha/upload-service/compare/upload-api-v1.0.0...upload-api-v1.0.1) (2024-11-05)
 
 
