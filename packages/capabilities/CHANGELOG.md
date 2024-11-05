@@ -3,6 +3,18 @@
 ## 1.0.0 (2024-11-05)
 
 
+### Fixes
+
+* bootstrap sha ([cdf6737](https://github.com/storacha/upload-service/commit/cdf67371ee9df3a60f7fea90c310179b20ee2b0b))
+
+
+### Other Changes
+
+* **main:** release capabilities 1.0.0 ([#16](https://github.com/storacha/upload-service/issues/16)) ([1c0902d](https://github.com/storacha/upload-service/commit/1c0902d168df26e2d850f20563dd825af57d5490))
+
+## 1.0.0 (2024-11-05)
+
+
 ### ⚠ BREAKING CHANGES
 
 * add `index/add` handler ([#1421](https://github.com/storacha/upload-service/issues/1421))
