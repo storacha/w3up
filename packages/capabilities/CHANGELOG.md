@@ -1,5 +1,12 @@
 # Changelog
 
+## [17.4.1](https://github.com/storacha/w3up/compare/capabilities-v17.4.0...capabilities-v17.4.1) (2024-11-05)
+
+
+### Fixes
+
+* **egress/record:** rename capability ([#1572](https://github.com/storacha/w3up/issues/1572)) ([d28691c](https://github.com/storacha/w3up/commit/d28691c4709f4e7c5ba81e042cac9e961c273bc9))
+
 ## [17.4.0](https://github.com/storacha/w3up/compare/capabilities-v17.3.0...capabilities-v17.4.0) (2024-10-24)
 
 
