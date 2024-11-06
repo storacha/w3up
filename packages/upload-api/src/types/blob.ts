@@ -81,7 +81,7 @@ export interface BlobService {
   }
 }
 
-export interface Configuration<C extends Capability> extends UCANOptions {
+export interface Configuration<C extends Capability> {
   /** Connection to the storage node. */
   connection: ConnectionView<BlobService>
   /** Invocation to execute. */
