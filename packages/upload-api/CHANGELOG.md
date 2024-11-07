@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.4](https://github.com/storacha/upload-service/compare/upload-api-v1.0.3...upload-api-v1.0.4) (2024-11-06)
+
+
+### Fixes
+
+* invocation config does not extend ucan options ([cb473c5](https://github.com/storacha/upload-service/commit/cb473c5db2f11188a713861af99d7270f27958b7))
+
 ## [1.0.3](https://github.com/storacha/upload-service/compare/upload-api-v1.0.2...upload-api-v1.0.3) (2024-11-05)
 
 
