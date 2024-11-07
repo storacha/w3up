@@ -161,7 +161,7 @@ import { RevocationsStorage } from './types/revocations.js'
 export * from '@storacha/capabilities/types'
 export * from '@ucanto/interface'
 
-export type { ProvisionsStorage, Provision } from './types/provisions.js'
+export type { ProvisionsStorage, Provision, Subscription } from './types/provisions.js'
 export type {
   DelegationsStorage,
   Query as DelegationsStorageQuery,
