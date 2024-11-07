@@ -3,7 +3,9 @@ import { DIDResolutionError } from '@ucanto/validator'
 import * as ClaimsService from './content-claims.js'
 import { BrowserStorageNode, StorageNode } from './storage-node.js'
 import * as BlobRetriever from './blob-retriever.js'
-import * as Router from './router.js'
+import * as RoutingService from './router.js'
+
+export { ClaimsService, BrowserStorageNode, StorageNode, BlobRetriever, RoutingService }
 
 /**
  * @param {object} config
@@ -49,7 +51,7 @@ export const getExternalServiceImplementations = async (config) => {
           }),
         ]
   )
-  const router = Router.create(config.serviceID, storageProviders)
+  const router = RoutingService.create(config.serviceID, storageProviders)
   return {
     claimsService,
     storageProviders,
