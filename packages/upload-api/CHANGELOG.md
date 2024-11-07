@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.0](https://github.com/storacha/upload-service/compare/upload-api-v1.0.4...upload-api-v1.1.0) (2024-11-07)
+
+
+### Features
+
+* export test external service implementations ([2a2eb0c](https://github.com/storacha/upload-service/commit/2a2eb0c0280da85d514c8bca99fc8eea9fa0aa4a))
+
 ## [1.0.4](https://github.com/storacha/upload-service/compare/upload-api-v1.0.3...upload-api-v1.0.4) (2024-11-06)
 
 
