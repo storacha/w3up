@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.2](https://github.com/storacha/upload-service/compare/upload-api-v1.1.1...upload-api-v1.1.2) (2024-11-08)
+
+
+### Fixes
+
+* ensure idempotent ([9deef57](https://github.com/storacha/upload-service/commit/9deef577b8f79665e9df91d2c13e8747c86219f1))
+
 ## [1.1.1](https://github.com/storacha/upload-service/compare/upload-api-v1.1.0...upload-api-v1.1.1) (2024-11-07)
 
 
