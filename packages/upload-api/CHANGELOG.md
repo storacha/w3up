@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.1](https://github.com/storacha/upload-service/compare/upload-api-v1.1.0...upload-api-v1.1.1) (2024-11-07)
+
+
+### Fixes
+
+* export Subscription type ([8c10e95](https://github.com/storacha/upload-service/commit/8c10e9506596748da288d55c63a53057f494ae8f))
+
 ## [1.1.0](https://github.com/storacha/upload-service/compare/upload-api-v1.0.4...upload-api-v1.1.0) (2024-11-07)
 
 
