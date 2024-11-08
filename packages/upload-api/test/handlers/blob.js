@@ -113,6 +113,9 @@ export const test = {
         },
       },
       proofs: [proof],
+      // Note: we have to set an expiration, or the default expiration value
+      // will be set when the invocation is executed and the UCAN issued.
+      expiration: (Math.floor(Date.now() / 1000)) + 10
     })
     // Invoke `blob/add` for the first time
     const firstBlobAdd = await invocation.execute(connection)
