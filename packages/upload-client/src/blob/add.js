@@ -246,6 +246,7 @@ export async function add(
           if (res.status >= 400 && res.status < 500) {
             throw new AbortError(`upload failed: ${res.status}`)
           }
+          await res.arrayBuffer()
           return res
         } catch (err) {
           if (options.signal?.aborted === true) {
