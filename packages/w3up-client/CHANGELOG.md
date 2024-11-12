@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.0.1](https://github.com/storacha/upload-service/compare/client-v1.0.0...client-v1.0.1) (2024-11-12)
+
+
+### Fixes
+
+* use configured receipts endpoint ([2e452c0](https://github.com/storacha/upload-service/commit/2e452c0c75e1ba34a6c5cb4cb3cd3a7c9f1c01ba))
+
+
+### Other Changes
+
+* format ([f740119](https://github.com/storacha/upload-service/commit/f74011982962d0c4e0b70b235d146cd611b8ea77))
+
 ## 1.0.0 (2024-11-05)
 
 
