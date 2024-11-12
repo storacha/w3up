@@ -6,19 +6,19 @@
 
 Install the CLI from npm (**requires Node 18 or higher**):
 
-```console
+```sh
 npm install -g @storacha/cli
 ```
 
 Login with this agent to act on behalf of the account associated with your email address:
 
-```console
+```sh
 storacha login alice@example.com
 ```
 
 Create a new Space for storing your data and register it:
 
-```console
+```sh
 storacha space create Documents # pick a good name!
 ```
 
@@ -26,7 +26,7 @@ If you'd like to learn more about what is going on under the hood with w3up and 
 
 Upload a file or directory:
 
-```console
+```sh
 storacha up recipies.txt
 ```
 
