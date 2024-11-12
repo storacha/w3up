@@ -55,7 +55,7 @@ export const testClient = {
       const dataCID = await alice.uploadFile(file, {
         onShardStored: (meta) => {
           carCID = meta.cid
-        }
+        },
       })
 
       assert.deepEqual(await uploadTable.exists(space.did(), dataCID), {
@@ -126,7 +126,7 @@ export const testClient = {
       const dataCID = await alice.uploadDirectory(files, {
         onShardStored: (meta) => {
           carCID = meta.cid
-        }
+        },
       })
 
       assert.deepEqual(await uploadTable.exists(space.did(), dataCID), {
@@ -169,7 +169,7 @@ export const testClient = {
       const root = await alice.uploadCAR(car, {
         onShardStored: (meta) => {
           carCID = meta.cid
-        }
+        },
       })
 
       assert.deepEqual(await uploadTable.exists(space.did(), root), {

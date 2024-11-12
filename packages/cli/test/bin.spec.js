@@ -565,7 +565,7 @@ export const testSpace = {
     })
 
     // wait 1 second so we don't get a cached receipt
-    await new Promise(resolve => setTimeout(resolve, 1000))
+    await new Promise((resolve) => setTimeout(resolve, 1000))
 
     const infoWithProvider = await storacha
       .args(['space', 'info'])
