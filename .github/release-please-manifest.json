@@ -4,7 +4,7 @@
   "packages/cli": "0.0.0",
   "packages/filecoin-api": "0.0.0",
   "packages/filecoin-client": "0.0.0",
-  "packages/capabilities": "1.1.0",
+  "packages/capabilities": "1.1.1",
   "packages/upload-api": "1.1.2",
   "packages/upload-client": "1.0.0",
   "packages/w3up-client": "1.0.0",

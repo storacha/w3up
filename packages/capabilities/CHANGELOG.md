@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.1](https://github.com/storacha/upload-service/compare/capabilities-v1.1.0...capabilities-v1.1.1) (2024-11-12)
+
+
+### Other Changes
+
+* **main:** release capabilities 1.0.1 ([#42](https://github.com/storacha/upload-service/issues/42)) ([3f3452a](https://github.com/storacha/upload-service/commit/3f3452a5eff8d4c98ddbef05c9f6fafa0fb9434c))
+
 ## [1.1.0](https://github.com/storacha/upload-service/compare/capabilities-v1.0.0...capabilities-v1.1.0) (2024-11-12)
 
 
