@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.3](https://github.com/storacha/upload-service/compare/upload-api-v1.1.2...upload-api-v1.1.3) (2024-11-12)
+
+
+### Fixes
+
+* trigger release ([fe6038c](https://github.com/storacha/upload-service/commit/fe6038c2efca3a2cbdc3b8dc6221e36fc53bccc7))
+
 ## [1.1.2](https://github.com/storacha/upload-service/compare/upload-api-v1.1.1...upload-api-v1.1.2) (2024-11-08)
 
 
