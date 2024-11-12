@@ -1,4 +1,4 @@
-<h1 align="center"><img src="https://bafybeia4luuns6dgymy5kau5rm7r4qzrrzg6cglpzpogussprpy42cmcn4.ipfs.w3s.link/w3up-logo.png" width="352" /></h1>
+<h1 align="center"><img src="https://bafybeich5z6anhfhf23tlnb67y32nl37nttkjfyqv6maeehur3unuuhd2e.ipfs.w3s.link/transparent-red.png" width="100" /></h1>
 <p align="center">The main JavaScript client for the <a href="https://storacha.network">Storacha Network</a></p>
 <p align="center">
   <a href="https://github.com/storacha/upload-service/actions/workflows/w3up-client.yml"><img alt="GitHub Workflow Status" src="https://img.shields.io/github/actions/workflow/status/storacha/w3up/w3up-client.yml?branch=main&style=for-the-badge" /></a>
@@ -11,7 +11,7 @@
 
 `@storacha/client` is a JavaScript library that provides a convenient interface to the w3up platform, a simple "on-ramp" to the content-addressed decentralized IPFS network.
 
-This library is the user-facing "porcelain" client for interacting with w3up services from JavaScript. It wraps the lower-level [`@storacha/access`][access-client-github] and [`@storacha/upload-client`][upload-client-github] client packages, which target individual w3up services. We recommend using `w3up-client` instead of using those "plumbing" packages directly, but you may find them useful if you need more context on w3up's architecture and internals.
+This library is the user-facing "porcelain" client for interacting with w3up services from JavaScript. It wraps the lower-level [`@storacha/access`][access-client-github] and [`@storacha/upload-client`][upload-client-github] client packages, which target individual w3up services. We recommend using `@storacha/client` instead of using those "plumbing" packages directly, but you may find them useful if you need more context on w3up's architecture and internals.
 
 **`w3up-client` requires Node 18 or higher**.
 
