@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.1](https://github.com/storacha/upload-service/compare/upload-client-v1.0.0...upload-client-v1.0.1) (2024-11-12)
+
+
+### Fixes
+
+* consume response body ([9d3659e](https://github.com/storacha/upload-service/commit/9d3659e28bf4c29e6a613e1cb42751e4f13dff41))
+
 ## 1.0.0 (2024-11-05)
 
 
