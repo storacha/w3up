@@ -1,4 +1,4 @@
-<h1 align="center">⁂<br/>storacha.network</h1>
+<h1 align="center">🐔<br/>storacha.network</h1>
 <p align="center">The upload API for <a href="https://storacha.network">https://storacha.network</a></p>
 
 ## About
