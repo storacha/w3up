@@ -53,7 +53,7 @@ export class UsageStorage {
           return {
             cause: /** @type {import('../types.js').Link} */ (item.cause),
             delta: item.size,
-            receiptAt: item.insertedAt,
+            receiptAt: item.insertedAt.toISOString(),
           }
         }),
       },

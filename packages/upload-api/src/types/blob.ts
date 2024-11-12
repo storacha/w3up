@@ -14,7 +14,6 @@ import type {
 } from '@ucanto/interface'
 import {
   Multihash,
-  BlobItem as Entry,
   BlobAllocate,
   BlobAccept,
   BlobAllocateSuccess,
@@ -24,7 +23,16 @@ import { MultihashDigest } from 'multiformats'
 import { ListResponse, SpaceDID } from '../types.js'
 import { Storage } from './storage.js'
 
-export type { Entry }
+export interface Blob {
+  digest: MultihashDigest
+  size: number
+}
+
+export interface Entry {
+  blob: Blob
+  cause: Link
+  insertedAt: Date
+}
 
 /** Indicates an entry was not found that matches the passed details. */
 export interface EntryNotFound extends Failure {
@@ -71,7 +79,7 @@ export interface BlobModel {
 export interface RegistrationData {
   space: SpaceDID
   cause: Link
-  blob: BlobModel
+  blob: Blob
 }
 
 export interface BlobService {

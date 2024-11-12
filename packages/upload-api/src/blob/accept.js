@@ -3,6 +3,8 @@ import { Message, Invocation } from '@ucanto/core'
 import * as Transport from '@ucanto/transport/car'
 import * as API from '../types.js'
 import * as HTTP from '@storacha/capabilities/http'
+import * as DID from '@ipld/dag-ucan/did'
+import * as Digest from 'multiformats/hashes/digest'
 import { AgentMessage } from '../lib.js'
 
 /**
@@ -95,7 +97,14 @@ export const poll = async (context, receipt) => {
     return messageWrite
   }
 
-  const register = await context.registry.register(allocate.nb)
+  const register = await context.registry.register({
+    space: /** @type {API.SpaceDID} */ (DID.decode(allocate.nb.space).did()),
+    cause: allocate.nb.cause,
+    blob: {
+      digest: Digest.decode(allocate.nb.blob.digest),
+      size: allocate.nb.blob.size,
+    },
+  })
   if (register.error) {
     // it's ok if there's already a registration of this blob in this space
     if (register.error.name !== 'EntryExists') {

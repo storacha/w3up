@@ -109,6 +109,7 @@
     "uint8arrays": "^5.0.3"
   },
   "devDependencies": {
+    "@ipld/dag-ucan": "^3.4.0",
     "@storacha/eslint-config": "workspace:^",
     "@types/assert": "^1.5.6",
     "@types/mocha": "^10.0.0",

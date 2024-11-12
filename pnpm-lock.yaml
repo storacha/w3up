@@ -216,6 +216,9 @@ importers:
         specifier: ^5.0.3
         version: 5.1.0
     devDependencies:
+      '@ipld/dag-ucan':
+        specifier: ^3.4.0
+        version: 3.4.0
       '@storacha/eslint-config':
         specifier: workspace:^
         version: link:../eslint-config-w3up

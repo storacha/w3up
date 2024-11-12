@@ -5,6 +5,7 @@ import { Assert } from '@web3-storage/content-claims/capability'
 import * as Server from '@ucanto/server'
 import * as HTTP from '@storacha/capabilities/http'
 import * as BlobCapabilities from '@storacha/capabilities/blob'
+import * as DID from '@ipld/dag-ucan/did'
 import { createConcludeInvocation } from '../../src/blob/add.js'
 import { randomCAR } from './random.js'
 
@@ -126,7 +127,7 @@ const setupBlobAddResponse = async function (
       nb: {
         blob,
         cause: invocation.link(),
-        space: space.did(),
+        space: DID.parse(space.did()),
       },
       expiration: Infinity,
     })
@@ -190,7 +191,7 @@ const setupBlobAddResponse = async function (
       with: space.did(),
       nb: {
         blob,
-        space: space.did(),
+        space: DID.parse(space.did()),
         _put: { 'ucan/await': ['.out.ok', blobPutTask.link()] },
       },
       proofs,

@@ -6,6 +6,7 @@ import * as Blob from '@storacha/capabilities/blob'
 import * as SpaceBlob from '@storacha/capabilities/space/blob'
 import * as HTTP from '@storacha/capabilities/http'
 import * as Digest from 'multiformats/hashes/digest'
+import * as DID from '@ipld/dag-ucan/did'
 import * as API from '../types.js'
 import { allocate as spaceAllocate } from '../space-allocate.js'
 import { createConcludeInvocation } from '../ucan/conclude.js'
@@ -126,7 +127,7 @@ async function allocate({ context, blob, space, cause }) {
         digest: blob.digest,
         size: blob.size,
       },
-      space,
+      space: DID.parse(space),
       cause,
     },
   })
@@ -271,7 +272,7 @@ async function accept({ context, provider, blob, space, delivery }) {
     with: provider.did(),
     nb: {
       blob,
-      space,
+      space: DID.parse(space),
       _put: { 'ucan/await': ['.out.ok', delivery.task.link()] },
     },
   })

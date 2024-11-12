@@ -13,18 +13,17 @@ export class Registry {
   /** @type {API.BlobAPI.Registry['register']} */
   async register({ space, cause, blob }) {
     const entries = this.data.get(space) ?? []
-    if (entries.some((e) => equals(e.blob.digest, blob.digest))) {
+    if (entries.some((e) => equals(e.blob.digest.bytes, blob.digest.bytes))) {
       return error(new EntryExists())
     }
-    const insertedAt = new Date().toISOString()
-    this.data.set(space, [{ blob, cause, insertedAt }, ...entries])
+    this.data.set(space, [{ blob, cause, insertedAt: new Date() }, ...entries])
     return ok({})
   }
 
   /** @type {API.BlobAPI.Registry['find']} */
   async find(space, digest) {
     const entries = this.data.get(space) ?? []
-    const entry = entries.find((e) => equals(e.blob.digest, digest.bytes))
+    const entry = entries.find((e) => equals(e.blob.digest.bytes, digest.bytes))
     if (!entry) return error(new EntryNotFound())
     return ok(entry)
   }
@@ -32,7 +31,7 @@ export class Registry {
   /** @type {API.BlobAPI.Registry['deregister']} */
   async deregister(space, digest) {
     const entries = this.data.get(space) ?? []
-    const entry = entries.find((e) => equals(e.blob.digest, digest.bytes))
+    const entry = entries.find((e) => equals(e.blob.digest.bytes, digest.bytes))
     if (!entry) return error(new EntryNotFound())
     this.data.set(
       space,

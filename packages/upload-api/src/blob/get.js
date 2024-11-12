@@ -13,9 +13,20 @@ export function blobGetProvider(context) {
     const digest = Digest.decode(capability.nb.digest)
     const space = Server.DID.parse(capability.with).did()
     const res = await context.registry.find(space, digest)
-    if (res.error && res.error.name === 'EntryNotFound') {
-      return Server.error(new BlobNotFound(digest))
+    if (res.error) {
+      if (res.error.name === 'EntryNotFound') {
+        return Server.error(new BlobNotFound(digest))
+      }
+      return res
     }
-    return res
+
+    return Server.ok({
+      blob: {
+        digest: res.ok.blob.digest.bytes,
+        size: res.ok.blob.size,
+      },
+      cause: res.ok.cause,
+      insertedAt: res.ok.insertedAt.toISOString(),
+    })
   })
 }

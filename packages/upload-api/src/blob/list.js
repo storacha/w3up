@@ -10,6 +10,20 @@ export function blobListProvider(context) {
   return Server.provide(SpaceBlob.list, async ({ capability }) => {
     const space = capability.with
     const { cursor, size } = capability.nb
-    return await context.registry.entries(space, { size, cursor })
+    const result = await context.registry.entries(space, { size, cursor })
+    if (result.error) {
+      return result
+    }
+    return Server.ok({
+      ...result.ok,
+      results: result.ok.results.map((r) => ({
+        blob: {
+          digest: r.blob.digest.bytes,
+          size: r.blob.size,
+        },
+        cause: r.cause,
+        insertedAt: r.insertedAt.toISOString(),
+      })),
+    })
   })
 }

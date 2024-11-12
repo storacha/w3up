@@ -5,7 +5,13 @@ import { BrowserStorageNode, StorageNode } from './storage-node.js'
 import * as BlobRetriever from './blob-retriever.js'
 import * as RoutingService from './router.js'
 
-export { ClaimsService, BrowserStorageNode, StorageNode, BlobRetriever, RoutingService }
+export {
+  ClaimsService,
+  BrowserStorageNode,
+  StorageNode,
+  BlobRetriever,
+  RoutingService,
+}
 
 /**
  * @param {object} config

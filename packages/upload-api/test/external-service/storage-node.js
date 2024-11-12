@@ -10,7 +10,10 @@ import { ed25519 } from '@ucanto/principal'
 import { CAR, HTTP } from '@ucanto/transport'
 import * as Server from '@ucanto/server'
 import { connect } from '@ucanto/client'
-import { AllocatedMemoryNotWrittenError, BlobSizeLimitExceededError } from '../../src/blob.js'
+import {
+  AllocatedMemoryNotWrittenError,
+  BlobSizeLimitExceededError,
+} from '../../src/blob.js'
 
 /**
  * @typedef {{
@@ -61,7 +64,12 @@ const createService = ({
         const digest = Digest.decode(capability.nb.blob.digest)
         const checksum = base64pad.baseEncode(digest.digest)
         if (capability.nb.blob.size > MaxUploadSize) {
-          return error(new BlobSizeLimitExceededError(capability.nb.blob.size, MaxUploadSize))
+          return error(
+            new BlobSizeLimitExceededError(
+              capability.nb.blob.size,
+              MaxUploadSize
+            )
+          )
         }
         if (await contentStore.has(digest)) {
           return ok({ size: 0 })
@@ -323,7 +331,7 @@ export class StorageNode {
 
 /**
  * @param {API.ClaimsClientContext} ctx
- * @param {{ space: API.SpaceDID, digest: API.MultihashDigest, location: API.URI }} params
+ * @param {{ space: Uint8Array, digest: API.MultihashDigest, location: API.URI }} params
  */
 const publishLocationCommitment = async (ctx, { digest, location }) => {
   const { invocationConfig, connection } = ctx.claimsService

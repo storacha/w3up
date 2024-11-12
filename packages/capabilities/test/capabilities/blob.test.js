@@ -1,6 +1,7 @@
 import assert from 'assert'
 import { access } from '@ucanto/validator'
 import { ed25519, Verifier } from '@ucanto/principal'
+import * as DID from '@ipld/dag-ucan/did'
 import * as Blob from '../../src/blob.js'
 import * as Capability from '../../src/top.js'
 import {
@@ -44,7 +45,7 @@ describe('blob capabilities', function () {
           digest: car.cid.multihash.bytes,
           size: car.bytes.length,
         },
-        space: space.did(),
+        space: DID.parse(space.did()),
         cause: await createCborCid({ now: Date.now() }),
       },
       proofs: [await top()],
@@ -74,7 +75,7 @@ describe('blob capabilities', function () {
           digest: car.cid.multihash.bytes,
           size: car.bytes.length,
         },
-        space: space.did(),
+        space: DID.parse(space.did()),
         cause: await createCborCid({ now: Date.now() }),
       },
       proofs: [await blob()],
@@ -111,7 +112,7 @@ describe('blob capabilities', function () {
           digest: car.cid.multihash.bytes,
           size: car.bytes.length,
         },
-        space: space.did(),
+        space: DID.parse(space.did()),
         cause: await createCborCid({ now: Date.now() }),
       },
       proofs: [blob],
@@ -138,7 +139,7 @@ describe('blob capabilities', function () {
       audience: bob,
       with: account.did(),
       nb: {
-        space: space0.did(),
+        space: DID.parse(space0.did()),
       },
       proofs: [await top()],
     })
@@ -152,7 +153,7 @@ describe('blob capabilities', function () {
           digest: car.cid.multihash.bytes,
           size: car.bytes.length,
         },
-        space: space1.did(),
+        space: DID.parse(space1.did()),
         cause: await createCborCid({ now: Date.now() }),
       },
       proofs: [blob],
@@ -181,7 +182,7 @@ describe('blob capabilities', function () {
           digest: car.cid.multihash.bytes,
           size: car.bytes.length,
         },
-        space: space.did(),
+        space: DID.parse(space.did()),
         _put: {
           'ucan/await': ['.out.ok', await createCborCid('receipt')],
         },
@@ -213,7 +214,7 @@ describe('blob capabilities', function () {
           digest: car.cid.multihash.bytes,
           size: car.bytes.length,
         },
-        space: space.did(),
+        space: DID.parse(space.did()),
         _put: {
           'ucan/await': ['.out.ok', await createCborCid('receipt')],
         },
@@ -252,7 +253,7 @@ describe('blob capabilities', function () {
           digest: car.cid.multihash.bytes,
           size: car.bytes.length,
         },
-        space: space.did(),
+        space: DID.parse(space.did()),
         _put: {
           'ucan/await': ['.out.ok', await createCborCid('receipt')],
         },
@@ -281,7 +282,7 @@ describe('blob capabilities', function () {
       audience: bob,
       with: account.did(),
       nb: {
-        space: space0.did(),
+        space: DID.parse(space0.did()),
       },
       proofs: [await top()],
     })
@@ -295,7 +296,7 @@ describe('blob capabilities', function () {
           digest: car.cid.multihash.bytes,
           size: car.bytes.length,
         },
-        space: space1.did(),
+        space: DID.parse(space1.did()),
         _put: {
           'ucan/await': ['.out.ok', await createCborCid('receipt')],
         },

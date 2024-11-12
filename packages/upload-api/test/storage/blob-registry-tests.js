@@ -13,7 +13,7 @@ export const test = {
     const { registry } = context
     const data = new Uint8Array([11, 22, 34, 44, 55])
     const digest = await sha256.digest(data)
-    const blob = { digest: digest.bytes, size: data.length }
+    const blob = { digest: digest, size: data.length }
     const cause = await randomCID()
     const registration = await registry.register({ space, blob, cause })
     assert.ok(registration.ok)
@@ -26,7 +26,7 @@ export const test = {
     const { registry } = context
     const data = new Uint8Array([11, 22, 34, 44, 55])
     const digest = await sha256.digest(data)
-    const blob = { digest: digest.bytes, size: data.length }
+    const blob = { digest: digest, size: data.length }
     const cause = await randomCID()
     const registration0 = await registry.register({ space, blob, cause })
     assert.ok(registration0.ok)
@@ -45,7 +45,7 @@ export const test = {
     assert.ok(find0.error)
     assert.equal(find0.error?.name, EntryNotFound.name)
 
-    const blob = { digest: digest.bytes, size: data.length }
+    const blob = { digest: digest, size: data.length }
     const cause = await randomCID()
     const registration = await registry.register({ space, blob, cause })
     assert.ok(registration.ok)
@@ -54,7 +54,9 @@ export const test = {
     assert.ok(find1.ok)
     assert.ok(find1.ok?.blob)
     assert.equal(find1.ok?.blob.size, data.length)
-    assert.ok(equals(digest.bytes, find1.ok?.blob.digest || new Uint8Array()))
+    assert.ok(
+      equals(digest.bytes, find1.ok?.blob.digest.bytes || new Uint8Array())
+    )
     assert.equal(find1.ok?.cause.toString(), cause.toString())
   },
   'should list all blobs in a space': async (assert, context) => {
@@ -65,12 +67,12 @@ export const test = {
     // Data for alice
     const data0 = new Uint8Array([11, 22, 34, 44, 55])
     const digest0 = await sha256.digest(data0)
-    const blob0 = { digest: digest0.bytes, size: data0.length }
+    const blob0 = { digest: digest0, size: data0.length }
     const cause0 = await randomCID()
     // Data for bob
     const data1 = new Uint8Array([66, 77, 88, 99, 0])
     const digest1 = await sha256.digest(data1)
-    const blob1 = { digest: digest1.bytes, size: data1.length }
+    const blob1 = { digest: digest1, size: data1.length }
     const cause1 = await randomCID()
 
     // Get alice empty entries
@@ -101,8 +103,8 @@ export const test = {
     assert.equal(entriesAlice1.ok?.results.length, 1)
     assert.ok(
       equals(
-        blob0.digest,
-        entriesAlice1.ok?.results[0].blob.digest || new Uint8Array()
+        blob0.digest.bytes,
+        entriesAlice1.ok?.results[0].blob.digest.bytes || new Uint8Array()
       )
     )
 
@@ -121,12 +123,12 @@ export const test = {
     assert.equal(entriesAlice2.ok?.results.length, 2)
     assert.ok(
       entriesAlice2.ok?.results.some((res) =>
-        equals(res.blob.digest, blob0.digest)
+        equals(res.blob.digest.bytes, blob0.digest.bytes)
       )
     )
     assert.ok(
       entriesAlice2.ok?.results.some((res) =>
-        equals(res.blob.digest, blob1.digest)
+        equals(res.blob.digest.bytes, blob1.digest.bytes)
       )
     )
   },
@@ -144,7 +146,7 @@ export const test = {
     const { registry } = context
     const data = new Uint8Array([11, 22, 34, 44, 55])
     const digest = await sha256.digest(data)
-    const blob = { digest: digest.bytes, size: data.length }
+    const blob = { digest: digest, size: data.length }
     const cause = await randomCID()
 
     const reg = await registry.register({ space, blob, cause })
