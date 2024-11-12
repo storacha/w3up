@@ -17,6 +17,7 @@ export const BlobClient = Test.withContext({
         access: connection,
         upload: connection,
       },
+      receiptsEndpoint: new URL(receiptsEndpoint),
     })
 
     const space = await alice.createSpace('test')
@@ -34,9 +35,7 @@ export const BlobClient = Test.withContext({
 
     const bytes = await randomBytes(128)
     const bytesHash = await sha256.digest(bytes)
-    const { digest } = await alice.capability.blob.add(new Blob([bytes]), {
-      receiptsEndpoint,
-    })
+    const { digest } = await alice.capability.blob.add(new Blob([bytes]))
 
     // TODO we should check blobsStorage as well
     Result.try(await registry.find(space.did(), digest))
@@ -53,6 +52,7 @@ export const BlobClient = Test.withContext({
         access: connection,
         upload: connection,
       },
+      receiptsEndpoint: new URL(receiptsEndpoint),
     })
 
     const space = await alice.createSpace('test')
@@ -70,9 +70,7 @@ export const BlobClient = Test.withContext({
 
     const bytes = await randomBytes(128)
     const bytesHash = await sha256.digest(bytes)
-    const { digest } = await alice.capability.blob.add(new Blob([bytes]), {
-      receiptsEndpoint,
-    })
+    const { digest } = await alice.capability.blob.add(new Blob([bytes]))
     assert.deepEqual(digest.bytes, bytesHash.bytes)
 
     const {
@@ -92,6 +90,7 @@ export const BlobClient = Test.withContext({
         access: connection,
         upload: connection,
       },
+      receiptsEndpoint: new URL(receiptsEndpoint),
     })
 
     const space = await alice.createSpace('test')
@@ -108,9 +107,7 @@ export const BlobClient = Test.withContext({
     })
 
     const bytes = await randomBytes(128)
-    const { digest } = await alice.capability.blob.add(new Blob([bytes]), {
-      receiptsEndpoint,
-    })
+    const { digest } = await alice.capability.blob.add(new Blob([bytes]))
 
     const result = await alice.capability.blob.remove(digest)
     assert.ok(result.ok)
@@ -125,6 +122,7 @@ export const BlobClient = Test.withContext({
         access: connection,
         upload: connection,
       },
+      receiptsEndpoint: new URL(receiptsEndpoint),
     })
 
     const space = await alice.createSpace('test')
@@ -141,9 +139,7 @@ export const BlobClient = Test.withContext({
     })
 
     const bytes = await randomBytes(128)
-    const { digest } = await alice.capability.blob.add(new Blob([bytes]), {
-      receiptsEndpoint,
-    })
+    const { digest } = await alice.capability.blob.add(new Blob([bytes]))
 
     const result = await alice.capability.blob.get(digest)
     assert.ok(result.ok)

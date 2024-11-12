@@ -36,6 +36,7 @@ export const testClient = {
           access: connection,
           upload: connection,
         },
+        receiptsEndpoint: new URL(receiptsEndpoint),
       })
 
       const space = await alice.createSpace('upload-test')
@@ -54,8 +55,7 @@ export const testClient = {
       const dataCID = await alice.uploadFile(file, {
         onShardStored: (meta) => {
           carCID = meta.cid
-        },
-        receiptsEndpoint,
+        }
       })
 
       assert.deepEqual(await uploadTable.exists(space.did(), dataCID), {
@@ -106,6 +106,7 @@ export const testClient = {
           access: connection,
           upload: connection,
         },
+        receiptsEndpoint: new URL(receiptsEndpoint),
       })
 
       const space = await alice.createSpace('upload-dir-test')
@@ -125,8 +126,7 @@ export const testClient = {
       const dataCID = await alice.uploadDirectory(files, {
         onShardStored: (meta) => {
           carCID = meta.cid
-        },
-        receiptsEndpoint,
+        }
       })
 
       assert.deepEqual(await uploadTable.exists(space.did(), dataCID), {
@@ -151,6 +151,7 @@ export const testClient = {
           access: connection,
           upload: connection,
         },
+        receiptsEndpoint: new URL(receiptsEndpoint),
       })
 
       const space = await alice.createSpace('car-space')
@@ -168,8 +169,7 @@ export const testClient = {
       const root = await alice.uploadCAR(car, {
         onShardStored: (meta) => {
           carCID = meta.cid
-        },
-        receiptsEndpoint,
+        }
       })
 
       assert.deepEqual(await uploadTable.exists(space.did(), root), {
@@ -645,6 +645,7 @@ export const testClient = {
           access: connection,
           upload: connection,
         },
+        receiptsEndpoint: new URL(receiptsEndpoint),
       })
 
       // setup space
@@ -662,9 +663,7 @@ export const testClient = {
       })
 
       const content = new Blob([bytes])
-      const fileLink = await alice.uploadFile(content, {
-        receiptsEndpoint,
-      })
+      const fileLink = await alice.uploadFile(content)
 
       assert.deepEqual(await uploadTable.exists(space.did(), fileLink), {
         ok: true,
@@ -695,6 +694,7 @@ export const testClient = {
             access: connection,
             upload: connection,
           },
+          receiptsEndpoint: new URL(receiptsEndpoint),
         })
 
         // setup space
@@ -712,9 +712,7 @@ export const testClient = {
         })
 
         const content = new Blob([bytes])
-        const fileLink = await alice.uploadFile(content, {
-          receiptsEndpoint,
-        })
+        const fileLink = await alice.uploadFile(content)
 
         assert.deepEqual(await uploadTable.exists(space.did(), fileLink), {
           ok: true,
@@ -772,6 +770,7 @@ export const testClient = {
           access: connection,
           upload: connection,
         },
+        receiptsEndpoint: new URL(receiptsEndpoint),
       })
 
       // setup space
@@ -789,9 +788,7 @@ export const testClient = {
       })
 
       const content = new Blob(bytesArray)
-      const fileLink = await alice.uploadFile(content, {
-        receiptsEndpoint,
-      })
+      const fileLink = await alice.uploadFile(content)
 
       const upload = await uploadTable.get(space.did(), fileLink)
 

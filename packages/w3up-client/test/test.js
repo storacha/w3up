@@ -2,6 +2,7 @@ import { StoreMemory } from '@storacha/access/stores/store-memory'
 import * as Context from '@storacha/upload-api/test/context'
 import * as Client from '@storacha/client'
 import * as assert from 'assert'
+import { receiptsEndpoint } from './helpers/utils.js'
 
 /**
  * @template [Context=void]
@@ -83,6 +84,7 @@ export const setup = async () => {
         upload: context.connection,
         filecoin: context.connection,
       },
+      receiptsEndpoint: new URL(receiptsEndpoint)
     })
 
   return {
