@@ -16,7 +16,10 @@ export const testCoupon = Test.withContext({
     const account = await login
 
     // Then we setup a billing for this account
-    await plansStorage.set(account.did(), 'did:web:test.storacha.network')
+    await plansStorage.set(
+      account.did(),
+      'did:web:test.upload.storacha.network'
+    )
 
     // Then we use the account to issue a coupon for the workshop
     const coupon = await client.coupon.issue({
@@ -45,7 +48,7 @@ export const testCoupon = Test.withContext({
 
     const info = await alice.capability.space.info(space.did())
     assert.deepEqual(info.did, space.did())
-    assert.deepEqual(info.providers, ['did:web:test.storacha.network'])
+    assert.deepEqual(info.providers, ['did:web:test.upload.storacha.network'])
   },
 
   'coupon with password': async (

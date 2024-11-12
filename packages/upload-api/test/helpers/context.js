@@ -29,7 +29,7 @@ export const createContext = async (
   const signer = await Signer.generate()
   const aggregatorSigner = await Signer.generate()
   const dealTrackerSigner = await Signer.generate()
-  const id = signer.withDID('did:web:test.storacha.network')
+  const id = signer.withDID('did:web:test.upload.storacha.network')
 
   const service = getMockService()
   const dealTrackerConnection = getConnection(

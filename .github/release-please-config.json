@@ -9,6 +9,7 @@
   "packages": {
     "packages/access-client": {},
     "packages/blob-index": {},
+    "packages/cli": {},
     "packages/filecoin-api": {},
     "packages/filecoin-client": {},
     "packages/capabilities": {},

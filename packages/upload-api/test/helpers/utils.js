@@ -41,7 +41,7 @@ export const w3 = ed25519
   .parse(
     'MgCYKXoHVy7Vk4/QjcEGi+MCqjntUiasxXJ8uJKY0qh11e+0Bs8WsdqGK7xothgrDzzWD0ME7ynPjz2okXDh8537lId8='
   )
-  .withDID('did:web:test.storacha.network')
+  .withDID('did:web:test.upload.storacha.network')
 
 /**
  * Creates a server for the given service.
