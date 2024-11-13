@@ -106,6 +106,8 @@ export const setupBlobAddWithHttpPutReceiptSuccessResponse = async function (
 
 /**
  * @param {string} url
+ * @param {any} config
+ * @param {any} invocation
  * @param {boolean} hasHttpPutReceipt
  * @param {boolean} hasAcceptReceipt
  */
