@@ -302,6 +302,10 @@ export async function add(
   let { receipt: acceptReceipt } = nextTasks.accept
   if (!acceptReceipt?.out.ok) {
     acceptReceipt = await poll(nextTasks.accept.task.link(), options)
+    /* c8 ignore next 3 */
+    if (acceptReceipt.out.error) {
+      throw new Error(`${BlobCapabilities.accept.can} failure`, { cause: acceptReceipt.out.error })
+    }
   }
 
   const blocks = new Map(

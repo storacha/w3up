@@ -1,6 +1,6 @@
 # CLI
 
-💾 the `storacha` command line interface.
+The command line interface to the Storacha Network.
 
 ## Getting started
 
