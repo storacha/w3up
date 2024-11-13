@@ -1,0 +1,14 @@
+{
+  "name": "@storacha/upload-service-scripts",
+  "version": "0.0.0",
+  "main": "index.js",
+  "type": "module",
+  "license": "Apache-2.0 OR MIT",
+  "dependencies": {
+    "@ipld/dag-ucan": "^3.4.0",
+    "@ucanto/core": "^10.0.1",
+    "@ucanto/interface": "^10.0.1",
+    "@ucanto/principal": "^9.0.1",
+    "multiformats": "^13.3.1"
+  }
+}
