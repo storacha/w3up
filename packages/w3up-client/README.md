@@ -13,7 +13,7 @@
 
 This library is the user-facing "porcelain" client for interacting with w3up services from JavaScript. It wraps the lower-level [`@web3-storage/access`][access-client-github] and [`@web3-storage/upload-client`][upload-client-github] client packages, which target individual w3up services. We recommend using `w3up-client` instead of using those "plumbing" packages directly, but you may find them useful if you need more context on w3up's architecture and internals.
 
-**`w3up-client` requires Node 18 or higher**.
+**`w3up-client` requires modern browser or Node 18+**.
 
 > ⚠️❗ __Public Data__ 🌎: All data uploaded to w3up is available to anyone who requests it using the correct CID. Do not store any private or sensitive information in an unencrypted form using w3up.
 
@@ -116,6 +116,16 @@ const client = await create({ principal })
 ```
 
 Once initialized, you can access the client's `Agent` with the [`agent` getter][docs-Client#agent].
+
+##### Pre-built bundle
+
+You can also import a pre-built bundle, which adds the exports from the client to a _global_ variable `w3up`:
+
+```js
+import '@web3-storage/w3up-client/bundle/browser'
+
+const client = await w3up.create()
+```
 
 #### Creating and registering Spaces
 
