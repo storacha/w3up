@@ -32,9 +32,9 @@
       "types": "./dist/src/account.d.ts",
       "import": "./dist/src/account.js"
     },
-    "./bundle/browser/cjs": {
+    "./bundle/browser": {
       "types": "./dist/src/index.d.ts",
-      "default": "./dist/src/index.bundle.browser.cjs"
+      "default": "./dist/src/index.bundle.browser.js"
     },
     "./delegation": {
       "types": "./dist/src/delegation.d.ts",
@@ -127,9 +127,9 @@
   "scripts": {
     "attw": "attw --pack .",
     "lint": "tsc --build && eslint '**/*.{js,ts}' && prettier --check '**/*.{js,ts,yml,json}' --ignore-path ../../.gitignore",
-    "build": "npm run build:tsc && npm run build:bundle:browser:cjs",
+    "build": "npm run build:tsc && npm run build:bundle:browser",
     "build:tsc": "tsc --build",
-    "build:bundle:browser:cjs": "esbuild src/index.js --bundle --minify --outfile=dist/src/index.bundle.browser.cjs",
+    "build:bundle:browser": "esbuild src/index.js --bundle --minify --outfile=dist/src/index.bundle.browser.js",
     "dev": "tsc --build --watch",
     "check": "tsc --build",
     "prepare": "npm run build",
