@@ -122,7 +122,7 @@ Once initialized, you can access the client's `Agent` with the [`agent` getter][
 You can also import a pre-built bundle, which adds the exports from the client to a _global_ variable `w3up`:
 
 ```js
-import '@web3-storage/w3up-client/bundle/browser'
+import '@web3-storage/w3up-client/browser.bundle.js'
 
 const client = await w3up.create()
 ```
