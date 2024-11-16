@@ -198,7 +198,8 @@
       "docs",
       "docs-generated",
       "coverage",
-      "src/types.js"
+      "src/types.js",
+      "*.bundle.js"
     ]
   },
   "directories": {
