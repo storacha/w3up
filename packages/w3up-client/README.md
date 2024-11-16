@@ -121,10 +121,16 @@ Once initialized, you can access the client's `Agent` with the [`agent` getter][
 
 You can also import a pre-built bundle, which adds the exports from the client to a _global_ variable `w3up`:
 
-```js
-import '@web3-storage/w3up-client/browser.min.js'
-
-const client = await w3up.create()
+```html
+<!doctype html>
+<script src="https://cdn.jsdelivr.net/npm/@web3-storage/w3up-client/browser.min.js"></script>
+<script>
+  async function main () {
+    const client = await w3up.create()
+    console.log(client.did())
+  }
+  main()
+</script>
 ```
 
 #### Creating and registering Spaces
