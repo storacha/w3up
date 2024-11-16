@@ -14,6 +14,7 @@ docs
 .env
 .next
 out
+*.min.js
 
 # debug
 npm-debug.log*

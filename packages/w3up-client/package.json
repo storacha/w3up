@@ -32,8 +32,8 @@
       "types": "./dist/src/account.d.ts",
       "import": "./dist/src/account.js"
     },
-    "./browser.bundle.js": {
-      "default": "./browser.bundle.js"
+    "./browser.min.js": {
+      "default": "./browser.min.js"
     },
     "./delegation": {
       "types": "./dist/src/delegation.d.ts",
@@ -122,14 +122,14 @@
   },
   "files": [
     "dist",
-    "*.bundle.js"
+    "*.min.js"
   ],
   "scripts": {
     "attw": "attw --pack .",
     "lint": "tsc --build && eslint '**/*.{js,ts}' && prettier --check '**/*.{js,ts,yml,json}' --ignore-path ../../.gitignore",
     "build": "npm run build:tsc && npm run build:bundle:browser",
     "build:tsc": "tsc --build",
-    "build:bundle:browser": "esbuild src/index.js --bundle --minify --target=chrome130 --format=iife --global-name=w3up --outfile=browser.bundle.js",
+    "build:bundle:browser": "esbuild src/index.js --bundle --minify --target=chrome130 --format=iife --global-name=w3up --outfile=browser.min.js",
     "dev": "tsc --build --watch",
     "check": "tsc --build",
     "prepare": "npm run build",
@@ -199,7 +199,7 @@
       "docs-generated",
       "coverage",
       "src/types.js",
-      "*.bundle.js"
+      "*.min.js"
     ]
   },
   "directories": {
