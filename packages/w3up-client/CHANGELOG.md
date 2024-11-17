@@ -1,5 +1,17 @@
 # Changelog
 
+## [16.5.0](https://github.com/storacha/w3up/compare/w3up-client-v16.4.1...w3up-client-v16.5.0) (2024-11-17)
+
+
+### Features
+
+* add pre-built browser bundle ([#1586](https://github.com/storacha/w3up/issues/1586)) ([2fd07e7](https://github.com/storacha/w3up/commit/2fd07e7c2337ca5ea4eff265338976b34ad0bf27))
+
+
+### Other Changes
+
+* **main:** release w3up-client 16.4.1 ([#1577](https://github.com/storacha/w3up/issues/1577)) ([1482d69](https://github.com/storacha/w3up/commit/1482d69c28baff1c27b1baf5f3e5c76f844e5576))
+
 ## [16.4.1](https://github.com/storacha/w3up/compare/w3up-client-v16.4.0...w3up-client-v16.4.1) (2024-11-05)
 
 
