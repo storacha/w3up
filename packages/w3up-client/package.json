@@ -32,6 +32,9 @@
       "types": "./dist/src/account.d.ts",
       "import": "./dist/src/account.js"
     },
+    "./browser.min.js": {
+      "default": "./browser.min.js"
+    },
     "./delegation": {
       "types": "./dist/src/delegation.d.ts",
       "import": "./dist/src/delegation.js"
@@ -118,12 +121,15 @@
     "access": "public"
   },
   "files": [
-    "dist"
+    "dist",
+    "*.min.js"
   ],
   "scripts": {
     "attw": "attw --pack .",
     "lint": "tsc --build && eslint '**/*.{js,ts}' && prettier --check '**/*.{js,ts,yml,json}' --ignore-path ../../.gitignore",
-    "build": "tsc --build",
+    "build": "npm run build:tsc && npm run build:bundle:browser",
+    "build:tsc": "tsc --build",
+    "build:bundle:browser": "esbuild src/index.js --bundle --minify --target=chrome130 --format=iife --global-name=w3up --outfile=browser.min.js",
     "dev": "tsc --build --watch",
     "check": "tsc --build",
     "prepare": "npm run build",
@@ -165,6 +171,7 @@
     "@web3-storage/upload-api": "workspace:^",
     "assert": "^2.0.0",
     "c8": "^7.13.0",
+    "esbuild": "^0.24.0",
     "hundreds": "^0.0.9",
     "mocha": "^10.1.0",
     "multiformats": "^12.1.2",
@@ -191,7 +198,8 @@
       "docs",
       "docs-generated",
       "coverage",
-      "src/types.js"
+      "src/types.js",
+      "*.min.js"
     ]
   },
   "directories": {
