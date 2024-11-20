@@ -1,5 +1,12 @@
 # Changelog
 
+## [16.5.1](https://github.com/storacha/w3up/compare/w3up-client-v16.5.0...w3up-client-v16.5.1) (2024-11-20)
+
+
+### Fixes
+
+* use configured receipts endpoint ([882d1c5](https://github.com/storacha/w3up/commit/882d1c5bda412103fa7d635f4ef1b99c1782e17a))
+
 ## [16.5.0](https://github.com/storacha/w3up/compare/w3up-client-v16.4.1...w3up-client-v16.5.0) (2024-11-17)
 
 
