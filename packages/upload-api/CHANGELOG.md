@@ -1,5 +1,17 @@
 # Changelog
 
+## [18.1.2](https://github.com/storacha/w3up/compare/upload-api-v18.1.1...upload-api-v18.1.2) (2024-11-20)
+
+
+### Fixes
+
+* ensure idempotent ([8b0584d](https://github.com/storacha/w3up/commit/8b0584dd0bea5b6cfe8ccafae8d19e708864e5d1))
+
+
+### Other Changes
+
+* **main:** release w3up-client 16.4.1 ([#1577](https://github.com/storacha/w3up/issues/1577)) ([1482d69](https://github.com/storacha/w3up/commit/1482d69c28baff1c27b1baf5f3e5c76f844e5576))
+
 ## [18.1.1](https://github.com/storacha/w3up/compare/upload-api-v18.1.0...upload-api-v18.1.1) (2024-11-05)
 
 
