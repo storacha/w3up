@@ -1,6 +1,6 @@
 /**
  * Utility to create delegations for actors in the network.
- * 
+ *
  * Usage:
  * node mkdelegate.js <private-key>
  */
@@ -13,15 +13,14 @@ import * as DID from '@ipld/dag-ucan/did'
 
 const indexingServiceDID = 'did:web:staging.indexer.storacha.network'
 const uploadServiceDID = 'did:web:staging.upload.storacha.network'
-const storageProviderDID =
-  'did:key:...'
+const storageProviderDID = 'did:key:...'
 
 if (!process.argv[2]) {
   console.error('missing private key arg')
   process.exit(1)
 }
 
-// @ts-expect-error 
+// @ts-expect-error
 const delegateIndexingServiceToUploadService = async () => {
   const issuer = ed25519.parse(process.argv[2]).withDID(indexingServiceDID)
   const audience = DID.parse(uploadServiceDID)
