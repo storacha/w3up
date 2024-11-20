@@ -17,8 +17,12 @@ export class BlobClient extends Base {
    * @param {import('../types.js').RequestOptions} [options]
    */
   async add(blob, options = {}) {
+    options = {
+      receiptsEndpoint: this._receiptsEndpoint.toString(),
+      connection: this._serviceConf.upload,
+      ...options,
+    }
     const conf = await this._invocationConfig([BlobCapabilities.add.can])
-    options.connection = this._serviceConf.upload
     const bytes = new Uint8Array(await blob.arrayBuffer())
     const digest = await sha256.digest(bytes)
     return { digest, ...(await Blob.add(conf, digest, bytes, options)) }

@@ -127,7 +127,11 @@ export class Client extends Base {
       FilecoinCapabilities.offer.can,
       UploadCapabilities.add.can,
     ])
-    options.connection = this._serviceConf.upload
+    options = {
+      receiptsEndpoint: this._receiptsEndpoint.toString(),
+      connection: this._serviceConf.upload,
+      ...options,
+    }
     return uploadFile(conf, file, options)
   }
 
@@ -152,7 +156,11 @@ export class Client extends Base {
       FilecoinCapabilities.offer.can,
       UploadCapabilities.add.can,
     ])
-    options.connection = this._serviceConf.upload
+    options = {
+      receiptsEndpoint: this._receiptsEndpoint.toString(),
+      connection: this._serviceConf.upload,
+      ...options,
+    }
     return uploadDirectory(conf, files, options)
   }
 
@@ -182,7 +190,11 @@ export class Client extends Base {
       FilecoinCapabilities.offer.can,
       UploadCapabilities.add.can,
     ])
-    options.connection = this._serviceConf.upload
+    options = {
+      receiptsEndpoint: this._receiptsEndpoint.toString(),
+      connection: this._serviceConf.upload,
+      ...options,
+    }
     return uploadCAR(conf, car, options)
   }
 
