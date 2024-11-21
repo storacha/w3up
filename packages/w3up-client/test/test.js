@@ -84,7 +84,7 @@ export const setup = async () => {
         upload: context.connection,
         filecoin: context.connection,
       },
-      receiptsEndpoint: new URL(receiptsEndpoint)
+      receiptsEndpoint: new URL(receiptsEndpoint),
     })
 
   return {

@@ -16,7 +16,7 @@ export const BlobClient = Test.withContext({
         access: connection,
         upload: connection,
       },
-      receiptsEndpoint: new URL(receiptsEndpoint)
+      receiptsEndpoint: new URL(receiptsEndpoint),
     })
 
     const space = await alice.createSpace('test')
@@ -53,7 +53,7 @@ export const BlobClient = Test.withContext({
         access: connection,
         upload: connection,
       },
-      receiptsEndpoint: new URL(receiptsEndpoint)
+      receiptsEndpoint: new URL(receiptsEndpoint),
     })
 
     const space = await alice.createSpace('test')
