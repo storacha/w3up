@@ -54,7 +54,7 @@ export const testClient = {
       const dataCID = await alice.uploadFile(file, {
         onShardStored: (meta) => {
           carCID = meta.cid
-        }
+        },
       })
 
       assert.deepEqual(await uploadTable.exists(space.did(), dataCID), {
@@ -112,7 +112,7 @@ export const testClient = {
           access: connection,
           upload: connection,
         },
-        receiptsEndpoint: new URL(receiptsEndpoint)
+        receiptsEndpoint: new URL(receiptsEndpoint),
       })
 
       const space = await alice.createSpace('upload-dir-test')
@@ -132,7 +132,7 @@ export const testClient = {
       const dataCID = await alice.uploadDirectory(files, {
         onShardStored: (meta) => {
           carCID = meta.cid
-        }
+        },
       })
 
       assert.deepEqual(await uploadTable.exists(space.did(), dataCID), {
@@ -175,7 +175,7 @@ export const testClient = {
       const root = await alice.uploadCAR(car, {
         onShardStored: (meta) => {
           carCID = meta.cid
-        }
+        },
       })
 
       assert.deepEqual(await uploadTable.exists(space.did(), root), {
@@ -205,7 +205,7 @@ export const testClient = {
         serviceConf: {
           access: connection,
           upload: connection,
-        }
+        },
       })
       const receipt = await alice.getReceipt(taskCid)
       // This is a real `piece/accept` receipt exported as fixture
