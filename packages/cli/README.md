@@ -278,10 +278,16 @@ Default `https://upload.storacha.network`
 
 ### `STORACHA_SERVICE_DID`
 
-`storacha` CLI will use the w3up `did:web:upload.storacha.network` as the service did. If you would like
+`storacha` CLI will use the w3up `did:web:upload.storacha.network` as the service DID. If you would like
 to use a different w3up-compatible service, set `STORACHA_SERVICE_DID` and `STORACHA_SERVICE_URL` environment variables to set the service DID and URL endpoint.
 
 Default `did:web:upload.storacha.network`
+
+### `STORACHA_RECEIPTS_URL`
+
+The URL at which UCAN receipts issued by the service may be fetched.
+
+Default `https://upload.storacha.network/receipt/`
 
 ## FAQ
 
