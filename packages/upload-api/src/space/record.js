@@ -33,7 +33,7 @@ const egressRecord = async ({ capability, invocation }, context) => {
     // Number of bytes that were served.
     capability.nb.bytes,
     // Date and time when the resource was served.
-    new Date(capability.nb.servedAt * 1000),
+    new Date(capability.nb.servedAt),
     // Link to the invocation that caused the egress traffic.
     invocation.cid
   )

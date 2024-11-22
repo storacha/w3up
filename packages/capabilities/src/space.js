@@ -87,7 +87,7 @@ export const egressRecord = capability({
     resource: Schema.link(),
     /** Amount of bytes served. */
     bytes: Schema.integer().greaterThan(0),
-    /** Timestamp of the event in seconds after Unix epoch. */
+    /** Timestamp of the event in milliseconds after Unix epoch. */
     servedAt: Schema.integer().greaterThan(-1),
   }),
   derives: equalWith,
