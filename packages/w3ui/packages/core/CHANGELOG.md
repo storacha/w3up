@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.3.2](https://github.com/storacha/w3ui/compare/core-v2.3.1...core-v2.3.2) (2024-11-25)
+
+
+### Bug Fixes
+
+* add missing receiptsEndpoint to client instantiation ([#647](https://github.com/storacha/w3ui/issues/647)) ([1c1e19d](https://github.com/storacha/w3ui/commit/1c1e19dd5613cde6b102eb83997911324f854d1f))
+
 ## [2.3.1](https://github.com/storacha/w3ui/compare/core-v2.3.0...core-v2.3.1) (2024-09-20)
 
 
