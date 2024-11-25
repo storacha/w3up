@@ -1,5 +1,12 @@
 # Changelog
 
+## [18.1.3](https://github.com/storacha/w3up/compare/upload-api-v18.1.2...upload-api-v18.1.3) (2024-11-22)
+
+
+### Fixes
+
+* **egressRecord:** Remove unnecessary multiplication for ts conversion ([#1588](https://github.com/storacha/w3up/issues/1588)) ([b7bc90e](https://github.com/storacha/w3up/commit/b7bc90e6a33b8f33dd7356794c55a77b364799ee))
+
 ## [18.1.2](https://github.com/storacha/w3up/compare/upload-api-v18.1.1...upload-api-v18.1.2) (2024-11-20)
 
 
