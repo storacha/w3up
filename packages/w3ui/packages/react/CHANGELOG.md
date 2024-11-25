@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.5.1](https://github.com/storacha/w3ui/compare/react-v2.5.0...react-v2.5.1) (2024-11-25)
+
+
+### Bug Fixes
+
+* add missing receiptsEndpoint to client instantiation ([#647](https://github.com/storacha/w3ui/issues/647)) ([1c1e19d](https://github.com/storacha/w3ui/commit/1c1e19dd5613cde6b102eb83997911324f854d1f))
+
 ## [2.5.0](https://github.com/storacha/w3ui/compare/react-v2.4.0...react-v2.5.0) (2024-10-07)
 
 
