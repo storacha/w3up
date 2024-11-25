@@ -8,7 +8,9 @@ import type {
 import { useState, useEffect, useCallback } from 'react'
 import { STORE_SAVE_EVENT, createClient } from '@w3ui/core'
 
-export type DatamodelProps = ServiceConfig
+export type DatamodelProps = ServiceConfig & {
+  receiptsEndpoint?: URL
+}
 
 export interface Datamodel {
   client?: Client
@@ -17,7 +19,7 @@ export interface Datamodel {
   logout: () => Promise<void>
 }
 
-export function useDatamodel ({ servicePrincipal, connection }: DatamodelProps): Datamodel {
+export function useDatamodel ({ servicePrincipal, connection, receiptsEndpoint }: DatamodelProps): Datamodel {
   const [client, setClient] = useState<Client>()
   const [events, setEvents] = useState<EventTarget>()
   const [accounts, setAccounts] = useState<Account[]>([])
@@ -26,7 +28,7 @@ export function useDatamodel ({ servicePrincipal, connection }: DatamodelProps):
   // update this function any time servicePrincipal or connection change
   const setupClient = useCallback(
     async (): Promise<void> => {
-      const { client, events } = await createClient({ servicePrincipal, connection })
+      const { client, events } = await createClient({ servicePrincipal, connection, receiptsEndpoint })
       setClient(client)
       setEvents(events)
       setAccounts(Object.values(client.accounts()))

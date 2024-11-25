@@ -41,6 +41,7 @@ export interface ContextActions {
 
 export interface CreateClientOptions extends ServiceConfig {
   events?: EventTarget
+  receiptsEndpoint?: URL
 }
 
 /**
@@ -72,6 +73,6 @@ export async function createClient (
   const events = options?.events ?? new EventTarget()
   const store = new IndexedDBEventDispatcherStore(dbName, events)
   const serviceConf = createServiceConf(options)
-  const client = await createW3UPClient({ store, serviceConf })
+  const client = await createW3UPClient({ store, serviceConf, receiptsEndpoint: options?.receiptsEndpoint })
   return { client, events, store }
 }

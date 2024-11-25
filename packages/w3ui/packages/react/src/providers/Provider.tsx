@@ -33,6 +33,7 @@ export const Context = createContext<ContextValue>(
 
 export interface ProviderProps extends ServiceConfig {
   children?: ReactNode
+  receiptsEndpoint?: URL
 }
 
 /**
@@ -41,9 +42,10 @@ export interface ProviderProps extends ServiceConfig {
 export function Provider ({
   children,
   servicePrincipal,
-  connection
+  connection,
+  receiptsEndpoint
 }: ProviderProps): ReactNode {
-  const { client, accounts, spaces, logout } = useDatamodel({ servicePrincipal, connection })
+  const { client, accounts, spaces, logout } = useDatamodel({ servicePrincipal, connection, receiptsEndpoint })
   return (
     <Context.Provider value={[{ client, accounts, spaces }, { logout }]}>
       {children}
