@@ -9,6 +9,7 @@ import {
   Index as IndexCapabilities,
   Upload as UploadCapabilities,
   Filecoin as FilecoinCapabilities,
+  Space as SpaceCapabilities,
 } from '@web3-storage/capabilities'
 import * as DIDMailto from '@web3-storage/did-mailto'
 import { Base } from './base.js'
@@ -253,6 +254,9 @@ export class Client extends Base {
    *
    * @typedef {object} CreateOptions
    * @property {Account.Account} [account]
+   * @property {boolean} [unauthorizeGateway] - If true, the gateway will not be authorized to serve content from the space.
+   * @property {`did:web:${string}`} [gateway] - The gateway to be authorized to serve content from the space. If not provided, the default did:web:w3s.link gateway will be authorized.
+   * @property {number} [gatewayExpiration] - The time in seconds to expire the gateway authorization.
    *
    * @param {string} name
    * @param {CreateOptions} options
@@ -291,7 +295,74 @@ export class Client extends Base {
         )
       }
     }
+
+    if (!options.unauthorizeGateway) {
+      await this.authorizeGateway(space, {
+        gateway: options.gateway,
+        expiration: options.gatewayExpiration,
+      })
+    }
+
     return space
+  }
+
+  /**
+   * Authorizes a gateway to serve content from the provided space and record egress events.
+   * Delegates the following capabilities to the gateway:
+   * - `space/content/serve/*`
+   *
+   * @param {import('./types.js').OwnedSpace} space - The space to authorize the gateway for.
+   * @param {object} [options] - Options for the authorization.
+   * @param {`did:web:${string}`} [options.gateway] - The Web DID of the gateway to authorize. If not provided, the default `did:web:w3s.link` gateway will be authorized.
+   * @param {number} [options.expiration] - The time in seconds to expire the authorization.
+   * @returns {Promise<void>}
+   */
+  async authorizeGateway(space, options = {}) {
+    const currentSpace = this.currentSpace()
+    try {
+      if (currentSpace && currentSpace.did() !== space.did()) {
+        // Set the current space to the space we are authorizing the gateway for
+        await this.setCurrentSpace(space.did())
+      }
+
+      // Authorize the agent to access the space
+      const authProof = await space.createAuthorization(this.agent)
+
+      // Create a delegation for the Gateway to serve content from the space
+      const delegation = await this.createDelegation(
+        /** @type {import('@ucanto/client').Principal<`did:${string}:${string}`>} */
+        {
+          did: () => options.gateway ?? `did:web:w3s.link`,
+        },
+        [SpaceCapabilities.contentServe.can],
+        {
+          expiration: options.expiration ?? Infinity,
+          proofs: [authProof],
+        }
+      )
+
+      // Authorize the gateway to serve content from the space
+      const result = await this.capability.access.delegate({
+        delegations: [delegation],
+      })
+
+      if (result.error) {
+        throw new Error(
+          `failed to authorize gateway: ${result.error.message}`,
+          {
+            cause: result.error,
+          }
+        )
+      }
+
+      // TODO: save the delegation into the DelegationsStore
+      // delegation
+    } finally {
+      // Reset the current space to the original space
+      if (currentSpace && currentSpace.did() !== space.did()) {
+        await this.setCurrentSpace(currentSpace.did())
+      }
+    }
   }
 
   /**
