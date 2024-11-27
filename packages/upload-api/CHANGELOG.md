@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.4](https://github.com/storacha/upload-service/compare/upload-api-v1.1.3...upload-api-v1.1.4) (2024-11-27)
+
+
+### Fixes
+
+* compatibility with legacy w3up client ([#59](https://github.com/storacha/upload-service/issues/59)) ([7185046](https://github.com/storacha/upload-service/commit/7185046e3186bef9b4f56f9e6c1c94a0c576fc53))
+
 ## [1.1.3](https://github.com/storacha/upload-service/compare/upload-api-v1.1.2...upload-api-v1.1.3) (2024-11-12)
 
 
