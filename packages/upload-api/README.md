@@ -15,7 +15,9 @@ npm install @storacha/upload-api
 
 ## Usage
 
-Coming soon!
+```js
+import { ... } from '@storacha/upload-api'
+```
 
 ## Contributing
 
