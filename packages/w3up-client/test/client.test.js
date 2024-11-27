@@ -15,6 +15,7 @@ import { receiptsEndpoint } from './helpers/utils.js'
 import { Absentee } from '@ucanto/principal'
 import { DIDMailto } from '../src/capability/access.js'
 import { confirmConfirmationUrl } from '../../upload-api/test/helpers/utils.js'
+import * as SpaceCapability from '@web3-storage/capabilities/space'
 
 /** @type {Test.Suite} */
 export const testClient = {
@@ -525,6 +526,45 @@ export const testClient = {
         currentSpace?.did(),
         spaceA.did(),
         'current space is not space A'
+      )
+    },
+  }),
+  authorizeGateway: Test.withContext({
+    'should authorize a gateway to serve content from a space': async (
+      assert,
+      { client, mail, grantAccess }
+    ) => {
+      // Step 1: Create a client for Alice and login
+      const aliceEmail = 'alice@web.mail'
+      const aliceLogin = client.login(aliceEmail)
+      const message = await mail.take()
+      assert.deepEqual(message.to, aliceEmail)
+      await grantAccess(message)
+      const aliceAccount = await aliceLogin
+
+      // Step 2: Alice creates a space
+      const spaceA = await client.createSpace('authorize-gateway-space', {
+        account: aliceAccount,
+      })
+      assert.ok(spaceA)
+      await client.setCurrentSpace(spaceA.did())
+
+      // Step 3: Authorize the gateway to serve content from the space
+      const delegation = await client.authorizeGateway(spaceA, {
+        gateway: 'did:web:staging.w3s.link',
+        expiration: Infinity,
+      })
+      assert.ok(delegation)
+
+      // Step 4: Find the delegation for the default gateway
+      assert.equal(delegation.audience.did(), 'did:web:staging.w3s.link')
+      assert.ok(
+        delegation.capabilities.some(
+          // @ts-expect-error
+          (c) =>
+            c.can === SpaceCapability.contentServe.can &&
+            c.with === spaceA.did()
+        )
       )
     },
   }),
