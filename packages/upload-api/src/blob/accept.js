@@ -1,5 +1,6 @@
 import * as Blob from '@storacha/capabilities/blob'
-import { Message, Invocation } from '@ucanto/core'
+import * as W3sBlob from '@storacha/capabilities/web3.storage/blob'
+import { Message, Receipt, Invocation } from '@ucanto/core'
 import * as Transport from '@ucanto/transport/car'
 import * as API from '../types.js'
 import * as HTTP from '@storacha/capabilities/http'
@@ -83,10 +84,34 @@ export const poll = async (context, receipt) => {
     configure.ok.connection
   )
 
+  // Create receipt for legacy `web3.storage/blob/accept`. The old client
+  // `@web3-storage/w3up-client` will poll for a receipt for this task, so
+  // we create one whose result is simply the result of the actual `blob/accept`
+  // task.
+  //
+  // TODO: remove when all users migrate to `@storacha/client`.
+  const w3sAccept = W3sBlob.accept.invoke({
+    issuer: context.id,
+    audience: context.id,
+    with: context.id.did(),
+    nb: {
+      blob: allocate.nb.blob,
+      space: /** @type {API.DIDKey} */ (DID.decode(allocate.nb.space).did()),
+      _put: { 'ucan/await': ['.out.ok', receipt.ran.link()] },
+    },
+  })
+  const w3sAcceptTask = await w3sAccept.delegate()
+  const w3sAcceptReceipt = await Receipt.issue({
+    issuer: context.id,
+    ran: w3sAcceptTask.cid,
+    result: acceptReceipt.out,
+    fx: acceptReceipt.fx,
+  })
+
   // record the invocation and the receipt
   const message = await Message.build({
     invocations: [configure.ok.invocation],
-    receipts: [acceptReceipt],
+    receipts: [acceptReceipt, w3sAcceptReceipt],
   })
   const messageWrite = await context.agentStore.messages.write({
     source: await Transport.outbound.encode(message),

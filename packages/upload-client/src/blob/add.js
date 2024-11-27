@@ -1,5 +1,4 @@
 import { ed25519 } from '@ucanto/principal'
-import { conclude } from '@storacha/capabilities/ucan'
 import * as UCAN from '@storacha/capabilities/ucan'
 import { Delegation, Receipt } from '@ucanto/core'
 import * as BlobCapabilities from '@storacha/capabilities/blob'
@@ -121,7 +120,7 @@ export function createConcludeInvocation(id, serviceDid, receipt) {
     receiptBlocks.push(block)
     receiptCids.push(block.cid)
   }
-  const concludeAllocatefx = conclude.invoke({
+  const concludeAllocatefx = UCAN.conclude.invoke({
     issuer: id,
     audience: serviceDid,
     with: id.toDIDKey(),
@@ -292,9 +291,12 @@ export async function add(
     )
     const ucanConclude = await httpPutConcludeInvocation.execute(conn)
     if (!ucanConclude.out.ok) {
-      throw new Error(`failed ${SpaceBlobCapabilities.add.can} invocation`, {
-        cause: result.out.error,
-      })
+      throw new Error(
+        `failed ${UCAN.conclude.can} for ${HTTPCapabilities.put.can} invocation`,
+        {
+          cause: result.out.error,
+        }
+      )
     }
   }
 

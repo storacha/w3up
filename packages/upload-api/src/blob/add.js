@@ -4,6 +4,7 @@ import * as Transport from '@ucanto/transport/car'
 import { ed25519 } from '@ucanto/principal'
 import * as Blob from '@storacha/capabilities/blob'
 import * as SpaceBlob from '@storacha/capabilities/space/blob'
+import * as W3sBlob from '@storacha/capabilities/web3.storage/blob'
 import * as HTTP from '@storacha/capabilities/http'
 import * as Digest from 'multiformats/hashes/digest'
 import * as DID from '@ipld/dag-ucan/did'
@@ -50,6 +51,14 @@ export function blobAddProvider(context) {
         return allocation
       }
 
+      const allocationW3s = await allocateW3s({
+        context,
+        blob,
+        space,
+        cause: invocation.link(),
+        receipt: allocation.ok.receipt,
+      })
+
       const delivery = await put({
         blob,
         allocation: allocation.ok,
@@ -66,7 +75,16 @@ export function blobAddProvider(context) {
         return acceptance
       }
 
-      // Create a result describing the this invocation workflow
+      const acceptanceW3s = await acceptW3s({
+        context,
+        provider: allocation.ok.provider,
+        blob,
+        space,
+        delivery: delivery,
+        acceptance: acceptance.ok,
+      })
+
+      // Create a result describing this invocation workflow
       let result = Server.ok({
         /** @type {API.SpaceBlobAddSuccess['site']} */
         site: {
@@ -74,12 +92,20 @@ export function blobAddProvider(context) {
         },
       })
         .fork(allocation.ok.task)
+        .fork(allocationW3s.task)
         .fork(delivery.task)
         .fork(acceptance.ok.task)
+        .fork(acceptanceW3s.task)
 
       // As a temporary solution we fork all add effects that add inline
       // receipts so they can be delivered to the client.
-      const fx = [...allocation.ok.fx, ...delivery.fx, ...acceptance.ok.fx]
+      const fx = [
+        ...allocation.ok.fx,
+        ...allocationW3s.fx,
+        ...delivery.fx,
+        ...acceptance.ok.fx,
+        ...acceptanceW3s.fx,
+      ]
       for (const task of fx) {
         result = result.fork(task)
       }
@@ -170,6 +196,49 @@ async function allocate({ context, blob, space, cause }) {
     receipt,
     fx: [await concludeAllocate.delegate()],
   })
+}
+
+/**
+ * Create an allocation task and receipt using the legacy
+ * `web3.storage/blob/allocate` capability. This enables backwards compatibility
+ * with `@web3-storage/w3up-client`.
+ *
+ * TODO: remove when all users migrate to `@storacha/client`.
+ *
+ * @param {object} allocate
+ * @param {API.BlobServiceContext} allocate.context
+ * @param {API.BlobModel} allocate.blob
+ * @param {API.DIDKey} allocate.space
+ * @param {API.Link} allocate.cause
+ * @param {API.Receipt<API.BlobAllocateSuccess, API.BlobAcceptFailure>} allocate.receipt
+ */
+async function allocateW3s({ context, blob, space, cause, receipt }) {
+  const w3sAllocate = W3sBlob.allocate.invoke({
+    issuer: context.id,
+    audience: context.id,
+    with: context.id.did(),
+    nb: { blob, cause, space },
+    expiration: Infinity,
+  })
+  const w3sAllocateTask = await w3sAllocate.delegate()
+
+  const w3sAllocateReceipt = await Receipt.issue({
+    issuer: context.id,
+    ran: w3sAllocateTask.cid,
+    result: receipt.out,
+  })
+
+  const w3sAllocateConclude = createConcludeInvocation(
+    context.id,
+    context.id,
+    w3sAllocateReceipt
+  )
+
+  return {
+    task: w3sAllocateTask,
+    receipt: w3sAllocateReceipt,
+    fx: [await w3sAllocateConclude.delegate()],
+  }
 }
 
 /**
@@ -312,4 +381,67 @@ async function accept({ context, provider, blob, space, delivery }) {
     receipt,
     fx: receipt ? [await conclude(receipt, context.id)] : [],
   })
+}
+
+/**
+ * Create an accept task and receipt using the legacy
+ * `web3.storage/blob/accept` capability. This enables backwards compatibility
+ * with `@web3-storage/w3up-client`.
+ *
+ * TODO: remove when all users migrate to `@storacha/client`.
+ *
+ * @param {object} input
+ * @param {API.BlobServiceContext} input.context
+ * @param {API.Principal} input.provider
+ * @param {API.BlobModel} input.blob
+ * @param {API.DIDKey} input.space
+ * @param {object} input.delivery
+ * @param {API.Invocation<API.HTTPPut>} input.delivery.task
+ * @param {API.Receipt|null} input.delivery.receipt
+ * @param {object} input.acceptance
+ * @param {API.Receipt|null} input.acceptance.receipt
+ */
+async function acceptW3s({ context, blob, space, delivery, acceptance }) {
+  // 1. Create web3.storage/blob/accept invocation and task
+  const w3sAccept = W3sBlob.accept.invoke({
+    issuer: context.id,
+    audience: context.id,
+    with: context.id.did(),
+    nb: {
+      blob,
+      space,
+      _put: { 'ucan/await': ['.out.ok', delivery.task.link()] },
+    },
+  })
+  const w3sAcceptTask = await w3sAccept.delegate()
+
+  let w3sAcceptReceipt = null
+  // If put has failed, we propagate the error to the `blob/accept` receipt.
+  if (delivery.receipt?.out.error) {
+    w3sAcceptReceipt = await Receipt.issue({
+      issuer: context.id,
+      ran: w3sAcceptTask,
+      result: {
+        error: new AwaitError({
+          cause: delivery.receipt.out.error,
+          at: '.out.ok',
+          reference: delivery.task.link(),
+        }),
+      },
+    })
+  }
+  // If `blob/accept` receipt is present, we issue a receipt for
+  // `web3.storage/blob/accept`.
+  else if (acceptance.receipt) {
+    w3sAcceptReceipt = await Receipt.issue({
+      issuer: context.id,
+      ran: w3sAcceptTask,
+      result: acceptance.receipt.out,
+    })
+  }
+
+  return {
+    task: w3sAcceptTask,
+    fx: w3sAcceptReceipt ? [await conclude(w3sAcceptReceipt, context.id)] : [],
+  }
 }

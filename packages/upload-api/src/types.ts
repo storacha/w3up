@@ -414,6 +414,8 @@ export interface RevocationServiceContext {
 }
 
 export interface ConcludeServiceContext {
+  /** Upload service signer. */
+  id: Signer
   /**
    * Store for invocations & receipts.
    */

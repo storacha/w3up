@@ -56,7 +56,7 @@ export const test = {
         blobAdd.out.ok.site['ucan/await'][1],
         next.accept.task.cid
       )
-      assert.equal(blobAdd.fx.fork.length, 4)
+      assert.equal(blobAdd.fx.fork.length, 7)
 
       // validate receipt next
       assert.ok(next.allocate.task)

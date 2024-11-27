@@ -780,12 +780,18 @@ importers:
       '@ucanto/server':
         specifier: ^10.0.0
         version: 10.0.0
+      '@web3-storage/access':
+        specifier: ^20.1.0
+        version: 20.1.0
       '@web3-storage/content-claims':
         specifier: ^4.0.4
         version: 4.0.5
       '@web3-storage/data-segment':
         specifier: ^5.0.0
         version: 5.3.0
+      '@web3-storage/w3up-client':
+        specifier: ^16.5.1
+        version: 16.5.1
       assert:
         specifier: ^2.0.0
         version: 2.1.0
@@ -2520,6 +2526,16 @@ packages:
   '@web-std/stream@1.0.0':
     resolution: {integrity: sha512-jyIbdVl+0ZJyKGTV0Ohb9E6UnxP+t7ZzX4Do3AHjZKxUXKMs9EmqnBDQgHF7bEw0EzbQygOjtt/7gvtmi//iCQ==}
 
+  '@web3-storage/access@20.1.0':
+    resolution: {integrity: sha512-IY6ICPRWE8++2jxvy+LzAiFvwAOIHR8cu9eNt+VT5sAFE796o4ma7GSU0eXRCiShmV2n6iSWAwWRT6XD5zIqPA==}
+
+  '@web3-storage/blob-index@1.0.4':
+    resolution: {integrity: sha512-04+PrmVHFT+xzRhyIPdcvGc8Y2NDffUe8R1gJOyErVzEVz5N1I9Q/BrlFHYt/A4HrjM5JBsxqSrZgTIkjfPmLA==}
+    engines: {node: '>=16.15'}
+
+  '@web3-storage/capabilities@17.4.1':
+    resolution: {integrity: sha512-GogLfON8PZabi03CUyncBvMcCi36yQ/0iR5P8kr4pxdnZm7OuAn4sEwbEB8rTKbah5V10Vwgb3O5dh0FBgyjHg==}
+
   '@web3-storage/content-claims@4.0.5':
     resolution: {integrity: sha512-+WpCkTN8aRfUCrCm0kOMZad+FRnFymVDFvS6/+PJMPGP17cci1/c5lqYdrjFV+5MkhL+BkUJVtRTx02G31FHmQ==}
 
@@ -2532,8 +2548,22 @@ packages:
   '@web3-storage/data-segment@5.3.0':
     resolution: {integrity: sha512-zFJ4m+pEKqtKatJNsFrk/2lHeFSbkXZ6KKXjBe7/2ayA9wAar7T/unewnOcZrrZTnCWmaxKsXWqdMFy9bXK9dw==}
 
+  '@web3-storage/did-mailto@2.1.0':
+    resolution: {integrity: sha512-TRmfSXj1IhtX3ESurSNOylZSBKi0z/VJNoMLpof+AVRdovgZjjocpiePQTs2pfHKqHTHfJXc9AboWyK4IKTWMw==}
+    engines: {node: '>=16.15'}
+
+  '@web3-storage/filecoin-client@3.3.4':
+    resolution: {integrity: sha512-T2xur1NPvuH09yajyjCWEl7MBH712nqHERj51w4nDp6f8libMCKY6lca0frCrm4OC5s8oy0ZtoRFhsRYxgTzSg==}
+
   '@web3-storage/sigv4@1.0.2':
     resolution: {integrity: sha512-ZUXKK10NmuQgPkqByhb1H3OQxkIM0CIn2BMPhGQw7vQw8WIzrBkk9IJiAVfJ/UVBFrf6uzPbx2lEBLt4diCMnQ==}
+
+  '@web3-storage/upload-client@17.1.0':
+    resolution: {integrity: sha512-0tUMe4Ez9gmUZjgn1Nrl6HYdGEsYyeLa6JrpoXcCGTQDBW2FehALc+GZZeoIjYQexRpw+qt9JstuJNN9dUNETw==}
+
+  '@web3-storage/w3up-client@16.5.1':
+    resolution: {integrity: sha512-tsBUSo6/bPElGAlMbHVeQDMgg4krRrKXOBl0TZttAAIYcMzTvm7fkDfD9+5rvJFsa/a846XqPoxtO21LwL768A==}
+    engines: {node: '>=18'}
 
   '@webassemblyjs/ast@1.14.1':
     resolution: {integrity: sha512-nuBEDgQfm1ccRp/8bCQrx1frohyufl4JlbMMZ4P1wpeOfDhF6FQkxZJ1b/e+PLwr6X1Nhw6OLme5usuBWYBvuQ==}
@@ -10168,6 +10198,48 @@ snapshots:
     dependencies:
       web-streams-polyfill: 3.3.3
 
+  '@web3-storage/access@20.1.0':
+    dependencies:
+      '@ipld/car': 5.3.3
+      '@ipld/dag-ucan': 3.4.0
+      '@scure/bip39': 1.4.0
+      '@storacha/one-webcrypto': 1.0.1
+      '@ucanto/client': 9.0.1
+      '@ucanto/core': 10.0.1
+      '@ucanto/interface': 10.0.1
+      '@ucanto/principal': 9.0.1
+      '@ucanto/transport': 9.1.1
+      '@ucanto/validator': 9.0.2
+      '@web3-storage/capabilities': 17.4.1
+      '@web3-storage/did-mailto': 2.1.0
+      bigint-mod-arith: 3.3.1
+      conf: 11.0.2
+      multiformats: 12.1.3
+      p-defer: 4.0.1
+      type-fest: 4.26.1
+      uint8arrays: 4.0.10
+
+  '@web3-storage/blob-index@1.0.4':
+    dependencies:
+      '@ipld/dag-cbor': 9.2.2
+      '@storacha/one-webcrypto': 1.0.1
+      '@ucanto/core': 10.0.1
+      '@ucanto/interface': 10.0.1
+      '@web3-storage/capabilities': 17.4.1
+      carstream: 2.2.0
+      multiformats: 13.3.1
+      uint8arrays: 5.1.0
+
+  '@web3-storage/capabilities@17.4.1':
+    dependencies:
+      '@ucanto/core': 10.0.1
+      '@ucanto/interface': 10.0.1
+      '@ucanto/principal': 9.0.1
+      '@ucanto/transport': 9.1.1
+      '@ucanto/validator': 9.0.2
+      '@web3-storage/data-segment': 5.3.0
+      uint8arrays: 5.1.0
+
   '@web3-storage/content-claims@4.0.5':
     dependencies:
       '@ucanto/client': 9.0.1
@@ -10198,9 +10270,58 @@ snapshots:
       multiformats: 13.3.1
       sync-multihash-sha2: 1.0.0
 
+  '@web3-storage/did-mailto@2.1.0': {}
+
+  '@web3-storage/filecoin-client@3.3.4':
+    dependencies:
+      '@ipld/dag-ucan': 3.4.0
+      '@ucanto/client': 9.0.1
+      '@ucanto/core': 10.0.1
+      '@ucanto/interface': 10.0.1
+      '@ucanto/transport': 9.1.1
+      '@web3-storage/capabilities': 17.4.1
+
   '@web3-storage/sigv4@1.0.2':
     dependencies:
       '@noble/hashes': 1.5.0
+
+  '@web3-storage/upload-client@17.1.0':
+    dependencies:
+      '@ipld/car': 5.3.3
+      '@ipld/dag-cbor': 9.2.2
+      '@ipld/dag-ucan': 3.4.0
+      '@ipld/unixfs': 2.2.0
+      '@ucanto/client': 9.0.1
+      '@ucanto/core': 10.0.1
+      '@ucanto/interface': 10.0.1
+      '@ucanto/transport': 9.1.1
+      '@web3-storage/blob-index': 1.0.4
+      '@web3-storage/capabilities': 17.4.1
+      '@web3-storage/data-segment': 5.3.0
+      '@web3-storage/filecoin-client': 3.3.4
+      ipfs-utils: 9.0.14(encoding@0.1.13)
+      multiformats: 12.1.3
+      p-retry: 5.1.2
+      varint: 6.0.0
+    transitivePeerDependencies:
+      - encoding
+
+  '@web3-storage/w3up-client@16.5.1':
+    dependencies:
+      '@ipld/dag-ucan': 3.4.0
+      '@ucanto/client': 9.0.1
+      '@ucanto/core': 10.0.1
+      '@ucanto/interface': 10.0.1
+      '@ucanto/principal': 9.0.1
+      '@ucanto/transport': 9.1.1
+      '@web3-storage/access': 20.1.0
+      '@web3-storage/blob-index': 1.0.4
+      '@web3-storage/capabilities': 17.4.1
+      '@web3-storage/did-mailto': 2.1.0
+      '@web3-storage/filecoin-client': 3.3.4
+      '@web3-storage/upload-client': 17.1.0
+    transitivePeerDependencies:
+      - encoding
 
   '@webassemblyjs/ast@1.14.1':
     dependencies:

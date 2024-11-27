@@ -185,7 +185,7 @@ describe('Blob.add', () => {
         { connection }
       ),
       {
-        message: 'failed space/blob/add invocation',
+        message: 'failed ucan/conclude for http/put invocation',
       }
     )
   })
