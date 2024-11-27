@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.0.2](https://github.com/storacha/upload-service/compare/client-v1.0.1...client-v1.0.2) (2024-11-27)
+
+
+### Fixes
+
+* Fix type references ([cc09933](https://github.com/storacha/upload-service/commit/cc09933ea0132e10f39f27304a273c443d3da3fa))
+* Fix type references ([#57](https://github.com/storacha/upload-service/issues/57)) ([10e6c7d](https://github.com/storacha/upload-service/commit/10e6c7d95becbe1f804a5195b5255cf95394351b))
+
 ## [1.0.1](https://github.com/storacha/upload-service/compare/client-v1.0.0...client-v1.0.1) (2024-11-12)
 
 
