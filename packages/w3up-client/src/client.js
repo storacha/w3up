@@ -98,7 +98,7 @@ export class Client extends Base {
   /**
    * List all accounts that agent has stored access to.
    *
-   * @returns {Record<DIDMailto, Account>} A dictionary with `did:mailto` as keys and `Account` instances as values.
+   * @returns {Record<DIDMailto.DidMailto, Account.Account>} A dictionary with `did:mailto` as keys and `Account` instances as values.
    */
   accounts() {
     return Account.list(this)
