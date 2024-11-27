@@ -1,6 +1,5 @@
 {
   "separate-pull-requests": true,
-  "bootstrap-sha": "112720e098d24b49e4f142fe52c2a1d316e5353f",
   "changelog-sections": [
     { "type": "feat", "section": "Features", "hidden": false },
     { "type": "fix", "section": "Fixes", "hidden": false },
