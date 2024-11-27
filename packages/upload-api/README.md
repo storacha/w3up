@@ -10,6 +10,7 @@ be implemented to run w3up on top of arbitrary data stores.
 ## Install
 
 Install the package using npm:
+
 ```bash
 npm install @storacha/upload-api
 ```
