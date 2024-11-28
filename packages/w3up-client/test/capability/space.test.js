@@ -142,7 +142,7 @@ export const SpaceClient = Test.withContext({
         assert.equal(egressRecord.bytes, car.size, 'bytes should be the same')
         assert.equal(
           new Date(egressRecord.servedAt).getTime(),
-          Math.floor(new Date(egressData.servedAt).getTime() / 1000) * 1000,
+          Math.floor(new Date(egressData.servedAt).getTime() / 1000),
           'servedAt should be the same'
         )
         assert.ok(egressRecord.cause.toString(), 'cause should be a link')
@@ -252,7 +252,7 @@ export const SpaceClient = Test.withContext({
         assert.equal(egressRecord.bytes, car.size, 'bytes should be the same')
         assert.equal(
           new Date(egressRecord.servedAt).getTime(),
-          Math.floor(new Date(egressData.servedAt).getTime() / 1000) * 1000,
+          Math.floor(new Date(egressData.servedAt).getTime() / 1000),
           'servedAt should be the same'
         )
         assert.ok(egressRecord.cause.toString(), 'cause should be a link')
@@ -364,7 +364,7 @@ export const SpaceClient = Test.withContext({
           assert.equal(egressRecord.bytes, car.size, 'bytes should be the same')
           assert.equal(
             new Date(egressRecord.servedAt).getTime(),
-            Math.floor(new Date(egressData.servedAt).getTime() / 1000) * 1000,
+            Math.floor(new Date(egressData.servedAt).getTime() / 1000),
             'servedAt should be the same'
           )
           assert.ok(egressRecord.cause.toString(), 'cause should be a link')
@@ -476,7 +476,7 @@ export const SpaceClient = Test.withContext({
           assert.equal(egressRecord.bytes, car.size, 'bytes should be the same')
           assert.equal(
             new Date(egressRecord.servedAt).getTime(),
-            Math.floor(new Date(egressData.servedAt).getTime() / 1000) * 1000,
+            Math.floor(new Date(egressData.servedAt).getTime() / 1000),
             'servedAt should be the same'
           )
           assert.ok(egressRecord.cause.toString(), 'cause should be a link')
