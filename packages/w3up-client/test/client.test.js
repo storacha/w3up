@@ -14,7 +14,11 @@ import * as Test from './test.js'
 import { receiptsEndpoint } from './helpers/utils.js'
 import { Absentee } from '@ucanto/principal'
 import { DIDMailto } from '../src/capability/access.js'
-import { confirmConfirmationUrl } from '../../upload-api/test/helpers/utils.js'
+import {
+  confirmConfirmationUrl,
+  w3,
+  w3Signer,
+} from '../../upload-api/test/helpers/utils.js'
 import * as SpaceCapability from '@web3-storage/capabilities/space'
 
 /** @type {Test.Suite} */
@@ -532,7 +536,7 @@ export const testClient = {
   authorizeGateway: Test.withContext({
     'should authorize a gateway to serve content from a space': async (
       assert,
-      { client, mail, grantAccess }
+      { client, mail, grantAccess, connection }
     ) => {
       // Step 1: Create a client for Alice and login
       const aliceEmail = 'alice@web.mail'
@@ -550,9 +554,9 @@ export const testClient = {
       await client.setCurrentSpace(spaceA.did())
 
       // Step 3: Authorize the gateway to serve content from the space
-      const delegation = await client.authorizeGateway(spaceA, {
-        gateway: 'did:web:staging.w3s.link',
-        expiration: Infinity,
+      const delegation = await client.authorizeContentServe(spaceA, {
+        audience: w3.did(),
+        connection: connection,
       })
       assert.ok(delegation)
 
@@ -560,7 +564,6 @@ export const testClient = {
       assert.equal(delegation.audience.did(), 'did:web:staging.w3s.link')
       assert.ok(
         delegation.capabilities.some(
-          // @ts-expect-error
           (c) =>
             c.can === SpaceCapability.contentServe.can &&
             c.with === spaceA.did()

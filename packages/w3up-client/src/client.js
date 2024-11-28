@@ -5,6 +5,7 @@ import {
   Receipt,
 } from '@web3-storage/upload-client'
 import {
+  Access as AccessCapabilities,
   Blob as BlobCapabilities,
   Index as IndexCapabilities,
   Upload as UploadCapabilities,
@@ -297,53 +298,61 @@ export class Client extends Base {
   }
 
   /**
-   * Authorizes a gateway to serve content from the provided space and record egress events.
-   * Delegates the following capabilities to the gateway:
+   * Authorizes an audience to serve content from the provided space and record egress events.
+   * It also publishes the delegation to the content serve service.
+   * Delegates the following capabilities to the audience:
    * - `space/content/serve/*`
    *
-   * @param {import('./types.js').OwnedSpace} space - The space to authorize the gateway for.
-   * @param {object} [options] - Options for the authorization.
-   * @param {`did:web:${string}`} [options.gateway] - The Web DID of the gateway to authorize. If not provided, the default `did:web:w3s.link` gateway will be authorized.
-   * @param {number} [options.expiration] - The time in seconds to expire the authorization.
-   * @returns {Promise<import('./delegation.js').AgentDelegation<any>>} Resolves with the AgentDelegation instance once the gateway is successfully authorized.
+   * @param {import('./types.js').OwnedSpace} space - The space to authorize the audience for.
+   * @param {object} options - Options for the authorization.
+   * @param {`did:${string}:${string}`} options.audience - The Web DID of the audience (gateway or peer) to authorize.
+   * @param {import('./types.js').ConnectionView<import('./types.js').ContentServeService>} options.connection - The connection to the Content Serve Service that will handle, validate, and store the access/delegate UCAN invocation.
+   * @param {number} [options.expiration] - The time at which the delegation expires in seconds from unix epoch.
    */
-  async authorizeGateway(space, options = {}) {
+  async authorizeContentServe(space, options) {
     const currentSpace = this.currentSpace()
     try {
       // Set the current space to the space we are authorizing the gateway for
       await this.setCurrentSpace(space.did())
 
-      const authProof = await space.createAuthorization(this.agent)
-
       /** @type {import('@ucanto/client').Principal<`did:${string}:${string}`>} */
-      const gateway = {
-        did: () => options.gateway ?? `did:web:w3s.link`,
+      const audience = {
+        did: () => options.audience,
       }
 
+      // Create the delegation
       const delegation = await this.createDelegation(
-        gateway,
+        audience,
         [SpaceCapabilities.contentServe.can],
         {
           expiration: options.expiration ?? Infinity,
-          proofs: [authProof],
         }
       )
 
-      const result = await this.capability.access.delegate({
-        delegations: [delegation],
-      })
+      // Publish the delegation to the content serve service
+      const verificationResult = await AccessCapabilities.delegate
+        .invoke({
+          issuer: this._agent.issuer,
+          audience,
+          with: space.did(),
+          proofs: [delegation],
+          nb: {
+            delegations: {
+              [delegation.cid.toString()]: delegation.cid,
+            },
+          },
+        })
+        .execute(options.connection)
 
-      /* c8 ignore next 8 - can't mock error */
-      if (result.error) {
+      if (verificationResult.out.error) {
         throw new Error(
-          `failed to authorize gateway: ${result.error.message}`,
+          `failed to publish delegation for audience ${options.audience} to the content serve service: ${verificationResult.out.error.message}`,
           {
-            cause: result.error,
+            cause: verificationResult.out.error,
           }
         )
       }
 
-      // TODO: save the delegation into the DelegationsStore
       return delegation
     } finally {
       if (currentSpace) {
