@@ -450,8 +450,8 @@ importers:
         specifier: workspace:^
         version: link:../capabilities
       '@web3-storage/content-claims':
-        specifier: ^5.1.0
-        version: 5.1.0
+        specifier: ^5.1.3
+        version: 5.1.3
       '@web3-storage/did-mailto':
         specifier: workspace:^
         version: link:../did-mailto
@@ -2521,8 +2521,8 @@ packages:
   '@web3-storage/content-claims@5.0.0':
     resolution: {integrity: sha512-HJFRFsR0qHCe0cOERsb3AjAxxzohYMMoIWaGJgrShDycnl6yqXHrGcdua1BWUDu5pmvKzwD9D7VmI8aSfrCcRA==}
 
-  '@web3-storage/content-claims@5.1.0':
-    resolution: {integrity: sha512-3VStFKoeieRpRU7brFjKTsAuAffQzYDIZ8F3Gh0+niw+MgzBK72osW+fftdquT8neWir34Ndu3mBUKKJ3ck1RQ==}
+  '@web3-storage/content-claims@5.1.3':
+    resolution: {integrity: sha512-X+Cpm+EmGuEvFyM8oX1NqsBkuSje836B72yuvnVmgd80XPt+McpOhM6ko7rfs9Dx9UmpiZq+998jlvBhg2W5ZA==}
 
   '@web3-storage/data-segment@4.0.0':
     resolution: {integrity: sha512-AnNyJp3wHMa7LBzguQzm4rmXSi8vQBz4uFs+jiXnSNtLR5dAqHfhMvi9XdWonWPYvxNvT5ZhYCSF0mpDjymqKg==}
@@ -9759,14 +9759,14 @@ snapshots:
       carstream: 2.1.0
       multiformats: 13.1.0
 
-  '@web3-storage/content-claims@5.1.0':
+  '@web3-storage/content-claims@5.1.3':
     dependencies:
       '@ucanto/client': 9.0.1
       '@ucanto/interface': 10.0.1
       '@ucanto/server': 10.0.0
       '@ucanto/transport': 9.1.1
       carstream: 2.1.0
-      multiformats: 13.1.0
+      multiformats: 13.3.0
 
   '@web3-storage/data-segment@4.0.0':
     dependencies:
