@@ -366,7 +366,7 @@ export interface W3sService {
   }
 }
 
-export type BlobServiceContext = SpaceServiceContext & {
+export type BlobServiceContext = SpaceServiceContext & ClaimsClientContext & {
   /**
    * Service signer
    */
