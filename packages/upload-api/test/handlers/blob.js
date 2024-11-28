@@ -464,7 +464,7 @@ export const test = {
         body: data,
         headers: address.headers,
       })
-      assert.equal(httpPut.status, 200, await httpPut.text())
+      assert.equal(httpPut.status, 200, `PUT ${address.url} failed (${httpPut.status}): ${await httpPut.text()}`)
     }
 
     const keys =
