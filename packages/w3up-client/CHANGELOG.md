@@ -1,5 +1,12 @@
 # Changelog
 
+## [16.5.2](https://github.com/storacha/w3up/compare/w3up-client-v16.5.1...w3up-client-v16.5.2) (2024-11-29)
+
+
+### Fixes
+
+* publish location claim to content claims service ([#1571](https://github.com/storacha/w3up/issues/1571)) ([fb08e0e](https://github.com/storacha/w3up/commit/fb08e0e11ed482fe8996d4dc7535c45fbcc373b7))
+
 ## [16.5.1](https://github.com/storacha/w3up/compare/w3up-client-v16.5.0...w3up-client-v16.5.1) (2024-11-20)
 
 
