@@ -43,6 +43,7 @@ export const w3Signer = ed25519.parse(
 )
 export const w3 = w3Signer.withDID('did:web:test.web3.storage')
 
+/** did:key:z6MkuKJgV8DKxiAF5oaUcT8ckg8kZUoBe6yavSLnHn5ZgyAP */
 export const gatewaySigner = ed25519.parse(
   'MgCaNpGXCEX0+BxxE4SjSStrxU9Ru/Im+HGNQ/JJx3lDoI+0B3NWjWW3G8OzjbazZjanjM3kgfcZbvpyxv20jHtmcTtg='
 )

@@ -345,7 +345,7 @@ export class Client extends Base {
   async authorizeContentServe(space, options) {
     const currentSpace = this.currentSpace()
     try {
-      // Set the current space to the space we are authorizing the gateway for
+      // Set the current space to the space we are authorizing the gateway for, otherwise the delegation will fail
       await this.setCurrentSpace(space.did())
 
       /** @type {import('@ucanto/client').Principal<`did:${string}:${string}`>} */
@@ -353,7 +353,7 @@ export class Client extends Base {
         did: () => options.audience,
       }
 
-      // Create the delegation
+      // Grant the audience the ability to serve content from the space, it includes existing proofs automatically
       const delegation = await this.createDelegation(
         audience,
         [SpaceCapabilities.contentServe.can],
@@ -363,12 +363,15 @@ export class Client extends Base {
       )
 
       // Publish the delegation to the content serve service
+      const accessProofs = this.proofs([
+        { can: AccessCapabilities.access.can, with: space.did() },
+      ])
       const verificationResult = await AccessCapabilities.delegate
         .invoke({
           issuer: this._agent.issuer,
           audience,
           with: space.did(),
-          proofs: [delegation],
+          proofs: [...accessProofs, delegation],
           nb: {
             delegations: {
               [delegation.cid.toString()]: delegation.cid,

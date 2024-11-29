@@ -15,10 +15,13 @@ import { receiptsEndpoint } from './helpers/utils.js'
 import { Absentee } from '@ucanto/principal'
 import { DIDMailto } from '../src/capability/access.js'
 import {
+  alice,
   confirmConfirmationUrl,
-  w3,
+  gateway,
+  gatewaySigner,
 } from '../../upload-api/test/helpers/utils.js'
 import * as SpaceCapability from '@web3-storage/capabilities/space'
+import { getConnection, getMockService } from './mocks/service.js'
 
 /** @type {Test.Suite} */
 export const testClient = {
@@ -547,33 +550,52 @@ export const testClient = {
   authorizeGateway: Test.withContext({
     'should authorize a gateway to serve content from a space': async (
       assert,
-      { client, mail, grantAccess, connection }
+      { mail, grantAccess, connection }
     ) => {
       // Step 1: Create a client for Alice and login
+      const aliceClient = new Client(
+        await AgentData.create({
+          principal: alice,
+        }),
+        {
+          // @ts-ignore
+          serviceConf: {
+            access: connection,
+            upload: connection,
+          },
+        }
+      )
+
       const aliceEmail = 'alice@web.mail'
-      const aliceLogin = client.login(aliceEmail)
+      const aliceLogin = aliceClient.login(aliceEmail)
       const message = await mail.take()
       assert.deepEqual(message.to, aliceEmail)
       await grantAccess(message)
       const aliceAccount = await aliceLogin
 
       // Step 2: Alice creates a space
-      const spaceA = await client.createSpace('authorize-gateway-space', {
+      const spaceA = await aliceClient.createSpace('authorize-gateway-space', {
         account: aliceAccount,
+        skipContentServeAuthorization: true,
       })
       assert.ok(spaceA)
-      await client.setCurrentSpace(spaceA.did())
 
-      // Step 3: Authorize the gateway to serve content from the space
-      const delegationResult = await client.authorizeContentServe(spaceA, {
-        audience: w3.did(),
-        connection: connection,
+      const gatewayService = getMockService()
+      const gatewayConnection = getConnection(
+        gateway,
+        gatewayService
+      ).connection
+
+      // Step 3: Alice authorizes the gateway to serve content from the space
+      const delegationResult = await aliceClient.authorizeContentServe(spaceA, {
+        audience: gateway.did(),
+        connection: gatewayConnection,
       })
       assert.ok(delegationResult.ok)
       const { delegation } = delegationResult.ok
 
       // Step 4: Find the delegation for the default gateway
-      assert.equal(delegation.audience.did(), 'did:web:staging.w3s.link')
+      assert.equal(delegation.audience.did(), gateway.did())
       assert.ok(
         delegation.capabilities.some(
           (c) =>
