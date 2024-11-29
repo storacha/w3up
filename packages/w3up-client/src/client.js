@@ -258,7 +258,7 @@ export class Client extends Base {
    * User can skip the Content Serve authorization by setting the `skipContentServeAuthorization` option to `true`.
    *
    * @typedef {object} SpaceCreateOptions
-   * @property {boolean} [skipContentServeAuthorization] - Whether to skip the Content Serve authorization.
+   * @property {boolean} [skipContentServeAuthorization] - Whether to skip the Content Serve authorization. It means that the content of the space will not be served by any Content Serve Service.
    * @property {`did:${string}:${string}`[]} [authorizeContentServeServices] - The DID Key or DID Web of the Content Serve Service to authorize to serve content from the created space.
    * @property {import('./types.js').ConnectionView<import('./types.js').ContentServeService>} [authorizeContentServeServices.connection] - The connection to the Content Serve Service that will handle, validate, and store the access/delegate UCAN invocation.
    * @property {Account.Account} [account] - The account configured as the recovery account for the space.
@@ -271,6 +271,9 @@ export class Client extends Base {
   async createSpace(name, options) {
     const space = await this._agent.createSpace(name)
 
+    // Save the space to authorize the client to use the space
+    await space.save()
+
     const account = options.account
     if (account) {
       // Provision the account with the space
@@ -281,9 +284,6 @@ export class Client extends Base {
           { cause: provisionResult.error }
         )
       }
-
-      // Save the space to authorize the client to use the space
-      await space.save()
 
       // Create a recovery for the account
       const recovery = await space.createRecovery(account.did())
@@ -379,7 +379,7 @@ export class Client extends Base {
 
       if (verificationResult.out.error) {
         throw new Error(
-          `failed to publish delegation for audience ${options.audience} to the content serve service: ${verificationResult.out.error.message}`,
+          `failed to publish delegation for audience ${options.audience}: ${verificationResult.out.error.message}`,
           {
             cause: verificationResult.out.error,
           }

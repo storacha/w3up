@@ -18,7 +18,9 @@ export const UsageClient = Test.withContext({
         },
       })
 
-      const space = await alice.createSpace('test')
+      const space = await alice.createSpace('test', {
+        skipContentServeAuthorization: true,
+      })
       const auth = await space.createAuthorization(alice)
       await alice.addSpace(auth)
 
@@ -60,7 +62,9 @@ export const UsageClient = Test.withContext({
         },
       })
 
-      const space = await alice.createSpace('test')
+      const space = await alice.createSpace('test', {
+        skipContentServeAuthorization: true,
+      })
       const auth = await space.createAuthorization(alice)
       await alice.addSpace(auth)
 

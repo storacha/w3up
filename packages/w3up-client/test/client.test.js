@@ -17,7 +17,6 @@ import { DIDMailto } from '../src/capability/access.js'
 import {
   confirmConfirmationUrl,
   w3,
-  w3Signer,
 } from '../../upload-api/test/helpers/utils.js'
 import * as SpaceCapability from '@web3-storage/capabilities/space'
 
@@ -43,7 +42,9 @@ export const testClient = {
         receiptsEndpoint: new URL(receiptsEndpoint),
       })
 
-      const space = await alice.createSpace('upload-test')
+      const space = await alice.createSpace('upload-test', {
+        skipContentServeAuthorization: true,
+      })
       const auth = await space.createAuthorization(alice)
       await alice.addSpace(auth)
       await alice.setCurrentSpace(space.did())
@@ -120,7 +121,9 @@ export const testClient = {
         receiptsEndpoint: new URL(receiptsEndpoint),
       })
 
-      const space = await alice.createSpace('upload-dir-test')
+      const space = await alice.createSpace('upload-dir-test', {
+        skipContentServeAuthorization: true,
+      })
       const auth = await space.createAuthorization(alice)
       await alice.addSpace(auth)
 
@@ -165,7 +168,9 @@ export const testClient = {
         receiptsEndpoint: new URL(receiptsEndpoint),
       })
 
-      const space = await alice.createSpace('car-space')
+      const space = await alice.createSpace('car-space', {
+        skipContentServeAuthorization: true,
+      })
       await alice.addSpace(await space.createAuthorization(alice))
       await alice.setCurrentSpace(space.did())
 
@@ -226,7 +231,9 @@ export const testClient = {
       const current0 = alice.currentSpace()
       assert.equal(current0, undefined)
 
-      const space = await alice.createSpace('new-space')
+      const space = await alice.createSpace('new-space', {
+        skipContentServeAuthorization: true,
+      })
       await alice.addSpace(await space.createAuthorization(alice))
       await alice.setCurrentSpace(space.did())
 
@@ -240,7 +247,9 @@ export const testClient = {
       const alice = new Client(await AgentData.create())
 
       const name = `space-${Date.now()}`
-      const space = await alice.createSpace(name)
+      const space = await alice.createSpace(name, {
+        skipContentServeAuthorization: true,
+      })
       const auth = await space.createAuthorization(alice)
       await alice.addSpace(auth)
 
@@ -254,7 +263,9 @@ export const testClient = {
       const alice = new Client(await AgentData.create())
       const bob = new Client(await AgentData.create())
 
-      const space = await alice.createSpace('new-space')
+      const space = await alice.createSpace('new-space', {
+        skipContentServeAuthorization: true,
+      })
       await alice.addSpace(
         await space.createAuthorization(alice, {
           access: { '*': {} },
@@ -577,7 +588,9 @@ export const testClient = {
       const alice = new Client(await AgentData.create())
       const bob = new Client(await AgentData.create())
 
-      const space = await alice.createSpace('proof-space')
+      const space = await alice.createSpace('proof-space', {
+        skipContentServeAuthorization: true,
+      })
       await alice.addSpace(await space.createAuthorization(alice))
       await alice.setCurrentSpace(space.did())
 
@@ -595,7 +608,9 @@ export const testClient = {
       const alice = new Client(await AgentData.create())
       const bob = new Client(await AgentData.create())
 
-      const space = await alice.createSpace('test')
+      const space = await alice.createSpace('test', {
+        skipContentServeAuthorization: true,
+      })
       await alice.addSpace(await space.createAuthorization(alice))
       await alice.setCurrentSpace(space.did())
       const name = `delegation-${Date.now()}`
@@ -631,7 +646,9 @@ export const testClient = {
         },
       })
 
-      const space = await alice.createSpace('test')
+      const space = await alice.createSpace('test', {
+        skipContentServeAuthorization: true,
+      })
       await alice.addSpace(
         await space.createAuthorization(alice, {
           access: { '*': {} },
@@ -653,7 +670,9 @@ export const testClient = {
       const alice = new Client(await AgentData.create())
       const bob = new Client(await AgentData.create())
 
-      const space = await alice.createSpace('test')
+      const space = await alice.createSpace('test', {
+        skipContentServeAuthorization: true,
+      })
       await alice.addSpace(await space.createAuthorization(alice))
       await alice.setCurrentSpace(space.did())
       const name = `delegation-${Date.now()}`
@@ -704,7 +723,9 @@ export const testClient = {
       })
 
       // setup space
-      const space = await alice.createSpace('upload-test')
+      const space = await alice.createSpace('upload-test', {
+        skipContentServeAuthorization: true,
+      })
       const auth = await space.createAuthorization(alice)
       await alice.addSpace(auth)
       await alice.setCurrentSpace(space.did())
@@ -753,7 +774,9 @@ export const testClient = {
         })
 
         // setup space
-        const space = await alice.createSpace('upload-test')
+        const space = await alice.createSpace('upload-test', {
+          skipContentServeAuthorization: true,
+        })
         const auth = await space.createAuthorization(alice)
         await alice.addSpace(auth)
         await alice.setCurrentSpace(space.did())
@@ -805,7 +828,9 @@ export const testClient = {
       })
 
       // setup space
-      const space = await alice.createSpace('upload-test')
+      const space = await alice.createSpace('upload-test', {
+        skipContentServeAuthorization: true,
+      })
       const auth = await space.createAuthorization(alice)
       await alice.addSpace(auth)
       await alice.setCurrentSpace(space.did())
@@ -829,7 +854,9 @@ export const testClient = {
       })
 
       // setup space
-      const space = await alice.createSpace('upload-test')
+      const space = await alice.createSpace('upload-test', {
+        skipContentServeAuthorization: true,
+      })
       const auth = await space.createAuthorization(alice)
       await alice.addSpace(auth)
       await alice.setCurrentSpace(space.did())

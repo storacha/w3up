@@ -20,7 +20,7 @@ export const AccessClient = Test.withContext({
     },
     'should delegate and then claim': async (
       assert,
-      { connection, provisionsStorage }
+      { id: w3, connection, provisionsStorage }
     ) => {
       const alice = new Client(await AgentData.create(), {
         // @ts-ignore
@@ -29,7 +29,10 @@ export const AccessClient = Test.withContext({
           upload: connection,
         },
       })
-      const space = await alice.createSpace('upload-test')
+
+      const space = await alice.createSpace('upload-test', {
+        skipContentServeAuthorization: true,
+      })
       const auth = await space.createAuthorization(alice)
       await alice.addSpace(auth)
       await alice.setCurrentSpace(space.did())
