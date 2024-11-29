@@ -1,5 +1,18 @@
 # Changelog
 
+## [17.1.1](https://github.com/storacha/w3up/compare/upload-client-v17.1.0...upload-client-v17.1.1) (2024-11-29)
+
+
+### Fixes
+
+* Find the receipts URL from the connection URL ([#1565](https://github.com/storacha/w3up/issues/1565)) ([3eb0f8e](https://github.com/storacha/w3up/commit/3eb0f8e31d92656fc65dc71f0b39f19478e8374e))
+* overflow slices ([#1595](https://github.com/storacha/w3up/issues/1595)) ([0731582](https://github.com/storacha/w3up/commit/0731582b68d864a2d8f23b36008b8c64dbfa18fe))
+
+
+### Other Changes
+
+* **main:** release w3up-client 16.4.1 ([#1577](https://github.com/storacha/w3up/issues/1577)) ([1482d69](https://github.com/storacha/w3up/commit/1482d69c28baff1c27b1baf5f3e5c76f844e5576))
+
 ## [17.1.0](https://github.com/storacha/w3up/compare/upload-client-v17.0.1...upload-client-v17.1.0) (2024-10-24)
 
 
