@@ -1,5 +1,19 @@
 # Changelog
 
+## [1.0.3](https://github.com/storacha/upload-service/compare/client-v1.0.2...client-v1.0.3) (2024-11-29)
+
+
+### Fixes
+
+* compatibility with legacy w3up client ([#59](https://github.com/storacha/upload-service/issues/59)) ([7185046](https://github.com/storacha/upload-service/commit/7185046e3186bef9b4f56f9e6c1c94a0c576fc53))
+
+
+### Other Changes
+
+* **main:** release client 1.0.3 ([b0ccad7](https://github.com/storacha/upload-service/commit/b0ccad779875b9f64143f901e0f218faad186a83))
+* **main:** release client 1.0.3 ([#79](https://github.com/storacha/upload-service/issues/79)) ([7c336f2](https://github.com/storacha/upload-service/commit/7c336f2861fecd1afddbf026896e2c4fbd45f0ee))
+* Revert "chore(main): release client 1.0.3" ([#84](https://github.com/storacha/upload-service/issues/84)) ([2f354c4](https://github.com/storacha/upload-service/commit/2f354c423d60d929fc24bb902d262b3ae7b89ee0))
+
 ## [1.0.2](https://github.com/storacha/upload-service/compare/client-v1.0.1...client-v1.0.2) (2024-11-27)
 
 
