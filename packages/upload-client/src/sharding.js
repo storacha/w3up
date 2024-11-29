@@ -105,7 +105,7 @@ export class ShardingStream extends TransformStream {
           overflowCurrentLength = 0
           /** @type {Map<import('./types.js').SliceDigest, import('./types.js').Position>} */
           const overflowSlices = new DigestMap()
-          for (const block of blocks) {
+          for (const block of overflowBlocks) {
             const overflowBlockHeaderLength = blockHeaderEncodingLength(block)
             overflowSlices.set(block.cid.multihash, [
               headerLength + overflowCurrentLength + overflowBlockHeaderLength,
