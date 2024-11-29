@@ -5,6 +5,7 @@ import * as AccessCaps from '@web3-storage/capabilities'
 
 /**
  * Mocked Gateway/Content Serve service
+ *
  * @param {{ ok: any } | { error: Server.API.Failure }} result
  */
 export function getContentServeMockService(result = { ok: {} }) {
@@ -20,8 +21,8 @@ export function getContentServeMockService(result = { ok: {} }) {
 /**
  * Generic function to create connection to any type of mock service with any type of signer id.
  *
- * @param {any} service
  * @param {any} id
+ * @param {any} service
  */
 export function getConnection(id, service) {
   const server = Server.create({
