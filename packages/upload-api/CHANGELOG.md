@@ -1,5 +1,12 @@
 # Changelog
 
+## [18.1.4](https://github.com/storacha/w3up/compare/upload-api-v18.1.3...upload-api-v18.1.4) (2024-11-28)
+
+
+### Fixes
+
+* publish location claim to content claims service ([#1571](https://github.com/storacha/w3up/issues/1571)) ([fb08e0e](https://github.com/storacha/w3up/commit/fb08e0e11ed482fe8996d4dc7535c45fbcc373b7))
+
 ## [18.1.3](https://github.com/storacha/w3up/compare/upload-api-v18.1.2...upload-api-v18.1.3) (2024-11-22)
 
 
