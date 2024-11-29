@@ -110,16 +110,31 @@ describe('ShardingStream', () => {
     // block 0 and 1 should be in shard 0
     const slice0 = shards[0].slices.get(blocks[0].cid.multihash)
     assert.ok(slice0)
-    assert(equals(blocks[0].bytes, shard0Bytes.slice(slice0[0], slice0[0] + slice0[1])))
+    assert(
+      equals(
+        blocks[0].bytes,
+        shard0Bytes.slice(slice0[0], slice0[0] + slice0[1])
+      )
+    )
 
     const slice1 = shards[0].slices.get(blocks[1].cid.multihash)
     assert.ok(slice1)
-    assert(equals(blocks[1].bytes, shard0Bytes.slice(slice1[0], slice1[0] + slice1[1])))
+    assert(
+      equals(
+        blocks[1].bytes,
+        shard0Bytes.slice(slice1[0], slice1[0] + slice1[1])
+      )
+    )
 
     // block 2 should be in shard 1
     const slice2 = shards[1].slices.get(blocks[2].cid.multihash)
     assert.ok(slice2)
-    assert(equals(blocks[2].bytes, shard1Bytes.slice(slice2[0], slice2[0] + slice2[1])))
+    assert(
+      equals(
+        blocks[2].bytes,
+        shard1Bytes.slice(slice2[0], slice2[0] + slice2[1])
+      )
+    )
   })
 
   it('exceeds shard size when block is encoded with root CID', async () => {
