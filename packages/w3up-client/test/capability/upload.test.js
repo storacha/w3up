@@ -9,7 +9,9 @@ export const UploadClient = Test.withContext({
     ) => {
       const car = await randomCAR(128)
 
-      const space = await alice.createSpace('test')
+      const space = await alice.createSpace('test', {
+        skipContentServeAuthorization: true,
+      })
       const auth = await space.createAuthorization(alice)
       await alice.addSpace(auth)
       await alice.setCurrentSpace(space.did())
@@ -38,7 +40,9 @@ export const UploadClient = Test.withContext({
     ) => {
       const car = await randomCAR(128)
 
-      const space = await alice.createSpace('test')
+      const space = await alice.createSpace('test', {
+        skipContentServeAuthorization: true,
+      })
       const auth = await space.createAuthorization(alice)
       await alice.addSpace(auth)
       await alice.setCurrentSpace(space.did())
@@ -77,7 +81,9 @@ export const UploadClient = Test.withContext({
     ) => {
       const car = await randomCAR(128)
 
-      const space = await alice.createSpace('test')
+      const space = await alice.createSpace('test', {
+        skipContentServeAuthorization: true,
+      })
       const auth = await space.createAuthorization(alice)
       await alice.addSpace(auth)
       await alice.setCurrentSpace(space.did())
@@ -109,7 +115,9 @@ export const UploadClient = Test.withContext({
     ) => {
       const car = await randomCAR(128)
 
-      const space = await alice.createSpace('test')
+      const space = await alice.createSpace('test', {
+        skipContentServeAuthorization: true,
+      })
       const auth = await space.createAuthorization(alice)
       await alice.addSpace(auth)
       await alice.setCurrentSpace(space.did())

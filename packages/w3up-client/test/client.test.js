@@ -1,5 +1,6 @@
 import assert from 'assert'
 import { parseLink } from '@ucanto/server'
+import * as Server from '@ucanto/server'
 import {
   Agent,
   AgentData,
@@ -18,10 +19,9 @@ import {
   alice,
   confirmConfirmationUrl,
   gateway,
-  gatewaySigner,
 } from '../../upload-api/test/helpers/utils.js'
 import * as SpaceCapability from '@web3-storage/capabilities/space'
-import { getConnection, getMockService } from './mocks/service.js'
+import { getConnection, getContentServeMockService } from './mocks/service.js'
 
 /** @type {Test.Suite} */
 export const testClient = {
@@ -303,6 +303,7 @@ export const testClient = {
       // Step 2: Alice creates a space with her account as the recovery account
       const space = await client.createSpace('recovery-space-test', {
         account: aliceAccount, // The account is the recovery account
+        skipContentServeAuthorization: true,
       })
       assert.ok(space)
 
@@ -334,7 +335,9 @@ export const testClient = {
         await aliceLogin
 
         // Step 2: Alice creates a space without providing a recovery account
-        const space = await client.createSpace('no-recovery-space-test')
+        const space = await client.createSpace('no-recovery-space-test', {
+          skipContentServeAuthorization: true,
+        })
         assert.ok(space)
 
         // Step 3: Attempt to access the space from a new device
@@ -437,6 +440,7 @@ export const testClient = {
       // Step 2: Alice creates a space
       const space = await aliceClient.createSpace('share-space-test', {
         account: aliceAccount,
+        skipContentServeAuthorization: true,
       })
       assert.ok(space)
 
@@ -489,6 +493,7 @@ export const testClient = {
           'share-space-delegate-fail-test',
           {
             account: aliceAccount,
+            skipContentServeAuthorization: true,
           }
         )
         assert.ok(space)
@@ -525,12 +530,14 @@ export const testClient = {
       // Step 2: Alice creates a space
       const spaceA = await client.createSpace('test-space-a', {
         account: aliceAccount,
+        skipContentServeAuthorization: true,
       })
       assert.ok(spaceA)
 
       // Step 3: Alice creates another space to share with a friend
       const spaceB = await client.createSpace('test-space-b', {
         account: aliceAccount,
+        skipContentServeAuthorization: true,
       })
       assert.ok(spaceB)
 
@@ -548,62 +555,248 @@ export const testClient = {
     },
   }),
   authorizeGateway: Test.withContext({
-    'should authorize a gateway to serve content from a space': async (
-      assert,
-      { mail, grantAccess, connection }
-    ) => {
-      // Step 1: Create a client for Alice and login
-      const aliceClient = new Client(
-        await AgentData.create({
-          principal: alice,
-        }),
-        {
-          // @ts-ignore
-          serviceConf: {
-            access: connection,
-            upload: connection,
-          },
-        }
-      )
-
-      const aliceEmail = 'alice@web.mail'
-      const aliceLogin = aliceClient.login(aliceEmail)
-      const message = await mail.take()
-      assert.deepEqual(message.to, aliceEmail)
-      await grantAccess(message)
-      const aliceAccount = await aliceLogin
-
-      // Step 2: Alice creates a space
-      const spaceA = await aliceClient.createSpace('authorize-gateway-space', {
-        account: aliceAccount,
-        skipContentServeAuthorization: true,
-      })
-      assert.ok(spaceA)
-
-      const gatewayService = getMockService()
-      const gatewayConnection = getConnection(
-        gateway,
-        gatewayService
-      ).connection
-
-      // Step 3: Alice authorizes the gateway to serve content from the space
-      const delegationResult = await aliceClient.authorizeContentServe(spaceA, {
-        audience: gateway.did(),
-        connection: gatewayConnection,
-      })
-      assert.ok(delegationResult.ok)
-      const { delegation } = delegationResult.ok
-
-      // Step 4: Find the delegation for the default gateway
-      assert.equal(delegation.audience.did(), gateway.did())
-      assert.ok(
-        delegation.capabilities.some(
-          (c) =>
-            c.can === SpaceCapability.contentServe.can &&
-            c.with === spaceA.did()
+    'should explicitly authorize a gateway to serve content from a space':
+      async (assert, { mail, grantAccess, connection }) => {
+        // Step 1: Create a client for Alice and login
+        const aliceClient = new Client(
+          await AgentData.create({
+            principal: alice,
+          }),
+          {
+            // @ts-ignore
+            serviceConf: {
+              access: connection,
+              upload: connection,
+            },
+          }
         )
-      )
-    },
+
+        const aliceEmail = 'alice@web.mail'
+        const aliceLogin = aliceClient.login(aliceEmail)
+        const message = await mail.take()
+        assert.deepEqual(message.to, aliceEmail)
+        await grantAccess(message)
+        const aliceAccount = await aliceLogin
+
+        // Step 2: Alice creates a space
+        const spaceA = await aliceClient.createSpace(
+          'authorize-gateway-space',
+          {
+            account: aliceAccount,
+            skipContentServeAuthorization: true,
+          }
+        )
+        assert.ok(spaceA)
+
+        const gatewayService = getContentServeMockService()
+        const gatewayConnection = getConnection(
+          gateway,
+          gatewayService
+        ).connection
+
+        // Step 3: Alice authorizes the gateway to serve content from the space
+        const delegationResult = await aliceClient.authorizeContentServe(
+          spaceA,
+          {
+            audience: gateway.did(),
+            connection: gatewayConnection,
+          }
+        )
+        assert.ok(delegationResult.ok)
+        const { delegation } = delegationResult.ok
+
+        // Step 4: Find the delegation for the default gateway
+        assert.equal(delegation.audience.did(), gateway.did())
+        assert.ok(
+          delegation.capabilities.some(
+            (c) =>
+              c.can === SpaceCapability.contentServe.can &&
+              c.with === spaceA.did()
+          )
+        )
+      },
+    'should automatically authorize a gateway to serve content from a space when the space is created':
+      async (assert, { mail, grantAccess, connection }) => {
+        // Step 1: Create a client for Alice and login
+        const aliceClient = new Client(
+          await AgentData.create({
+            principal: alice,
+          }),
+          {
+            // @ts-ignore
+            serviceConf: {
+              access: connection,
+              upload: connection,
+            },
+          }
+        )
+
+        const aliceEmail = 'alice@web.mail'
+        const aliceLogin = aliceClient.login(aliceEmail)
+        const message = await mail.take()
+        assert.deepEqual(message.to, aliceEmail)
+        await grantAccess(message)
+        const aliceAccount = await aliceLogin
+
+        // Step 2: Alice creates a space
+        const gatewayService = getContentServeMockService()
+        const gatewayConnection = getConnection(
+          gateway,
+          gatewayService
+        ).connection
+
+        try {
+          const spaceA = await aliceClient.createSpace(
+            'authorize-gateway-space',
+            {
+              account: aliceAccount,
+              authorizeContentServeServices: [gateway.did()],
+              connection: gatewayConnection,
+            }
+          )
+          assert.ok(spaceA, 'should create the space')
+        } catch (error) {
+          assert.fail(error, 'should not throw when creating the space')
+        }
+      },
+    'should throw when the content serve authorization fails due to missing connection configuration':
+      async (assert, { mail, grantAccess, connection }) => {
+        // Step 1: Create a client for Alice and login
+        const aliceClient = new Client(
+          await AgentData.create({
+            principal: alice,
+          }),
+          {
+            // @ts-ignore
+            serviceConf: {
+              access: connection,
+              upload: connection,
+            },
+          }
+        )
+
+        const aliceEmail = 'alice@web.mail'
+        const aliceLogin = aliceClient.login(aliceEmail)
+        const message = await mail.take()
+        assert.deepEqual(message.to, aliceEmail)
+        await grantAccess(message)
+        const aliceAccount = await aliceLogin
+
+        try {
+          const spaceA = await aliceClient.createSpace(
+            'authorize-gateway-space',
+            {
+              account: aliceAccount,
+              authorizeContentServeServices: [gateway.did()],
+            }
+          )
+          assert.fail(spaceA, 'should not create the space')
+        } catch (error) {
+          assert.match(
+            // @ts-expect-error
+            error.message,
+            /missing <connection> option/,
+            'should throw when creating the space'
+          )
+        }
+      },
+    'should throw when the content serve authorization fails due to missing service configuration':
+      async (assert, { mail, grantAccess, connection }) => {
+        // Step 1: Create a client for Alice and login
+        const aliceClient = new Client(
+          await AgentData.create({
+            principal: alice,
+          }),
+          {
+            // @ts-ignore
+            serviceConf: {
+              access: connection,
+              upload: connection,
+            },
+          }
+        )
+
+        const aliceEmail = 'alice@web.mail'
+        const aliceLogin = aliceClient.login(aliceEmail)
+        const message = await mail.take()
+        assert.deepEqual(message.to, aliceEmail)
+        await grantAccess(message)
+        const aliceAccount = await aliceLogin
+
+        const gatewayService = getContentServeMockService()
+        const gatewayConnection = getConnection(
+          gateway,
+          gatewayService
+        ).connection
+        try {
+          const spaceA = await aliceClient.createSpace(
+            'authorize-gateway-space',
+            {
+              account: aliceAccount,
+              authorizeContentServeServices: [], // No services to authorize
+              connection: gatewayConnection,
+            }
+          )
+          assert.fail(spaceA, 'should not create the space')
+        } catch (error) {
+          assert.match(
+            // @ts-expect-error
+            error.message,
+            /missing <authorizeContentServeServices> option/,
+            'should throw when creating the space'
+          )
+        }
+      },
+    'should throw when content serve service can not process the invocation':
+      async (assert, { mail, grantAccess, connection }) => {
+        // Step 1: Create a client for Alice and login
+        const aliceClient = new Client(
+          await AgentData.create({
+            principal: alice,
+          }),
+          {
+            // @ts-ignore
+            serviceConf: {
+              access: connection,
+              upload: connection,
+            },
+          }
+        )
+
+        const aliceEmail = 'alice@web.mail'
+        const aliceLogin = aliceClient.login(aliceEmail)
+        const message = await mail.take()
+        assert.deepEqual(message.to, aliceEmail)
+        await grantAccess(message)
+        const aliceAccount = await aliceLogin
+
+        // Step 2: Alice creates a space
+        const gatewayService = getContentServeMockService({
+          error: Server.fail(
+            'Content serve service can not process the invocation'
+          ).error,
+        })
+        const gatewayConnection = getConnection(
+          gateway,
+          gatewayService
+        ).connection
+
+        try {
+          await aliceClient.createSpace('authorize-gateway-space', {
+            account: aliceAccount,
+            authorizeContentServeServices: [gateway.did()],
+            connection: gatewayConnection,
+          })
+          assert.fail('should not create the space')
+        } catch (error) {
+          assert.match(
+            // @ts-expect-error
+            error.message,
+            /failed to publish delegation for audience/,
+            'should throw when publishing the delegation'
+          )
+        }
+      },
   }),
   proofs: {
     'should get proofs': async (assert) => {

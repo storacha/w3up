@@ -13,7 +13,6 @@ import * as API from '../../src/types.js'
 
 import { validateAuthorization } from '../utils.js'
 import { mockService } from './mocks.js'
-import { Access } from '@web3-storage/capabilities'
 
 export { getStoreImplementations } from './store-implementations.js'
 export { getQueueImplementations } from './queue-implementations.js'
@@ -234,16 +233,6 @@ export function getMockService() {
     assert: {
       equals: Server.provide(
         Assert.equals,
-        async ({ capability, invocation }) => {
-          return {
-            ok: {},
-          }
-        }
-      ),
-    },
-    access: {
-      delegate: Server.provide(
-        Access.delegate,
         async ({ capability, invocation }) => {
           return {
             ok: {},

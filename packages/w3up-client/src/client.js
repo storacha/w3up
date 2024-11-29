@@ -30,7 +30,6 @@ import { FilecoinClient } from './capability/filecoin.js'
 import { CouponAPI } from './coupon.js'
 export * as Access from './capability/access.js'
 import * as Result from './result.js'
-import { remove } from '@web3-storage/capabilities/store'
 
 export {
   AccessClient,
@@ -260,7 +259,7 @@ export class Client extends Base {
    * @typedef {object} SpaceCreateOptions
    * @property {boolean} [skipContentServeAuthorization] - Whether to skip the Content Serve authorization. It means that the content of the space will not be served by any Content Serve Service.
    * @property {`did:${string}:${string}`[]} [authorizeContentServeServices] - The DID Key or DID Web of the Content Serve Service to authorize to serve content from the created space.
-   * @property {import('./types.js').ConnectionView<import('./types.js').ContentServeService>} [authorizeContentServeServices.connection] - The connection to the Content Serve Service that will handle, validate, and store the access/delegate UCAN invocation.
+   * @property {import('./types.js').ConnectionView<import('./types.js').ContentServeService>} [connection] - The connection to the Content Serve Service that will handle, validate, and store the access/delegate UCAN invocation.
    * @property {Account.Account} [account] - The account configured as the recovery account for the space.
    * @property {string} [name] - The name of the space to create.
    *
@@ -269,10 +268,8 @@ export class Client extends Base {
    * @returns {Promise<import("./space.js").OwnedSpace>} The created space owned by the agent.
    */
   async createSpace(name, options) {
-    const space = await this._agent.createSpace(name)
-
     // Save the space to authorize the client to use the space
-    await space.save()
+    const space = await this._agent.createSpace(name)
 
     const account = options.account
     if (account) {
@@ -284,6 +281,9 @@ export class Client extends Base {
           { cause: provisionResult.error }
         )
       }
+
+      // Save the space to authorize the client to use the space
+      await space.save()
 
       // Create a recovery for the account
       const recovery = await space.createRecovery(account.did())
@@ -380,6 +380,7 @@ export class Client extends Base {
         })
         .execute(options.connection)
 
+      /* c8 ignore next 8 - can't mock this error */
       if (verificationResult.out.error) {
         throw new Error(
           `failed to publish delegation for audience ${options.audience}: ${verificationResult.out.error.message}`,
@@ -388,7 +389,6 @@ export class Client extends Base {
           }
         )
       }
-
       return { ok: { ...verificationResult.out.ok, delegation } }
     } finally {
       if (currentSpace) {

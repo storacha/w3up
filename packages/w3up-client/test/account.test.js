@@ -111,7 +111,9 @@ export const testAccount = Test.withContext({
     assert,
     { client, mail, grantAccess }
   ) => {
-    const space = await client.createSpace('test')
+    const space = await client.createSpace('test', {
+      skipContentServeAuthorization: true,
+    })
     const mnemonic = space.toMnemonic()
     const { signer } = await Space.fromMnemonic(mnemonic, { name: 'import' })
     assert.deepEqual(
@@ -147,7 +149,9 @@ export const testAccount = Test.withContext({
 
   'multi device workflow': async (asserts, { connect, mail, grantAccess }) => {
     const laptop = await connect()
-    const space = await laptop.createSpace('main')
+    const space = await laptop.createSpace('main', {
+      skipContentServeAuthorization: true,
+    })
 
     // want to provision space ?
     const email = 'alice@web.mail'
@@ -183,7 +187,9 @@ export const testAccount = Test.withContext({
     asserts.deepEqual(result.did, space.did())
   },
   'setup recovery': async (assert, { client, mail, grantAccess }) => {
-    const space = await client.createSpace('test')
+    const space = await client.createSpace('test', {
+      skipContentServeAuthorization: true,
+    })
 
     const email = 'alice@web.mail'
     const login = Account.login(client, email)
@@ -280,7 +286,9 @@ export const testAccount = Test.withContext({
     assert,
     { client, mail, grantAccess }
   ) => {
-    const space = await client.createSpace('test')
+    const space = await client.createSpace('test', {
+      skipContentServeAuthorization: true,
+    })
 
     const email = 'alice@web.mail'
     const login = Account.login(client, email)
@@ -299,8 +307,10 @@ export const testAccount = Test.withContext({
     assert.equal(typeof subs.results[0].subscription, 'string')
   },
 
-  'space.save': async (assert, { client, mail, grantAccess }) => {
-    const space = await client.createSpace('test')
+  'space.save': async (assert, { client }) => {
+    const space = await client.createSpace('test', {
+      skipContentServeAuthorization: true,
+    })
     assert.deepEqual(client.spaces(), [])
 
     const result = await space.save()
