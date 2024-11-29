@@ -30,6 +30,7 @@ import { FilecoinClient } from './capability/filecoin.js'
 import { CouponAPI } from './coupon.js'
 export * as Access from './capability/access.js'
 import * as Result from './result.js'
+import { remove } from '@web3-storage/capabilities/store'
 
 export {
   AccessClient,
@@ -252,15 +253,22 @@ export class Client extends Base {
    * If an account is not provided, the space is created without any delegation and is not saved, hence it is a temporary space.
    * When an account is provided in the options argument, then it creates a delegated recovery account
    * by provisioning the space, saving it and then delegating access to the recovery account.
+   * In addition, it authorizes the listed Content Serve Services to serve content from the created space.
+   * It is done by delegating the `space/content/serve/*` capability to the Content Serve Service.
+   * User can skip the Content Serve authorization by setting the `skipContentServeAuthorization` option to `true`.
    *
-   * @typedef {object} CreateOptions
-   * @property {Account.Account} [account]
+   * @typedef {object} SpaceCreateOptions
+   * @property {boolean} [skipContentServeAuthorization] - Whether to skip the Content Serve authorization.
+   * @property {`did:${string}:${string}`[]} [authorizeContentServeServices] - The DID Key or DID Web of the Content Serve Service to authorize to serve content from the created space.
+   * @property {import('./types.js').ConnectionView<import('./types.js').ContentServeService>} [authorizeContentServeServices.connection] - The connection to the Content Serve Service that will handle, validate, and store the access/delegate UCAN invocation.
+   * @property {Account.Account} [account] - The account configured as the recovery account for the space.
+   * @property {string} [name] - The name of the space to create.
    *
-   * @param {string} name
-   * @param {CreateOptions} options
+   * @param {string} name - The name of the space to create.
+   * @param {SpaceCreateOptions} options - Options for the space creation.
    * @returns {Promise<import("./space.js").OwnedSpace>} The created space owned by the agent.
    */
-  async createSpace(name, options = {}) {
+  async createSpace(name, options) {
     const space = await this._agent.createSpace(name)
 
     const account = options.account
@@ -291,6 +299,31 @@ export class Client extends Base {
           `failed to authorize recovery account: ${result.error.message}`,
           { cause: result.error }
         )
+      }
+    }
+
+    // Authorize the listed Content Serve Services to serve content from the created space
+    if (options.skipContentServeAuthorization !== true) {
+      if (
+        !options.authorizeContentServeServices ||
+        options.authorizeContentServeServices.length === 0
+      ) {
+        throw new Error(
+          'failed to authorize Content Serve Services: missing <authorizeContentServeServices> option'
+        )
+      }
+
+      if (!options.connection) {
+        throw new Error(
+          'failed to authorize Content Serve Services: missing <connection> option'
+        )
+      }
+
+      for (const service of options.authorizeContentServeServices) {
+        await this.authorizeContentServe(space, {
+          audience: service,
+          connection: options.connection,
+        })
       }
     }
 
@@ -353,7 +386,7 @@ export class Client extends Base {
         )
       }
 
-      return delegation
+      return { ok: { ...verificationResult.out.ok, delegation } }
     } finally {
       if (currentSpace) {
         await this.setCurrentSpace(currentSpace.did())

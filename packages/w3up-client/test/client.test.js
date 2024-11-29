@@ -554,11 +554,12 @@ export const testClient = {
       await client.setCurrentSpace(spaceA.did())
 
       // Step 3: Authorize the gateway to serve content from the space
-      const delegation = await client.authorizeContentServe(spaceA, {
+      const delegationResult = await client.authorizeContentServe(spaceA, {
         audience: w3.did(),
         connection: connection,
       })
-      assert.ok(delegation)
+      assert.ok(delegationResult.ok)
+      const { delegation } = delegationResult.ok
 
       // Step 4: Find the delegation for the default gateway
       assert.equal(delegation.audience.did(), 'did:web:staging.w3s.link')
