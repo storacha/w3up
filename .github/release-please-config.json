@@ -1,4 +1,6 @@
 {
+  "release-type": "node",
+  "include-component-in-tag": true,
   "separate-pull-requests": true,
   "changelog-sections": [
     { "type": "feat", "section": "Features", "hidden": false },
