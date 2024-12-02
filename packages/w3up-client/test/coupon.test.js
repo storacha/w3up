@@ -38,7 +38,7 @@ export const testCoupon = Test.withContext({
 
     // creates a space and provision it with redeemed coupon
     const space = await alice.createSpace('home', {
-      skipContentServeAuthorization: true,
+      skipGatewayAuthorization: true,
     })
     const result = await space.provision(access)
     await space.save()

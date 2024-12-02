@@ -25,7 +25,7 @@ export const testSpace = Test.withContext({
 
   'should get usage': async (assert, { client, grantAccess, mail }) => {
     const space = await client.createSpace('test', {
-      skipContentServeAuthorization: true,
+      skipGatewayAuthorization: true,
     })
 
     const email = 'alice@web.mail'

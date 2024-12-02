@@ -6,7 +6,7 @@ export const FilecoinClient = Test.withContext({
   offer: {
     'should send an offer': async (assert, { client: alice }) => {
       const space = await alice.createSpace('test', {
-        skipContentServeAuthorization: true,
+        skipGatewayAuthorization: true,
       })
       const auth = await space.createAuthorization(alice)
       await alice.addSpace(auth)
@@ -39,7 +39,7 @@ export const FilecoinClient = Test.withContext({
       }
 
       const space = await alice.createSpace('test', {
-        skipContentServeAuthorization: true,
+        skipGatewayAuthorization: true,
       })
       const auth = await space.createAuthorization(alice)
       await alice.addSpace(auth)

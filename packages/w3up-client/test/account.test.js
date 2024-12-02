@@ -112,7 +112,7 @@ export const testAccount = Test.withContext({
     { client, mail, grantAccess }
   ) => {
     const space = await client.createSpace('test', {
-      skipContentServeAuthorization: true,
+      skipGatewayAuthorization: true,
     })
     const mnemonic = space.toMnemonic()
     const { signer } = await Space.fromMnemonic(mnemonic, { name: 'import' })
@@ -150,7 +150,7 @@ export const testAccount = Test.withContext({
   'multi device workflow': async (asserts, { connect, mail, grantAccess }) => {
     const laptop = await connect()
     const space = await laptop.createSpace('main', {
-      skipContentServeAuthorization: true,
+      skipGatewayAuthorization: true,
     })
 
     // want to provision space ?
@@ -188,7 +188,7 @@ export const testAccount = Test.withContext({
   },
   'setup recovery': async (assert, { client, mail, grantAccess }) => {
     const space = await client.createSpace('test', {
-      skipContentServeAuthorization: true,
+      skipGatewayAuthorization: true,
     })
 
     const email = 'alice@web.mail'
@@ -287,7 +287,7 @@ export const testAccount = Test.withContext({
     { client, mail, grantAccess }
   ) => {
     const space = await client.createSpace('test', {
-      skipContentServeAuthorization: true,
+      skipGatewayAuthorization: true,
     })
 
     const email = 'alice@web.mail'
@@ -309,7 +309,7 @@ export const testAccount = Test.withContext({
 
   'space.save': async (assert, { client }) => {
     const space = await client.createSpace('test', {
-      skipContentServeAuthorization: true,
+      skipGatewayAuthorization: true,
     })
     assert.deepEqual(client.spaces(), [])
 

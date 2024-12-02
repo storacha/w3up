@@ -20,7 +20,7 @@ export const SpaceClient = Test.withContext({
       })
 
       const space = await alice.createSpace('test', {
-        skipContentServeAuthorization: true,
+        skipGatewayAuthorization: true,
       })
       const auth = await space.createAuthorization(alice, {
         access: { 'space/info': {} },
@@ -58,7 +58,7 @@ export const SpaceClient = Test.withContext({
         },
       })
       const space = await alice.createSpace('test', {
-        skipContentServeAuthorization: true,
+        skipGatewayAuthorization: true,
       })
       const auth = await alice.addSpace(await space.createAuthorization(alice))
       assert.ok(auth)
@@ -170,7 +170,7 @@ export const SpaceClient = Test.withContext({
         },
       })
       const space = await alice.createSpace('test', {
-        skipContentServeAuthorization: true,
+        skipGatewayAuthorization: true,
       })
       const auth = await alice.addSpace(await space.createAuthorization(alice))
       assert.ok(auth)
@@ -280,7 +280,7 @@ export const SpaceClient = Test.withContext({
           },
         })
         const space = await alice.createSpace('test', {
-          skipContentServeAuthorization: true,
+          skipGatewayAuthorization: true,
         })
         const auth = await alice.addSpace(
           await space.createAuthorization(alice)
@@ -394,7 +394,7 @@ export const SpaceClient = Test.withContext({
           },
         })
         const space = await alice.createSpace('test', {
-          skipContentServeAuthorization: true,
+          skipGatewayAuthorization: true,
         })
         const auth = await alice.addSpace(
           await space.createAuthorization(alice)
@@ -510,7 +510,7 @@ export const SpaceClient = Test.withContext({
         },
       })
       const space = await alice.createSpace('test', {
-        skipContentServeAuthorization: true,
+        skipGatewayAuthorization: true,
       })
       const auth = await alice.addSpace(await space.createAuthorization(alice))
       assert.ok(auth)

@@ -248,20 +248,20 @@ export class Client extends Base {
   }
 
   /**
-   * Create a new space with a given name.
+   * Creates a new space with a given name.
    * If an account is not provided, the space is created without any delegation and is not saved, hence it is a temporary space.
    * When an account is provided in the options argument, then it creates a delegated recovery account
    * by provisioning the space, saving it and then delegating access to the recovery account.
-   * In addition, it authorizes the listed Content Serve Services to serve content from the created space.
-   * It is done by delegating the `space/content/serve/*` capability to the Content Serve Service.
-   * User can skip the Content Serve authorization by setting the `skipContentServeAuthorization` option to `true`.
+   * In addition, it authorizes the listed Gateway Services to serve content from the created space.
+   * It is done by delegating the `space/content/serve/*` capability to the Gateway Service.
+   * User can skip the Gateway authorization by setting the `skipGatewayAuthorization` option to `true`.
+   *
+   * @typedef {import('./types.js').ConnectionView<import('./types.js').ContentServeService>} ConnectionView
    *
    * @typedef {object} SpaceCreateOptions
-   * @property {boolean} [skipContentServeAuthorization] - Whether to skip the Content Serve authorization. It means that the content of the space will not be served by any Content Serve Service.
-   * @property {`did:${string}:${string}`[]} [authorizeContentServeServices] - The DID Key or DID Web of the Content Serve Service to authorize to serve content from the created space.
-   * @property {import('./types.js').ConnectionView<import('./types.js').ContentServeService>} [connection] - The connection to the Content Serve Service that will handle, validate, and store the access/delegate UCAN invocation.
    * @property {Account.Account} [account] - The account configured as the recovery account for the space.
-   * @property {string} [name] - The name of the space to create.
+   * @property {Array<ConnectionView>} [authorizeGatewayServices] - The DID Key or DID Web of the Gateway to authorize to serve content from the created space.
+   * @property {boolean} [skipGatewayAuthorization] - Whether to skip the Gateway authorization. It means that the content of the space will not be served by any Gateway.
    *
    * @param {string} name - The name of the space to create.
    * @param {SpaceCreateOptions} options - Options for the space creation.
@@ -289,41 +289,32 @@ export class Client extends Base {
       const recovery = await space.createRecovery(account.did())
 
       // Delegate space access to the recovery
-      const result = await this.capability.access.delegate({
+      const delegationResult = await this.capability.access.delegate({
         space: space.did(),
         delegations: [recovery],
       })
 
-      if (result.error) {
+      if (delegationResult.error) {
         throw new Error(
-          `failed to authorize recovery account: ${result.error.message}`,
-          { cause: result.error }
+          `failed to authorize recovery account: ${delegationResult.error.message}`,
+          { cause: delegationResult.error }
         )
       }
     }
 
-    // Authorize the listed Content Serve Services to serve content from the created space
-    if (options.skipContentServeAuthorization !== true) {
+    // Authorize the listed Gateway Services to serve content from the created space
+    if (options.skipGatewayAuthorization !== true) {
       if (
-        !options.authorizeContentServeServices ||
-        options.authorizeContentServeServices.length === 0
+        !options.authorizeGatewayServices ||
+        options.authorizeGatewayServices.length === 0
       ) {
         throw new Error(
-          'failed to authorize Content Serve Services: missing <authorizeContentServeServices> option'
+          'failed to authorize Gateway Services: missing <authorizeGatewayServices> option'
         )
       }
 
-      if (!options.connection) {
-        throw new Error(
-          'failed to authorize Content Serve Services: missing <connection> option'
-        )
-      }
-
-      for (const service of options.authorizeContentServeServices) {
-        await this.authorizeContentServe(space, {
-          audience: service,
-          connection: options.connection,
-        })
+      for (const serviceConnection of options.authorizeGatewayServices) {
+        await this.authorizeContentServe(space, serviceConnection)
       }
     }
 
@@ -337,12 +328,12 @@ export class Client extends Base {
    * - `space/content/serve/*`
    *
    * @param {import('./types.js').OwnedSpace} space - The space to authorize the audience for.
-   * @param {object} options - Options for the authorization.
-   * @param {`did:${string}:${string}`} options.audience - The Web DID of the audience (gateway or peer) to authorize.
-   * @param {import('./types.js').ConnectionView<import('./types.js').ContentServeService>} options.connection - The connection to the Content Serve Service that will handle, validate, and store the access/delegate UCAN invocation.
+   * @param {import('./types.js').ConnectionView<import('./types.js').ContentServeService>} connection - The connection to the Content Serve Service that will handle, validate, and store the access/delegate UCAN invocation.
+   * @param {object} [options] - Options for the content serve authorization invocation.
+   * @param {`did:${string}:${string}`} [options.audience] - The Web DID of the audience (gateway or peer) to authorize.
    * @param {number} [options.expiration] - The time at which the delegation expires in seconds from unix epoch.
    */
-  async authorizeContentServe(space, options) {
+  async authorizeContentServe(space, connection, options = {}) {
     const currentSpace = this.currentSpace()
     try {
       // Set the current space to the space we are authorizing the gateway for, otherwise the delegation will fail
@@ -350,7 +341,7 @@ export class Client extends Base {
 
       /** @type {import('@ucanto/client').Principal<`did:${string}:${string}`>} */
       const audience = {
-        did: () => options.audience,
+        did: () => options.audience ?? connection.id.did(),
       }
 
       // Grant the audience the ability to serve content from the space, it includes existing proofs automatically
@@ -378,7 +369,7 @@ export class Client extends Base {
             },
           },
         })
-        .execute(options.connection)
+        .execute(connection)
 
       /* c8 ignore next 8 - can't mock this error */
       if (verificationResult.out.error) {

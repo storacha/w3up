@@ -31,7 +31,7 @@ export const AccessClient = Test.withContext({
       })
 
       const space = await alice.createSpace('upload-test', {
-        skipContentServeAuthorization: true,
+        skipGatewayAuthorization: true,
       })
       const auth = await space.createAuthorization(alice)
       await alice.addSpace(auth)

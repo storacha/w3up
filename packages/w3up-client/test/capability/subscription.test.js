@@ -9,7 +9,7 @@ export const SubscriptionClient = Test.withContext({
       { client, connection, service, plansStorage, grantAccess, mail }
     ) => {
       const space = await client.createSpace('test', {
-        skipContentServeAuthorization: true,
+        skipGatewayAuthorization: true,
       })
       const email = 'alice@web.mail'
       const login = Account.login(client, email)
