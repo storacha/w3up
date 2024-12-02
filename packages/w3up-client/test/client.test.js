@@ -10,7 +10,7 @@ import {
 import { randomBytes, randomCAR } from './helpers/random.js'
 import { toCAR } from './helpers/car.js'
 import { File } from './helpers/shims.js'
-import { Client } from '../src/client.js'
+import { authorizeContentServe, Client } from '../src/client.js'
 import * as Test from './test.js'
 import { receiptsEndpoint } from './helpers/utils.js'
 import { Absentee } from '@ucanto/principal'
@@ -595,7 +595,8 @@ export const testClient = {
         ).connection
 
         // Step 3: Alice authorizes the gateway to serve content from the space
-        const delegationResult = await aliceClient.authorizeContentServe(
+        const delegationResult = await authorizeContentServe(
+          aliceClient,
           spaceA,
           gatewayConnection
         )

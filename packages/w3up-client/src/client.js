@@ -314,78 +314,11 @@ export class Client extends Base {
       }
 
       for (const serviceConnection of options.authorizeGatewayServices) {
-        await this.authorizeContentServe(space, serviceConnection)
+        await authorizeContentServe(this, space, serviceConnection)
       }
     }
 
     return space
-  }
-
-  /**
-   * Authorizes an audience to serve content from the provided space and record egress events.
-   * It also publishes the delegation to the content serve service.
-   * Delegates the following capabilities to the audience:
-   * - `space/content/serve/*`
-   *
-   * @param {import('./types.js').OwnedSpace} space - The space to authorize the audience for.
-   * @param {import('./types.js').ConnectionView<import('./types.js').ContentServeService>} connection - The connection to the Content Serve Service that will handle, validate, and store the access/delegate UCAN invocation.
-   * @param {object} [options] - Options for the content serve authorization invocation.
-   * @param {`did:${string}:${string}`} [options.audience] - The Web DID of the audience (gateway or peer) to authorize.
-   * @param {number} [options.expiration] - The time at which the delegation expires in seconds from unix epoch.
-   */
-  async authorizeContentServe(space, connection, options = {}) {
-    const currentSpace = this.currentSpace()
-    try {
-      // Set the current space to the space we are authorizing the gateway for, otherwise the delegation will fail
-      await this.setCurrentSpace(space.did())
-
-      /** @type {import('@ucanto/client').Principal<`did:${string}:${string}`>} */
-      const audience = {
-        did: () => options.audience ?? connection.id.did(),
-      }
-
-      // Grant the audience the ability to serve content from the space, it includes existing proofs automatically
-      const delegation = await this.createDelegation(
-        audience,
-        [SpaceCapabilities.contentServe.can],
-        {
-          expiration: options.expiration ?? Infinity,
-        }
-      )
-
-      // Publish the delegation to the content serve service
-      const accessProofs = this.proofs([
-        { can: AccessCapabilities.access.can, with: space.did() },
-      ])
-      const verificationResult = await AccessCapabilities.delegate
-        .invoke({
-          issuer: this._agent.issuer,
-          audience,
-          with: space.did(),
-          proofs: [...accessProofs, delegation],
-          nb: {
-            delegations: {
-              [delegation.cid.toString()]: delegation.cid,
-            },
-          },
-        })
-        .execute(connection)
-
-      /* c8 ignore next 8 - can't mock this error */
-      if (verificationResult.out.error) {
-        throw new Error(
-          `failed to publish delegation for audience ${options.audience}: ${verificationResult.out.error.message}`,
-          {
-            cause: verificationResult.out.error,
-          }
-        )
-      }
-      return { ok: { ...verificationResult.out.ok, delegation } }
-    } finally {
-      if (currentSpace) {
-        await this.setCurrentSpace(currentSpace.did())
-      }
-    }
   }
 
   /**
@@ -617,5 +550,78 @@ export class Client extends Base {
 
     // Remove association of content CID with selected space.
     await this.capability.upload.remove(contentCID)
+  }
+}
+
+/**
+ * Authorizes an audience to serve content from the provided space and record egress events.
+ * It also publishes the delegation to the content serve service.
+ * Delegates the following capabilities to the audience:
+ * - `space/content/serve/*`
+ *
+ * @param {Client} client - The w3up client instance.
+ * @param {import('./types.js').OwnedSpace} space - The space to authorize the audience for.
+ * @param {import('./types.js').ConnectionView<import('./types.js').ContentServeService>} connection - The connection to the Content Serve Service that will handle, validate, and store the access/delegate UCAN invocation.
+ * @param {object} [options] - Options for the content serve authorization invocation.
+ * @param {`did:${string}:${string}`} [options.audience] - The Web DID of the audience (gateway or peer) to authorize.
+ * @param {number} [options.expiration] - The time at which the delegation expires in seconds from unix epoch.
+ */
+export const authorizeContentServe = async (
+  client,
+  space,
+  connection,
+  options = {}
+) => {
+  const currentSpace = client.currentSpace()
+  try {
+    // Set the current space to the space we are authorizing the gateway for, otherwise the delegation will fail
+    await client.setCurrentSpace(space.did())
+
+    /** @type {import('@ucanto/client').Principal<`did:${string}:${string}`>} */
+    const audience = {
+      did: () => options.audience ?? connection.id.did(),
+    }
+
+    // Grant the audience the ability to serve content from the space, it includes existing proofs automatically
+    const delegation = await client.createDelegation(
+      audience,
+      [SpaceCapabilities.contentServe.can],
+      {
+        expiration: options.expiration ?? Infinity,
+      }
+    )
+
+    // Publish the delegation to the content serve service
+    const accessProofs = client.proofs([
+      { can: AccessCapabilities.access.can, with: space.did() },
+    ])
+    const verificationResult = await AccessCapabilities.delegate
+      .invoke({
+        issuer: client.agent.issuer,
+        audience,
+        with: space.did(),
+        proofs: [...accessProofs, delegation],
+        nb: {
+          delegations: {
+            [delegation.cid.toString()]: delegation.cid,
+          },
+        },
+      })
+      .execute(connection)
+
+    /* c8 ignore next 8 - can't mock this error */
+    if (verificationResult.out.error) {
+      throw new Error(
+        `failed to publish delegation for audience ${options.audience}: ${verificationResult.out.error.message}`,
+        {
+          cause: verificationResult.out.error,
+        }
+      )
+    }
+    return { ok: { ...verificationResult.out.ok, delegation } }
+  } finally {
+    if (currentSpace) {
+      await client.setCurrentSpace(currentSpace.did())
+    }
   }
 }

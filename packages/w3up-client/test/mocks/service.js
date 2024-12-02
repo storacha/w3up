@@ -1,5 +1,6 @@
 import * as Client from '@ucanto/client'
 import * as Server from '@ucanto/server'
+import { HTTP } from '@ucanto/transport'
 import * as CAR from '@ucanto/transport/car'
 import * as AccessCaps from '@web3-storage/capabilities'
 
@@ -23,8 +24,9 @@ export function getContentServeMockService(result = { ok: {} }) {
  *
  * @param {any} id
  * @param {any} service
+ * @param {string | undefined} [url]
  */
-export function getConnection(id, service) {
+export function getConnection(id, service, url = undefined) {
   const server = Server.create({
     id: id,
     service,
@@ -34,7 +36,7 @@ export function getConnection(id, service) {
   const connection = Client.connect({
     id: id,
     codec: CAR.outbound,
-    channel: server,
+    channel: url ? HTTP.open({ url: new URL(url) }) : server,
   })
 
   return { connection }

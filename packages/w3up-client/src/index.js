@@ -12,6 +12,7 @@ import { Client } from './client.js'
 export * as Result from './result.js'
 export * as Account from './account.js'
 export * from './ability.js'
+export { authorizeContentServe } from './client.js'
 
 /**
  * Create a new w3up client.
@@ -43,8 +44,5 @@ export async function create(options = {}) {
   const data = await AgentData.create({ principal }, { store })
   return new Client(data, options)
 }
-
-export const authorizeContentServe =
-  Client.prototype.authorizeContentServe.bind(Client.prototype)
 
 export { Client }
