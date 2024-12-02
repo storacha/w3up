@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.0.5](https://github.com/storacha/upload-service/compare/client-v1.0.4...client-v1.0.5) (2024-12-02)
+
+
+### Other Changes
+
+* Trigger release ([05444ef](https://github.com/storacha/upload-service/commit/05444ef59909bd8f5382d4df289b08812e08a9c0))
+* Trigger release ([#94](https://github.com/storacha/upload-service/issues/94)) ([36be4bf](https://github.com/storacha/upload-service/commit/36be4bfbf38f49f9388d77c3cde37f6c7e5961be))
+
 ## [1.0.4](https://github.com/storacha/upload-service/compare/client-v1.0.3...client-v1.0.4) (2024-12-02)
 
 
