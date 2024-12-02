@@ -44,4 +44,7 @@ export async function create(options = {}) {
   return new Client(data, options)
 }
 
+export const authorizeContentServe =
+  Client.prototype.authorizeContentServe.bind(Client.prototype)
+
 export { Client }
