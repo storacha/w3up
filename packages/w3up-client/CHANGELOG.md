@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.0.4](https://github.com/storacha/upload-service/compare/client-v1.0.3...client-v1.0.4) (2024-12-02)
+
+
+### Other Changes
+
+* **main:** release client 1.0.3 ([17ff92b](https://github.com/storacha/upload-service/commit/17ff92b1ea44ae0e2fce2fa97b40ad578989a9e2))
+* **main:** release client 1.0.3 ([#85](https://github.com/storacha/upload-service/issues/85)) ([0ea3a80](https://github.com/storacha/upload-service/commit/0ea3a80517eb1f7d8dd0d3e2eb8cc4f72c4a93ba))
+* Revert "chore(main): release client 1.0.3" ([#84](https://github.com/storacha/upload-service/issues/84)) ([2f354c4](https://github.com/storacha/upload-service/commit/2f354c423d60d929fc24bb902d262b3ae7b89ee0))
+
 ## [1.0.3](https://github.com/storacha/upload-service/compare/client-v1.0.2...client-v1.0.3) (2024-11-29)
 
 
