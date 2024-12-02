@@ -1,6 +1,6 @@
 {
   "name": "@storacha/filecoin-client",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "description": "The w3filecoin client for storacha.network",
   "homepage": "https://storacha.network",
   "repository": {

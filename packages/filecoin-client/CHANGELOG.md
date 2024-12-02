@@ -1,5 +1,45 @@
 # Changelog
 
+## 1.0.0 (2024-12-02)
+
+
+### Features
+
+* filecoin info ([#1091](https://github.com/storacha/upload-service/issues/1091)) ([adb2442](https://github.com/storacha/upload-service/commit/adb24424d1faf50daf2339b77c22fdd44faa236a))
+* move aggregate information out of deals in filecoin/info ([#1192](https://github.com/storacha/upload-service/issues/1192)) ([18dc590](https://github.com/storacha/upload-service/commit/18dc590ad50a023ef3094bfc1a2d729459e5d68e))
+* router ([#11](https://github.com/storacha/upload-service/issues/11)) ([c810735](https://github.com/storacha/upload-service/commit/c8107354da663120228f779814eafa0c9a3e80a2))
+* upgrade ucanto/transport to 9.1.0 in all packages to get more verbose errors from HTTP transport on non-ok response ([#1312](https://github.com/storacha/upload-service/issues/1312)) ([d6978d7](https://github.com/storacha/upload-service/commit/d6978d7ab299be76987c6533d18e6857f6998fe6))
+
+
+### Fixes
+
+* filecoin test use blob ([#1422](https://github.com/storacha/upload-service/issues/1422)) ([359c0b7](https://github.com/storacha/upload-service/commit/359c0b736cad8e4375d75af4f60e97e20057e7aa))
+* issue where typedoc docs would only show full docs for w3up-client ([#1141](https://github.com/storacha/upload-service/issues/1141)) ([0b8d3f3](https://github.com/storacha/upload-service/commit/0b8d3f3b52918b1b4d3b76ea6fea3fb0c837cd73))
+* migrate repo ([#1389](https://github.com/storacha/upload-service/issues/1389)) ([475a287](https://github.com/storacha/upload-service/commit/475a28743ff9f7138b46dfe4227d3c80ed75a6a2))
+* package metadata ([#1161](https://github.com/storacha/upload-service/issues/1161)) ([b8a1cc2](https://github.com/storacha/upload-service/commit/b8a1cc2e125a91be582998bda295e1ae1caab087))
+* repo URLs ([#1550](https://github.com/storacha/upload-service/issues/1550)) ([e02ddf3](https://github.com/storacha/upload-service/commit/e02ddf3696553b03f8d2f7316de0a99a9303a60f))
+* upgrade filecoin client deal tracker principal ([#1092](https://github.com/storacha/upload-service/issues/1092)) ([cde7113](https://github.com/storacha/upload-service/commit/cde71134ab8fdd4a72e3764da30ae0a414a8690b))
+* upgrade ucanto core ([#1127](https://github.com/storacha/upload-service/issues/1127)) ([5ce4d22](https://github.com/storacha/upload-service/commit/5ce4d2292d7e980da4a2ea0f1583f608a81157d2))
+* upgrade ucanto libs and format filecoin api ([#1359](https://github.com/storacha/upload-service/issues/1359)) ([87ca098](https://github.com/storacha/upload-service/commit/87ca098186fe204ff3409a2684719f1c54148c97))
+* upload API test fixes ([6b0d72d](https://github.com/storacha/upload-service/commit/6b0d72dee3dc9ce5320ad8de333a718d644b5c3d))
+
+
+### Other Changes
+
+* Add `pnpm dev` to watch-build all packages ([#1533](https://github.com/storacha/upload-service/issues/1533)) ([07970ef](https://github.com/storacha/upload-service/commit/07970efd443149158ebbfb2c4e745b5007eb9407))
+* **main:** release filecoin-client 3.0.2 ([#1093](https://github.com/storacha/upload-service/issues/1093)) ([7896e73](https://github.com/storacha/upload-service/commit/7896e73801d2fae29c0288d5e96642f92c64a296))
+* **main:** release filecoin-client 3.1.0 ([#1097](https://github.com/storacha/upload-service/issues/1097)) ([2cbc76d](https://github.com/storacha/upload-service/commit/2cbc76d115c706248bec6cb8e66139dd032c28d2))
+* **main:** release filecoin-client 3.1.1 ([#1130](https://github.com/storacha/upload-service/issues/1130)) ([afd9306](https://github.com/storacha/upload-service/commit/afd9306f6f2e99e1ef55e186521b4de4e86281b2))
+* **main:** release filecoin-client 3.1.2 ([#1146](https://github.com/storacha/upload-service/issues/1146)) ([824b29d](https://github.com/storacha/upload-service/commit/824b29d60db0f19fc539bca96c3adbbcc1343da2))
+* **main:** release filecoin-client 3.1.3 ([#1162](https://github.com/storacha/upload-service/issues/1162)) ([26fde82](https://github.com/storacha/upload-service/commit/26fde82e5d742e3f190af4a4929cf07962179273))
+* **main:** release filecoin-client 3.2.0 ([#1197](https://github.com/storacha/upload-service/issues/1197)) ([85e4b87](https://github.com/storacha/upload-service/commit/85e4b870bc0313e0e866082e4572d7584164edcf))
+* **main:** release filecoin-client 3.3.0 ([#1317](https://github.com/storacha/upload-service/issues/1317)) ([08a8bab](https://github.com/storacha/upload-service/commit/08a8babc3afb0208f4ebac03a99060d0cae279c9))
+* **main:** release filecoin-client 3.3.1 ([#1361](https://github.com/storacha/upload-service/issues/1361)) ([1c95471](https://github.com/storacha/upload-service/commit/1c9547196c6a1818f6de9bbec1d17236aacde4b2))
+* **main:** release filecoin-client 3.3.2 ([#1397](https://github.com/storacha/upload-service/issues/1397)) ([37f1ffd](https://github.com/storacha/upload-service/commit/37f1ffd638e9498b78bcf444e87182e1599e7b92))
+* **main:** release filecoin-client 3.3.3 ([#1423](https://github.com/storacha/upload-service/issues/1423)) ([6af72b0](https://github.com/storacha/upload-service/commit/6af72b0aadc70ab4bed700d7f3df09dc087e75b1))
+* **main:** release filecoin-client 3.3.4 ([#1539](https://github.com/storacha/upload-service/issues/1539)) ([a3af226](https://github.com/storacha/upload-service/commit/a3af22678b45365fa951d88d9251bf6e0d0d65b2))
+* package renames ([0f797ed](https://github.com/storacha/upload-service/commit/0f797ed298b570dd649aa18055f801b0ab6fbfd8))
+
 ## [3.3.4](https://github.com/storacha/w3up/compare/filecoin-client-v3.3.3...filecoin-client-v3.3.4) (2024-09-23)
 
 
