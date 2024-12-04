@@ -147,8 +147,8 @@ export const execute = async (agent, input) => {
  * a receipt it will return receipt without running invocation.
  *
  * @template {Record<string, any>} S
- * @param {Types.Invocation} invocation
  * @param {Agent<S>} agent
+ * @param {Types.Invocation} invocation
  */
 export const run = async (agent, invocation) => {
   const cached = await agent.context.agentStore.receipts.get(invocation.link())

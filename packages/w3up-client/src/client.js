@@ -5,10 +5,12 @@ import {
   Receipt,
 } from '@web3-storage/upload-client'
 import {
+  Access as AccessCapabilities,
   Blob as BlobCapabilities,
   Index as IndexCapabilities,
   Upload as UploadCapabilities,
   Filecoin as FilecoinCapabilities,
+  Space as SpaceCapabilities,
 } from '@web3-storage/capabilities'
 import * as DIDMailto from '@web3-storage/did-mailto'
 import { Base } from './base.js'
@@ -246,19 +248,27 @@ export class Client extends Base {
   }
 
   /**
-   * Create a new space with a given name.
+   * Creates a new space with a given name.
    * If an account is not provided, the space is created without any delegation and is not saved, hence it is a temporary space.
    * When an account is provided in the options argument, then it creates a delegated recovery account
    * by provisioning the space, saving it and then delegating access to the recovery account.
+   * In addition, it authorizes the listed Gateway Services to serve content from the created space.
+   * It is done by delegating the `space/content/serve/*` capability to the Gateway Service.
+   * User can skip the Gateway authorization by setting the `skipGatewayAuthorization` option to `true`.
    *
-   * @typedef {object} CreateOptions
-   * @property {Account.Account} [account]
+   * @typedef {import('./types.js').ConnectionView<import('./types.js').ContentServeService>} ConnectionView
    *
-   * @param {string} name
-   * @param {CreateOptions} options
+   * @typedef {object} SpaceCreateOptions
+   * @property {Account.Account} [account] - The account configured as the recovery account for the space.
+   * @property {Array<ConnectionView>} [authorizeGatewayServices] - The DID Key or DID Web of the Gateway to authorize to serve content from the created space.
+   * @property {boolean} [skipGatewayAuthorization] - Whether to skip the Gateway authorization. It means that the content of the space will not be served by any Gateway.
+   *
+   * @param {string} name - The name of the space to create.
+   * @param {SpaceCreateOptions} options - Options for the space creation.
    * @returns {Promise<import("./space.js").OwnedSpace>} The created space owned by the agent.
    */
-  async createSpace(name, options = {}) {
+  async createSpace(name, options) {
+    // Save the space to authorize the client to use the space
     const space = await this._agent.createSpace(name)
 
     const account = options.account
@@ -279,18 +289,35 @@ export class Client extends Base {
       const recovery = await space.createRecovery(account.did())
 
       // Delegate space access to the recovery
-      const result = await this.capability.access.delegate({
+      const delegationResult = await this.capability.access.delegate({
         space: space.did(),
         delegations: [recovery],
       })
 
-      if (result.error) {
+      if (delegationResult.error) {
         throw new Error(
-          `failed to authorize recovery account: ${result.error.message}`,
-          { cause: result.error }
+          `failed to authorize recovery account: ${delegationResult.error.message}`,
+          { cause: delegationResult.error }
         )
       }
     }
+
+    // Authorize the listed Gateway Services to serve content from the created space
+    if (options.skipGatewayAuthorization !== true) {
+      if (
+        !options.authorizeGatewayServices ||
+        options.authorizeGatewayServices.length === 0
+      ) {
+        throw new Error(
+          'failed to authorize Gateway Services: missing <authorizeGatewayServices> option'
+        )
+      }
+
+      for (const serviceConnection of options.authorizeGatewayServices) {
+        await authorizeContentServe(this, space, serviceConnection)
+      }
+    }
+
     return space
   }
 
@@ -523,5 +550,78 @@ export class Client extends Base {
 
     // Remove association of content CID with selected space.
     await this.capability.upload.remove(contentCID)
+  }
+}
+
+/**
+ * Authorizes an audience to serve content from the provided space and record egress events.
+ * It also publishes the delegation to the content serve service.
+ * Delegates the following capabilities to the audience:
+ * - `space/content/serve/*`
+ *
+ * @param {Client} client - The w3up client instance.
+ * @param {import('./types.js').OwnedSpace} space - The space to authorize the audience for.
+ * @param {import('./types.js').ConnectionView<import('./types.js').ContentServeService>} connection - The connection to the Content Serve Service that will handle, validate, and store the access/delegate UCAN invocation.
+ * @param {object} [options] - Options for the content serve authorization invocation.
+ * @param {`did:${string}:${string}`} [options.audience] - The Web DID of the audience (gateway or peer) to authorize.
+ * @param {number} [options.expiration] - The time at which the delegation expires in seconds from unix epoch.
+ */
+export const authorizeContentServe = async (
+  client,
+  space,
+  connection,
+  options = {}
+) => {
+  const currentSpace = client.currentSpace()
+  try {
+    // Set the current space to the space we are authorizing the gateway for, otherwise the delegation will fail
+    await client.setCurrentSpace(space.did())
+
+    /** @type {import('@ucanto/client').Principal<`did:${string}:${string}`>} */
+    const audience = {
+      did: () => options.audience ?? connection.id.did(),
+    }
+
+    // Grant the audience the ability to serve content from the space, it includes existing proofs automatically
+    const delegation = await client.createDelegation(
+      audience,
+      [SpaceCapabilities.contentServe.can],
+      {
+        expiration: options.expiration ?? Infinity,
+      }
+    )
+
+    // Publish the delegation to the content serve service
+    const accessProofs = client.proofs([
+      { can: AccessCapabilities.access.can, with: space.did() },
+    ])
+    const verificationResult = await AccessCapabilities.delegate
+      .invoke({
+        issuer: client.agent.issuer,
+        audience,
+        with: space.did(),
+        proofs: [...accessProofs, delegation],
+        nb: {
+          delegations: {
+            [delegation.cid.toString()]: delegation.cid,
+          },
+        },
+      })
+      .execute(connection)
+
+    /* c8 ignore next 8 - can't mock this error */
+    if (verificationResult.out.error) {
+      throw new Error(
+        `failed to publish delegation for audience ${options.audience}: ${verificationResult.out.error.message}`,
+        {
+          cause: verificationResult.out.error,
+        }
+      )
+    }
+    return { ok: { ...verificationResult.out.ok, delegation } }
+  } finally {
+    if (currentSpace) {
+      await client.setCurrentSpace(currentSpace.did())
+    }
   }
 }

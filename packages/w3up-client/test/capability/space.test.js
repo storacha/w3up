@@ -19,7 +19,9 @@ export const SpaceClient = Test.withContext({
         },
       })
 
-      const space = await alice.createSpace('test')
+      const space = await alice.createSpace('test', {
+        skipGatewayAuthorization: true,
+      })
       const auth = await space.createAuthorization(alice, {
         access: { 'space/info': {} },
         expiration: Infinity,
@@ -55,7 +57,9 @@ export const SpaceClient = Test.withContext({
           upload: connection,
         },
       })
-      const space = await alice.createSpace('test')
+      const space = await alice.createSpace('test', {
+        skipGatewayAuthorization: true,
+      })
       const auth = await alice.addSpace(await space.createAuthorization(alice))
       assert.ok(auth)
 
@@ -165,7 +169,9 @@ export const SpaceClient = Test.withContext({
           upload: connection,
         },
       })
-      const space = await alice.createSpace('test')
+      const space = await alice.createSpace('test', {
+        skipGatewayAuthorization: true,
+      })
       const auth = await alice.addSpace(await space.createAuthorization(alice))
       assert.ok(auth)
 
@@ -273,7 +279,9 @@ export const SpaceClient = Test.withContext({
             upload: connection,
           },
         })
-        const space = await alice.createSpace('test')
+        const space = await alice.createSpace('test', {
+          skipGatewayAuthorization: true,
+        })
         const auth = await alice.addSpace(
           await space.createAuthorization(alice)
         )
@@ -385,7 +393,9 @@ export const SpaceClient = Test.withContext({
             upload: connection,
           },
         })
-        const space = await alice.createSpace('test')
+        const space = await alice.createSpace('test', {
+          skipGatewayAuthorization: true,
+        })
         const auth = await alice.addSpace(
           await space.createAuthorization(alice)
         )
@@ -499,7 +509,9 @@ export const SpaceClient = Test.withContext({
           upload: connection,
         },
       })
-      const space = await alice.createSpace('test')
+      const space = await alice.createSpace('test', {
+        skipGatewayAuthorization: true,
+      })
       const auth = await alice.addSpace(await space.createAuthorization(alice))
       assert.ok(auth)
 

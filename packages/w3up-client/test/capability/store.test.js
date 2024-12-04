@@ -16,7 +16,9 @@ export const StoreClient = Test.withContext({
       },
     })
 
-    const space = await alice.createSpace('test')
+    const space = await alice.createSpace('test', {
+      skipGatewayAuthorization: true,
+    })
     const auth = await space.createAuthorization(alice)
     await alice.addSpace(auth)
     await alice.setCurrentSpace(space.did())
@@ -51,7 +53,9 @@ export const StoreClient = Test.withContext({
       },
     })
 
-    const space = await alice.createSpace('test')
+    const space = await alice.createSpace('test', {
+      skipGatewayAuthorization: true,
+    })
     const auth = await space.createAuthorization(alice)
     await alice.addSpace(auth)
     await alice.setCurrentSpace(space.did())
@@ -87,7 +91,9 @@ export const StoreClient = Test.withContext({
       },
     })
 
-    const space = await alice.createSpace('test')
+    const space = await alice.createSpace('test', {
+      skipGatewayAuthorization: true,
+    })
     const auth = await space.createAuthorization(alice)
     await alice.addSpace(auth)
     await alice.setCurrentSpace(space.did())
@@ -121,7 +127,9 @@ export const StoreClient = Test.withContext({
       },
     })
 
-    const space = await alice.createSpace('test')
+    const space = await alice.createSpace('test', {
+      skipGatewayAuthorization: true,
+    })
     const auth = await space.createAuthorization(alice)
     await alice.addSpace(auth)
     await alice.setCurrentSpace(space.did())

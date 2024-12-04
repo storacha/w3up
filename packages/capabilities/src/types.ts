@@ -131,16 +131,6 @@ export type UsageReport = InferInvokedCapability<typeof UsageCaps.report>
 export type UsageReportSuccess = Record<ProviderDID, UsageData>
 export type UsageReportFailure = Ucanto.Failure
 
-export type EgressRecord = InferInvokedCapability<typeof SpaceCaps.egressRecord>
-export type EgressRecordSuccess = {
-  space: SpaceDID
-  resource: UnknownLink
-  bytes: number
-  servedAt: ISO8601Date
-  cause: UnknownLink
-}
-export type EgressRecordFailure = ConsumerNotFound | Ucanto.Failure
-
 export interface UsageData {
   /** Provider the report concerns, e.g. `did:web:web3.storage` */
   provider: ProviderDID
@@ -284,6 +274,18 @@ export type RateLimitListFailure = Ucanto.Failure
 // Space
 export type Space = InferInvokedCapability<typeof SpaceCaps.space>
 export type SpaceInfo = InferInvokedCapability<typeof SpaceCaps.info>
+export type SpaceContentServe = InferInvokedCapability<
+  typeof SpaceCaps.contentServe
+>
+export type EgressRecord = InferInvokedCapability<typeof SpaceCaps.egressRecord>
+export type EgressRecordSuccess = {
+  space: SpaceDID
+  resource: UnknownLink
+  bytes: number
+  servedAt: ISO8601Date
+  cause: UnknownLink
+}
+export type EgressRecordFailure = ConsumerNotFound | Ucanto.Failure
 
 // filecoin
 export interface DealMetadata {
@@ -895,6 +897,8 @@ export type ServiceAbilityArray = [
   ProviderAdd['can'],
   Space['can'],
   SpaceInfo['can'],
+  SpaceContentServe['can'],
+  EgressRecord['can'],
   Upload['can'],
   UploadAdd['can'],
   UploadGet['can'],

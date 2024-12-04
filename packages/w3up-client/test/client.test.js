@@ -1,5 +1,6 @@
 import assert from 'assert'
 import { parseLink } from '@ucanto/server'
+import * as Server from '@ucanto/server'
 import {
   Agent,
   AgentData,
@@ -9,12 +10,18 @@ import {
 import { randomBytes, randomCAR } from './helpers/random.js'
 import { toCAR } from './helpers/car.js'
 import { File } from './helpers/shims.js'
-import { Client } from '../src/client.js'
+import { authorizeContentServe, Client } from '../src/client.js'
 import * as Test from './test.js'
 import { receiptsEndpoint } from './helpers/utils.js'
 import { Absentee } from '@ucanto/principal'
 import { DIDMailto } from '../src/capability/access.js'
-import { confirmConfirmationUrl } from '../../upload-api/test/helpers/utils.js'
+import {
+  alice,
+  confirmConfirmationUrl,
+  gateway,
+} from '../../upload-api/test/helpers/utils.js'
+import * as SpaceCapability from '@web3-storage/capabilities/space'
+import { getConnection, getContentServeMockService } from './mocks/service.js'
 
 /** @type {Test.Suite} */
 export const testClient = {
@@ -38,7 +45,9 @@ export const testClient = {
         receiptsEndpoint: new URL(receiptsEndpoint),
       })
 
-      const space = await alice.createSpace('upload-test')
+      const space = await alice.createSpace('upload-test', {
+        skipGatewayAuthorization: true,
+      })
       const auth = await space.createAuthorization(alice)
       await alice.addSpace(auth)
       await alice.setCurrentSpace(space.did())
@@ -115,7 +124,9 @@ export const testClient = {
         receiptsEndpoint: new URL(receiptsEndpoint),
       })
 
-      const space = await alice.createSpace('upload-dir-test')
+      const space = await alice.createSpace('upload-dir-test', {
+        skipGatewayAuthorization: true,
+      })
       const auth = await space.createAuthorization(alice)
       await alice.addSpace(auth)
 
@@ -160,7 +171,9 @@ export const testClient = {
         receiptsEndpoint: new URL(receiptsEndpoint),
       })
 
-      const space = await alice.createSpace('car-space')
+      const space = await alice.createSpace('car-space', {
+        skipGatewayAuthorization: true,
+      })
       await alice.addSpace(await space.createAuthorization(alice))
       await alice.setCurrentSpace(space.did())
 
@@ -221,7 +234,9 @@ export const testClient = {
       const current0 = alice.currentSpace()
       assert.equal(current0, undefined)
 
-      const space = await alice.createSpace('new-space')
+      const space = await alice.createSpace('new-space', {
+        skipGatewayAuthorization: true,
+      })
       await alice.addSpace(await space.createAuthorization(alice))
       await alice.setCurrentSpace(space.did())
 
@@ -235,7 +250,9 @@ export const testClient = {
       const alice = new Client(await AgentData.create())
 
       const name = `space-${Date.now()}`
-      const space = await alice.createSpace(name)
+      const space = await alice.createSpace(name, {
+        skipGatewayAuthorization: true,
+      })
       const auth = await space.createAuthorization(alice)
       await alice.addSpace(auth)
 
@@ -249,7 +266,9 @@ export const testClient = {
       const alice = new Client(await AgentData.create())
       const bob = new Client(await AgentData.create())
 
-      const space = await alice.createSpace('new-space')
+      const space = await alice.createSpace('new-space', {
+        skipGatewayAuthorization: true,
+      })
       await alice.addSpace(
         await space.createAuthorization(alice, {
           access: { '*': {} },
@@ -284,6 +303,7 @@ export const testClient = {
       // Step 2: Alice creates a space with her account as the recovery account
       const space = await client.createSpace('recovery-space-test', {
         account: aliceAccount, // The account is the recovery account
+        skipGatewayAuthorization: true,
       })
       assert.ok(space)
 
@@ -315,7 +335,9 @@ export const testClient = {
         await aliceLogin
 
         // Step 2: Alice creates a space without providing a recovery account
-        const space = await client.createSpace('no-recovery-space-test')
+        const space = await client.createSpace('no-recovery-space-test', {
+          skipGatewayAuthorization: true,
+        })
         assert.ok(space)
 
         // Step 3: Attempt to access the space from a new device
@@ -418,6 +440,7 @@ export const testClient = {
       // Step 2: Alice creates a space
       const space = await aliceClient.createSpace('share-space-test', {
         account: aliceAccount,
+        skipGatewayAuthorization: true,
       })
       assert.ok(space)
 
@@ -470,6 +493,7 @@ export const testClient = {
           'share-space-delegate-fail-test',
           {
             account: aliceAccount,
+            skipGatewayAuthorization: true,
           }
         )
         assert.ok(space)
@@ -506,12 +530,14 @@ export const testClient = {
       // Step 2: Alice creates a space
       const spaceA = await client.createSpace('test-space-a', {
         account: aliceAccount,
+        skipGatewayAuthorization: true,
       })
       assert.ok(spaceA)
 
       // Step 3: Alice creates another space to share with a friend
       const spaceB = await client.createSpace('test-space-b', {
         account: aliceAccount,
+        skipGatewayAuthorization: true,
       })
       assert.ok(spaceB)
 
@@ -528,12 +554,207 @@ export const testClient = {
       )
     },
   }),
+  authorizeGateway: Test.withContext({
+    'should explicitly authorize a gateway to serve content from a space':
+      async (assert, { mail, grantAccess, connection }) => {
+        // Step 1: Create a client for Alice and login
+        const aliceClient = new Client(
+          await AgentData.create({
+            principal: alice,
+          }),
+          {
+            // @ts-ignore
+            serviceConf: {
+              access: connection,
+              upload: connection,
+            },
+          }
+        )
+
+        const aliceEmail = 'alice@web.mail'
+        const aliceLogin = aliceClient.login(aliceEmail)
+        const message = await mail.take()
+        assert.deepEqual(message.to, aliceEmail)
+        await grantAccess(message)
+        const aliceAccount = await aliceLogin
+
+        // Step 2: Alice creates a space
+        const spaceA = await aliceClient.createSpace(
+          'authorize-gateway-space',
+          {
+            account: aliceAccount,
+            skipGatewayAuthorization: true,
+          }
+        )
+        assert.ok(spaceA)
+
+        const gatewayService = getContentServeMockService()
+        const gatewayConnection = getConnection(
+          gateway,
+          gatewayService
+        ).connection
+
+        // Step 3: Alice authorizes the gateway to serve content from the space
+        const delegationResult = await authorizeContentServe(
+          aliceClient,
+          spaceA,
+          gatewayConnection
+        )
+        assert.ok(delegationResult.ok)
+        const { delegation } = delegationResult.ok
+
+        // Step 4: Find the delegation for the default gateway
+        assert.equal(delegation.audience.did(), gateway.did())
+        assert.ok(
+          delegation.capabilities.some(
+            (c) =>
+              c.can === SpaceCapability.contentServe.can &&
+              c.with === spaceA.did()
+          )
+        )
+      },
+    'should automatically authorize a gateway to serve content from a space when the space is created':
+      async (assert, { mail, grantAccess, connection }) => {
+        // Step 1: Create a client for Alice and login
+        const aliceClient = new Client(
+          await AgentData.create({
+            principal: alice,
+          }),
+          {
+            // @ts-ignore
+            serviceConf: {
+              access: connection,
+              upload: connection,
+            },
+          }
+        )
+
+        const aliceEmail = 'alice@web.mail'
+        const aliceLogin = aliceClient.login(aliceEmail)
+        const message = await mail.take()
+        assert.deepEqual(message.to, aliceEmail)
+        await grantAccess(message)
+        const aliceAccount = await aliceLogin
+
+        // Step 2: Alice creates a space
+        const gatewayService = getContentServeMockService()
+        const gatewayConnection = getConnection(
+          gateway,
+          gatewayService
+        ).connection
+
+        try {
+          const spaceA = await aliceClient.createSpace(
+            'authorize-gateway-space',
+            {
+              account: aliceAccount,
+              authorizeGatewayServices: [gatewayConnection],
+            }
+          )
+          assert.ok(spaceA, 'should create the space')
+        } catch (error) {
+          assert.fail(error, 'should not throw when creating the space')
+        }
+      },
+    'should throw when the content serve authorization fails due to missing service configuration':
+      async (assert, { mail, grantAccess, connection }) => {
+        // Step 1: Create a client for Alice and login
+        const aliceClient = new Client(
+          await AgentData.create({
+            principal: alice,
+          }),
+          {
+            // @ts-ignore
+            serviceConf: {
+              access: connection,
+              upload: connection,
+            },
+          }
+        )
+
+        const aliceEmail = 'alice@web.mail'
+        const aliceLogin = aliceClient.login(aliceEmail)
+        const message = await mail.take()
+        assert.deepEqual(message.to, aliceEmail)
+        await grantAccess(message)
+        const aliceAccount = await aliceLogin
+
+        try {
+          const spaceA = await aliceClient.createSpace(
+            'authorize-gateway-space',
+            {
+              account: aliceAccount,
+              authorizeGatewayServices: [], // No services to authorize
+            }
+          )
+          assert.fail(spaceA, 'should not create the space')
+        } catch (error) {
+          assert.match(
+            // @ts-expect-error
+            error.message,
+            /missing <authorizeGatewayServices> option/,
+            'should throw when creating the space'
+          )
+        }
+      },
+    'should throw when content serve service can not process the invocation':
+      async (assert, { mail, grantAccess, connection }) => {
+        // Step 1: Create a client for Alice and login
+        const aliceClient = new Client(
+          await AgentData.create({
+            principal: alice,
+          }),
+          {
+            // @ts-ignore
+            serviceConf: {
+              access: connection,
+              upload: connection,
+            },
+          }
+        )
+
+        const aliceEmail = 'alice@web.mail'
+        const aliceLogin = aliceClient.login(aliceEmail)
+        const message = await mail.take()
+        assert.deepEqual(message.to, aliceEmail)
+        await grantAccess(message)
+        const aliceAccount = await aliceLogin
+
+        // Step 2: Alice creates a space
+        const gatewayService = getContentServeMockService({
+          error: Server.fail(
+            'Content serve service can not process the invocation'
+          ).error,
+        })
+        const gatewayConnection = getConnection(
+          gateway,
+          gatewayService
+        ).connection
+
+        try {
+          await aliceClient.createSpace('authorize-gateway-space', {
+            account: aliceAccount,
+            authorizeGatewayServices: [gatewayConnection],
+          })
+          assert.fail('should not create the space')
+        } catch (error) {
+          assert.match(
+            // @ts-expect-error
+            error.message,
+            /failed to publish delegation for audience/,
+            'should throw when publishing the delegation'
+          )
+        }
+      },
+  }),
   proofs: {
     'should get proofs': async (assert) => {
       const alice = new Client(await AgentData.create())
       const bob = new Client(await AgentData.create())
 
-      const space = await alice.createSpace('proof-space')
+      const space = await alice.createSpace('proof-space', {
+        skipGatewayAuthorization: true,
+      })
       await alice.addSpace(await space.createAuthorization(alice))
       await alice.setCurrentSpace(space.did())
 
@@ -551,7 +772,9 @@ export const testClient = {
       const alice = new Client(await AgentData.create())
       const bob = new Client(await AgentData.create())
 
-      const space = await alice.createSpace('test')
+      const space = await alice.createSpace('test', {
+        skipGatewayAuthorization: true,
+      })
       await alice.addSpace(await space.createAuthorization(alice))
       await alice.setCurrentSpace(space.did())
       const name = `delegation-${Date.now()}`
@@ -587,7 +810,9 @@ export const testClient = {
         },
       })
 
-      const space = await alice.createSpace('test')
+      const space = await alice.createSpace('test', {
+        skipGatewayAuthorization: true,
+      })
       await alice.addSpace(
         await space.createAuthorization(alice, {
           access: { '*': {} },
@@ -609,7 +834,9 @@ export const testClient = {
       const alice = new Client(await AgentData.create())
       const bob = new Client(await AgentData.create())
 
-      const space = await alice.createSpace('test')
+      const space = await alice.createSpace('test', {
+        skipGatewayAuthorization: true,
+      })
       await alice.addSpace(await space.createAuthorization(alice))
       await alice.setCurrentSpace(space.did())
       const name = `delegation-${Date.now()}`
@@ -660,7 +887,9 @@ export const testClient = {
       })
 
       // setup space
-      const space = await alice.createSpace('upload-test')
+      const space = await alice.createSpace('upload-test', {
+        skipGatewayAuthorization: true,
+      })
       const auth = await space.createAuthorization(alice)
       await alice.addSpace(auth)
       await alice.setCurrentSpace(space.did())
@@ -709,7 +938,9 @@ export const testClient = {
         })
 
         // setup space
-        const space = await alice.createSpace('upload-test')
+        const space = await alice.createSpace('upload-test', {
+          skipGatewayAuthorization: true,
+        })
         const auth = await space.createAuthorization(alice)
         await alice.addSpace(auth)
         await alice.setCurrentSpace(space.did())
@@ -761,7 +992,9 @@ export const testClient = {
       })
 
       // setup space
-      const space = await alice.createSpace('upload-test')
+      const space = await alice.createSpace('upload-test', {
+        skipGatewayAuthorization: true,
+      })
       const auth = await space.createAuthorization(alice)
       await alice.addSpace(auth)
       await alice.setCurrentSpace(space.did())
@@ -785,7 +1018,9 @@ export const testClient = {
       })
 
       // setup space
-      const space = await alice.createSpace('upload-test')
+      const space = await alice.createSpace('upload-test', {
+        skipGatewayAuthorization: true,
+      })
       const auth = await space.createAuthorization(alice)
       await alice.addSpace(auth)
       await alice.setCurrentSpace(space.did())

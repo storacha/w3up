@@ -229,7 +229,10 @@ export const handleAggregateInsertToPieceAcceptQueue = async (
   // TODO: Batch per a maximum to queue
   const results = await map(
     pieces,
-    /** @returns {Promise<import('@ucanto/interface').Result<import('@ucanto/interface').Unit, RangeError|import('../types.js').QueueAddError>>} */
+    /**
+     * @param piece
+     * @returns {Promise<import('@ucanto/interface').Result<import('@ucanto/interface').Unit, RangeError|import('../types.js').QueueAddError>>}
+     */
     async piece => {
       const inclusionProof = aggregateBuilder.resolveProof(piece.link)
       if (inclusionProof.error) return inclusionProof
