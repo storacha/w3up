@@ -1,6 +1,6 @@
 {
   "name": "@web3-storage/filecoin-api",
-  "version": "7.3.2",
+  "version": "8.0.0",
   "type": "module",
   "main": "./src/lib.js",
   "homepage": "https://web3.storage",
