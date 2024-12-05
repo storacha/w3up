@@ -499,7 +499,7 @@ describe('Blob.add', () => {
     )
   })
 
-  it('throws for bucket URL server error 5xx', async function() {
+  it('throws for bucket URL server error 5xx', async function () {
     // allow time for retries
     this.timeout(10_000)
 
