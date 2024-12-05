@@ -222,7 +222,7 @@ export async function add(
       globalThis.fetch.bind(globalThis)
 
     let fetchDidCallUploadProgressCb = false
-    const { status } = await retry(
+    await retry(
       async () => {
         try {
           const res = await fetchWithUploadProgress(address.url, {
@@ -242,11 +242,14 @@ export async function add(
             // @ts-expect-error - this is needed by recent versions of node - see https://github.com/bluesky-social/atproto/pull/470 for more info
             duplex: 'half',
           })
+          // do not retry client errors
           if (res.status >= 400 && res.status < 500) {
             throw new AbortError(`upload failed: ${res.status}`)
           }
+          if (!res.ok) {
+            throw new Error(`upload failed: ${res.status}`)
+          }
           await res.arrayBuffer()
-          return res
         } catch (err) {
           if (options.signal?.aborted === true) {
             throw new AbortError('upload aborted')
@@ -258,7 +261,6 @@ export async function add(
         retries: options.retries ?? REQUEST_RETRIES,
       }
     )
-    if (status !== 200) throw new Error(`upload failed: ${status}`)
 
     if (!fetchDidCallUploadProgressCb && options.onUploadProgress) {
       // the fetch implementation didn't support onUploadProgress

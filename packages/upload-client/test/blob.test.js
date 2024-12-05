@@ -499,7 +499,10 @@ describe('Blob.add', () => {
     )
   })
 
-  it('throws for bucket URL server error 5xx', async () => {
+  it('throws for bucket URL server error 5xx', async function () {
+    // allow time for retries
+    this.timeout(10_000)
+
     const space = await Signer.generate()
     const agent = await Signer.generate()
     const bytes = await randomBytes(128)
