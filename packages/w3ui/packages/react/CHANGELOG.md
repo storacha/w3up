@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.5.2](https://github.com/storacha/w3ui/compare/react-v2.5.1...react-v2.5.2) (2024-12-04)
+
+
+### Bug Fixes
+
+* Force a `@w3ui/react` release ([#654](https://github.com/storacha/w3ui/issues/654)) ([1013069](https://github.com/storacha/w3ui/commit/101306961201466d1d49718074d6f7b0271b29df))
+
 ## [2.5.1](https://github.com/storacha/w3ui/compare/react-v2.5.0...react-v2.5.1) (2024-11-25)
 
 
