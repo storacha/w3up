@@ -1,5 +1,12 @@
 # Changelog
 
+## [17.1.2](https://github.com/storacha/w3up/compare/upload-client-v17.1.1...upload-client-v17.1.2) (2024-12-05)
+
+
+### Fixes
+
+* retry when PUT request fails ([#1601](https://github.com/storacha/w3up/issues/1601)) ([be2f05f](https://github.com/storacha/w3up/commit/be2f05f99a0d1a074d6fe54db1c4fb11a1e0b37c))
+
 ## [17.1.1](https://github.com/storacha/w3up/compare/upload-client-v17.1.0...upload-client-v17.1.1) (2024-11-29)
 
 
