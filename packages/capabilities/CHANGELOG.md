@@ -1,5 +1,26 @@
 # Changelog
 
+## [18.0.0](https://github.com/storacha/w3up/compare/capabilities-v17.4.1...capabilities-v18.0.0) (2024-12-05)
+
+
+### ⚠ BREAKING CHANGES
+
+* content serve authorization ([#1590](https://github.com/storacha/w3up/issues/1590))
+
+### Features
+
+* content serve authorization ([#1590](https://github.com/storacha/w3up/issues/1590)) ([8b553a5](https://github.com/storacha/w3up/commit/8b553a53253f55a3f0a2980557fa5c3b92427f3f))
+
+
+### Fixes
+
+* **egressRecord:** Remove unnecessary multiplication for ts conversion ([#1588](https://github.com/storacha/w3up/issues/1588)) ([b7bc90e](https://github.com/storacha/w3up/commit/b7bc90e6a33b8f33dd7356794c55a77b364799ee))
+
+
+### Other Changes
+
+* **main:** release w3up-client 16.4.1 ([#1577](https://github.com/storacha/w3up/issues/1577)) ([1482d69](https://github.com/storacha/w3up/commit/1482d69c28baff1c27b1baf5f3e5c76f844e5576))
+
 ## [17.4.1](https://github.com/storacha/w3up/compare/capabilities-v17.4.0...capabilities-v17.4.1) (2024-11-05)
 
 
