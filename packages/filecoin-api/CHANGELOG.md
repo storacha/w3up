@@ -1,5 +1,21 @@
 # Changelog
 
+## [8.0.0](https://github.com/storacha/w3up/compare/filecoin-api-v7.3.2...filecoin-api-v8.0.0) (2024-12-09)
+
+
+### ⚠ BREAKING CHANGES
+
+* content serve authorization ([#1590](https://github.com/storacha/w3up/issues/1590))
+
+### Features
+
+* content serve authorization ([#1590](https://github.com/storacha/w3up/issues/1590)) ([8b553a5](https://github.com/storacha/w3up/commit/8b553a53253f55a3f0a2980557fa5c3b92427f3f))
+
+
+### Other Changes
+
+* **main:** release w3up-client 16.4.1 ([#1577](https://github.com/storacha/w3up/issues/1577)) ([1482d69](https://github.com/storacha/w3up/commit/1482d69c28baff1c27b1baf5f3e5c76f844e5576))
+
 ## [7.3.2](https://github.com/storacha/w3up/compare/filecoin-api-v7.3.1...filecoin-api-v7.3.2) (2024-10-20)
 
 
