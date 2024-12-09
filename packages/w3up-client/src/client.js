@@ -262,6 +262,7 @@ export class Client extends Base {
    * @property {Account.Account} [account] - The account configured as the recovery account for the space.
    * @property {Array<ConnectionView>} [authorizeGatewayServices] - The DID Key or DID Web of the Gateway to authorize to serve content from the created space.
    * @property {boolean} [skipGatewayAuthorization] - Whether to skip the Gateway authorization. It means that the content of the space will not be served by any Gateway.
+   * @property {string} [token] - The token to use for the content serve verification invocation.
    *
    * @param {string} name - The name of the space to create.
    * @param {SpaceCreateOptions} options - Options for the space creation.
@@ -314,7 +315,9 @@ export class Client extends Base {
       }
 
       for (const serviceConnection of options.authorizeGatewayServices) {
-        await authorizeContentServe(this, space, serviceConnection)
+        await authorizeContentServe(this, space, serviceConnection, {
+          token: options.token,
+        })
       }
     }
 
@@ -565,6 +568,7 @@ export class Client extends Base {
  * @param {object} [options] - Options for the content serve authorization invocation.
  * @param {`did:${string}:${string}`} [options.audience] - The Web DID of the audience (gateway or peer) to authorize.
  * @param {number} [options.expiration] - The time at which the delegation expires in seconds from unix epoch.
+ * @param {string} [options.token] - The token to use for the content serve verification invocation.
  */
 export const authorizeContentServe = async (
   client,
@@ -582,14 +586,18 @@ export const authorizeContentServe = async (
       did: () => options.audience ?? connection.id.did(),
     }
 
-    // Grant the audience the ability to serve content from the space, it includes existing proofs automatically
-    const delegation = await client.createDelegation(
+    const delegation = await SpaceCapabilities.contentServe.delegate({
+      issuer: client.agent.issuer,
       audience,
-      [SpaceCapabilities.contentServe.can],
-      {
-        expiration: options.expiration ?? Infinity,
-      }
-    )
+      with: space.did(),
+      expiration: options.expiration ?? Infinity,
+      nb: {
+        token: options.token ?? null,
+      },
+      proofs: client.proofs([
+        { can: SpaceCapabilities.contentServe.can, with: space.did() },
+      ]),
+    })
 
     // Publish the delegation to the content serve service
     const accessProofs = client.proofs([
