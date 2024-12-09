@@ -277,6 +277,9 @@ export type SpaceInfo = InferInvokedCapability<typeof SpaceCaps.info>
 export type SpaceContentServe = InferInvokedCapability<
   typeof SpaceCaps.contentServe
 >
+export type SpaceContentServeTransportHTTP = InferInvokedCapability<
+  typeof SpaceCaps.transportHttp
+>
 export type EgressRecord = InferInvokedCapability<typeof SpaceCaps.egressRecord>
 export type EgressRecordSuccess = {
   space: SpaceDID
@@ -898,6 +901,7 @@ export type ServiceAbilityArray = [
   Space['can'],
   SpaceInfo['can'],
   SpaceContentServe['can'],
+  SpaceContentServeTransportHTTP['can'],
   EgressRecord['can'],
   Upload['can'],
   UploadAdd['can'],
