@@ -1,5 +1,16 @@
 # Changelog
 
+## [19.0.0](https://github.com/storacha/w3up/compare/upload-api-v18.1.4...upload-api-v19.0.0) (2024-12-09)
+
+
+### ⚠ BREAKING CHANGES
+
+* content serve authorization ([#1590](https://github.com/storacha/w3up/issues/1590))
+
+### Features
+
+* content serve authorization ([#1590](https://github.com/storacha/w3up/issues/1590)) ([8b553a5](https://github.com/storacha/w3up/commit/8b553a53253f55a3f0a2980557fa5c3b92427f3f))
+
 ## [18.1.4](https://github.com/storacha/w3up/compare/upload-api-v18.1.3...upload-api-v18.1.4) (2024-11-28)
 
 
