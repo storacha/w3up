@@ -1,5 +1,16 @@
 # Changelog
 
+## [17.0.0](https://github.com/storacha/w3up/compare/w3up-client-v16.5.2...w3up-client-v17.0.0) (2024-12-09)
+
+
+### ⚠ BREAKING CHANGES
+
+* content serve authorization ([#1590](https://github.com/storacha/w3up/issues/1590))
+
+### Features
+
+* content serve authorization ([#1590](https://github.com/storacha/w3up/issues/1590)) ([8b553a5](https://github.com/storacha/w3up/commit/8b553a53253f55a3f0a2980557fa5c3b92427f3f))
+
 ## [16.5.2](https://github.com/storacha/w3up/compare/w3up-client-v16.5.1...w3up-client-v16.5.2) (2024-11-29)
 
 
