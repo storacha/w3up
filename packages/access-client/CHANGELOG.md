@@ -1,5 +1,12 @@
 # Changelog
 
+## [20.1.1](https://github.com/storacha/w3up/compare/access-v20.1.0...access-v20.1.1) (2024-12-09)
+
+
+### Other Changes
+
+* **main:** release w3up-client 16.4.1 ([#1577](https://github.com/storacha/w3up/issues/1577)) ([1482d69](https://github.com/storacha/w3up/commit/1482d69c28baff1c27b1baf5f3e5c76f844e5576))
+
 ## [20.1.0](https://github.com/storacha/w3up/compare/access-v20.0.1...access-v20.1.0) (2024-10-20)
 
 
