@@ -72,6 +72,9 @@ export const allocate = capability({
 export const contentServe = capability({
   can: 'space/content/serve/*',
   with: SpaceDID,
+  nb: Schema.struct({
+    authToken: Schema.string().optional(),
+  }),
   derives: equalWith,
 })
 

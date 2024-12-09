@@ -565,6 +565,7 @@ export class Client extends Base {
  * @param {object} [options] - Options for the content serve authorization invocation.
  * @param {`did:${string}:${string}`} [options.audience] - The Web DID of the audience (gateway or peer) to authorize.
  * @param {number} [options.expiration] - The time at which the delegation expires in seconds from unix epoch.
+ * @param {string} [options.authToken] - The auth token to use for the content serve authorization invocation.
  */
 export const authorizeContentServe = async (
   client,
@@ -582,14 +583,18 @@ export const authorizeContentServe = async (
       did: () => options.audience ?? connection.id.did(),
     }
 
-    // Grant the audience the ability to serve content from the space, it includes existing proofs automatically
-    const delegation = await client.createDelegation(
+    const delegation = await SpaceCapabilities.contentServe.delegate({
+      issuer: client.agent.issuer,
       audience,
-      [SpaceCapabilities.contentServe.can],
-      {
-        expiration: options.expiration ?? Infinity,
-      }
-    )
+      with: space.did(),
+      expiration: options.expiration ?? Infinity,
+      nb: {
+        authToken: options.authToken,
+      },
+      proofs: client.proofs([
+        { can: SpaceCapabilities.contentServe.can, with: space.did() },
+      ]),
+    })
 
     // Publish the delegation to the content serve service
     const accessProofs = client.proofs([
