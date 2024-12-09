@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.3.5](https://github.com/storacha/w3up/compare/filecoin-client-v3.3.4...filecoin-client-v3.3.5) (2024-12-09)
+
+
+### Other Changes
+
+* **main:** release w3up-client 16.4.1 ([#1577](https://github.com/storacha/w3up/issues/1577)) ([1482d69](https://github.com/storacha/w3up/commit/1482d69c28baff1c27b1baf5f3e5c76f844e5576))
+
 ## [3.3.4](https://github.com/storacha/w3up/compare/filecoin-client-v3.3.3...filecoin-client-v3.3.4) (2024-09-23)
 
 
