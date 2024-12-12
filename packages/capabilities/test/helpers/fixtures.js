@@ -36,3 +36,12 @@ export const service = Signer.parse(
 export const readmeCID = parseLink(
   'bafybeihqfdg2ereoijjoyrqzr2x2wsasqm2udurforw7pa3tvbnxhojao4'
 )
+
+export const gateway = Signer.parse(
+  'MgCaNpGXCEX0+BxxE4SjSStrxU9Ru/Im+HGNQ/JJx3lDoI+0B3NWjWW3G8OzjbazZjanjM3kgfcZbvpyxv20jHtmcTtg=' // random key
+).withDID('did:web:w3s.link')
+
+/** did:key:z6MktYxTNoCxrXhK9oS5PdzutujTJ5DaS3FWYxNpRTXwrH6h */
+export const space = Signer.parse(
+  'MgCYBaaeyfAHFNt5+M07rY9pPLnmhyxvMEj5jdyAN0ajSlO0B0Xk2fW+t/EsB2nqWraDmB7N0NiTXKZaVBbOpCMtCktI=' // random key
+)
