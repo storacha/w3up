@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.0.6](https://github.com/storacha/upload-service/compare/client-v1.0.5...client-v1.0.6) (2024-12-12)
+
+
+### Fixes
+
+* **egress/record:** rename capability ([#1572](https://github.com/storacha/upload-service/issues/1572)) ([98ab50c](https://github.com/storacha/upload-service/commit/98ab50cf0a5c7985a567e9507b04d948e425d623))
+* **egress/record:** rename capability ([#1572](https://github.com/storacha/upload-service/issues/1572)) ([#97](https://github.com/storacha/upload-service/issues/97)) ([df8b9a2](https://github.com/storacha/upload-service/commit/df8b9a2dd88871d33bd836aea431d7dbc2bc590c))
+
 ## [1.0.5](https://github.com/storacha/upload-service/compare/client-v1.0.4...client-v1.0.5) (2024-12-02)
 
 

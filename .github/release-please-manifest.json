@@ -7,6 +7,6 @@
   "packages/capabilities": "1.1.1",
   "packages/upload-api": "1.1.7",
   "packages/upload-client": "1.0.1",
-  "packages/w3up-client": "1.0.5",
+  "packages/w3up-client": "1.0.6",
   "packages/did-mailto": "1.0.0"
 }
