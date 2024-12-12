@@ -1,5 +1,15 @@
 # Changelog
 
+## [1.1.2](https://github.com/storacha/upload-service/compare/capabilities-v1.1.1...capabilities-v1.1.2) (2024-12-12)
+
+
+### Fixes
+
+* **egress/record:** Remove unnecessary multiplication for ts conversion ([#98](https://github.com/storacha/upload-service/issues/98)) ([79ac1ab](https://github.com/storacha/upload-service/commit/79ac1ab7690d10b672c3dfb0ae4ddd9cc420ee2f))
+* **egress/record:** rename capability ([#1572](https://github.com/storacha/upload-service/issues/1572)) ([98ab50c](https://github.com/storacha/upload-service/commit/98ab50cf0a5c7985a567e9507b04d948e425d623))
+* **egress/record:** rename capability ([#1572](https://github.com/storacha/upload-service/issues/1572)) ([#97](https://github.com/storacha/upload-service/issues/97)) ([df8b9a2](https://github.com/storacha/upload-service/commit/df8b9a2dd88871d33bd836aea431d7dbc2bc590c))
+* **egressRecord:** Remove unnecessary multiplication for ts conversion ([#1588](https://github.com/storacha/upload-service/issues/1588)) ([1870202](https://github.com/storacha/upload-service/commit/1870202f8b2551c4a30488f84530567572382fb0))
+
 ## [1.1.1](https://github.com/storacha/upload-service/compare/capabilities-v1.1.0...capabilities-v1.1.1) (2024-11-12)
 
 
