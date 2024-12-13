@@ -30,6 +30,9 @@ import { FilecoinClient } from './capability/filecoin.js'
 import { CouponAPI } from './coupon.js'
 export * as Access from './capability/access.js'
 import * as Result from './result.js'
+import * as UcantoClient from '@ucanto/client'
+import { HTTP } from '@ucanto/transport'
+import * as CAR from '@ucanto/transport/car'
 
 export {
   AccessClient,
@@ -304,16 +307,23 @@ export class Client extends Base {
 
     // Authorize the listed Gateway Services to serve content from the created space
     if (options.skipGatewayAuthorization !== true) {
-      if (
-        !options.authorizeGatewayServices ||
-        options.authorizeGatewayServices.length === 0
-      ) {
-        throw new Error(
-          'failed to authorize Gateway Services: missing <authorizeGatewayServices> option'
-        )
+      let authorizeGatewayServices = options.authorizeGatewayServices
+      if (!authorizeGatewayServices || authorizeGatewayServices.length === 0) {
+        // If no Gateway Services are provided, authorize the Storacha Gateway Service
+        authorizeGatewayServices = [
+          UcantoClient.connect({
+            id: {
+              did: () => 'did:web:w3s.link',
+            },
+            codec: CAR.outbound,
+            channel: HTTP.open({
+              url: new URL(' https://freeway.dag.haus'),
+            }),
+          }),
+        ]
       }
 
-      for (const serviceConnection of options.authorizeGatewayServices) {
+      for (const serviceConnection of authorizeGatewayServices) {
         await authorizeContentServe(this, space, serviceConnection)
       }
     }
