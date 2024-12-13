@@ -658,6 +658,7 @@ export const testClient = {
       },
     'should authorize the Storacha Gateway Service when no Gateway Services are provided':
       async (assert, { mail, grantAccess, connection }) => {
+        Test
         // Step 1: Create a client for Alice and login
         const aliceClient = new Client(
           await AgentData.create({
@@ -678,6 +679,9 @@ export const testClient = {
         assert.deepEqual(message.to, aliceEmail)
         await grantAccess(message)
         const aliceAccount = await aliceLogin
+
+        process.env.DEFAULT_GATEWAY_ID = gateway.did()
+        process.env.DEFAULT_GATEWAY_URL = 'http://localhost:5001'
 
         const spaceA = await aliceClient.createSpace(
           'authorize-gateway-space',

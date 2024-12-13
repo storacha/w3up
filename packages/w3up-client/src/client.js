@@ -313,11 +313,16 @@ export class Client extends Base {
         authorizeGatewayServices = [
           UcantoClient.connect({
             id: {
-              did: () => 'did:web:w3s.link',
+              did: () =>
+                /** @type {`did:${string}:${string}`} */ (
+                  process.env.DEFAULT_GATEWAY_ID ?? 'did:web:w3s.link'
+                ),
             },
             codec: CAR.outbound,
             channel: HTTP.open({
-              url: new URL(' https://freeway.dag.haus'),
+              url: new URL(
+                process.env.DEFAULT_GATEWAY_URL ?? 'https://freeway.dag.haus'
+              ),
             }),
           }),
         ]
