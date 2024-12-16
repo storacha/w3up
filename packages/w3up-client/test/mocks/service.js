@@ -13,7 +13,7 @@ export function getContentServeMockService(result = { ok: {} }) {
   return {
     access: {
       delegate: Server.provide(AccessCaps.Access.delegate, async (data) => {
-        console.log('Access Caps Delegate', data)
+        // console.log('Access Caps Delegate', data)
         return result
       }),
     },

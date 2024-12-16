@@ -14,28 +14,29 @@ const server = createServer(async (req, res) => {
   if (req.method === 'OPTIONS') return res.end()
 
   if (req.method === 'POST') {
-    console.time('Service Setup')
     const service = getContentServeMockService()
     const server = createUcantoServer(gateway, service)
-    console.timeEnd('Service Setup')
 
-    console.time('Collect Request Body')
     const bodyBuffer = Buffer.concat(await collect(req))
-    console.timeEnd('Collect Request Body')
 
-    console.time('Server Request')
+    const reqHeaders = /** @type {Record<string, string>} */ (
+      Object.fromEntries(Object.entries(req.headers))
+    )
+
     const { headers, body, status } = await server.request({
       body: new Uint8Array(
         bodyBuffer.buffer,
         bodyBuffer.byteOffset,
         bodyBuffer.byteLength
       ),
-      headers: /** @type {Record<string, string>} */ (
-        Object.fromEntries(Object.entries(req.headers))
-      ),
+      headers: reqHeaders,
     })
-    console.timeEnd('Server Request')
-    return new Response(body, { headers, status: status ?? 200 })
+
+    for (const [key, value] of Object.entries(headers)) {
+      res.setHeader(key, value)
+    }
+    res.writeHead(status ?? 200)
+    res.end(body)
   }
   res.end()
 })

@@ -658,7 +658,6 @@ export const testClient = {
       },
     'should authorize the Storacha Gateway Service when no Gateway Services are provided':
       async (assert, { mail, grantAccess, connection }) => {
-        Test
         // Step 1: Create a client for Alice and login
         const aliceClient = new Client(
           await AgentData.create({
