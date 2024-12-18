@@ -1,5 +1,12 @@
 # Changelog
 
+## [17.1.3](https://github.com/storacha/w3up/compare/upload-client-v17.1.2...upload-client-v17.1.3) (2024-12-18)
+
+
+### Fixes
+
+* do not add `mode: cors` when cloudflare workers runtime ([#1605](https://github.com/storacha/w3up/issues/1605)) ([7902527](https://github.com/storacha/w3up/commit/7902527c34f113b13c0dfe858515dc4807b84204))
+
 ## [17.1.2](https://github.com/storacha/w3up/compare/upload-client-v17.1.1...upload-client-v17.1.2) (2024-12-05)
 
 
