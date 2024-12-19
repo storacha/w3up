@@ -119,6 +119,7 @@
   "scripts": {
     "attw": "attw --pack .",
     "lint": "tsc --build && eslint '**/*.{js,ts}' && prettier --check '**/*.{js,ts,yml,json}' --ignore-path ../../.gitignore",
+    "lint:fix": "tsc --build && eslint '**/*.{js,ts}' --fix && prettier --write '**/*.{js,ts,yml,json}' --ignore-path ../../.gitignore",
     "build": "tsc --build",
     "dev": "tsc --build --watch",
     "check": "tsc --build",
@@ -131,6 +132,7 @@
     "mock:bucket-0-200": "PORT=8989 STATUS=200 node test/helpers/bucket-server.js",
     "mock:bucket-1-200": "PORT=8990 STATUS=200 node test/helpers/bucket-server.js",
     "mock:receipts-server": "PORT=9201 node test/helpers/receipts-server.js",
+    "mock:gateway-server": "PORT=5001 node test/helpers/gateway-server.js",
     "coverage": "c8 report -r html && open coverage/index.html",
     "rc": "npm version prerelease --preid rc",
     "docs": "npm run build && typedoc --out docs-generated"

@@ -265,7 +265,9 @@ export async function remove(rootCid, opts) {
  */
 export async function createSpace(name) {
   const client = await getClient()
-  const space = await client.createSpace(name)
+  const space = await client.createSpace(name, {
+    skipGatewayAuthorization: true,
+  })
   await client.setCurrentSpace(space.did())
   console.log(space.did())
 }

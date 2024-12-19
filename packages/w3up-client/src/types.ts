@@ -1,5 +1,8 @@
 import { type Driver } from '@storacha/access/drivers/types'
 import {
+  AccessDelegate,
+  AccessDelegateFailure,
+  AccessDelegateSuccess,
   type Service as AccessService,
   type AgentDataExport,
 } from '@storacha/access/types'
@@ -11,6 +14,7 @@ import type {
   Ability,
   Resource,
   Unit,
+  ServiceMethod,
 } from '@ucanto/interface'
 import { type Client } from './client.js'
 import { StorefrontService } from '@storacha/filecoin-client/storefront'
@@ -36,6 +40,15 @@ export interface ServiceConf {
   filecoin: ConnectionView<StorefrontService>
 }
 
+export interface ContentServeService {
+  access: {
+    delegate: ServiceMethod<
+      AccessDelegate,
+      AccessDelegateSuccess,
+      AccessDelegateFailure
+    >
+  }
+}
 export interface ClientFactoryOptions {
   /**
    * A storage driver that persists exported agent data.

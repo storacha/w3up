@@ -19,7 +19,9 @@ export const SpaceClient = Test.withContext({
         },
       })
 
-      const space = await alice.createSpace('test')
+      const space = await alice.createSpace('test', {
+        skipGatewayAuthorization: true,
+      })
       const auth = await space.createAuthorization(alice, {
         access: { 'space/info': {} },
         expiration: Infinity,
@@ -55,7 +57,9 @@ export const SpaceClient = Test.withContext({
           upload: connection,
         },
       })
-      const space = await alice.createSpace('test')
+      const space = await alice.createSpace('test', {
+        skipGatewayAuthorization: true,
+      })
       const auth = await alice.addSpace(await space.createAuthorization(alice))
       assert.ok(auth)
 
@@ -142,7 +146,7 @@ export const SpaceClient = Test.withContext({
         assert.equal(egressRecord.bytes, car.size, 'bytes should be the same')
         assert.equal(
           new Date(egressRecord.servedAt).getTime(),
-          Math.floor(new Date(egressData.servedAt).getTime() / 1000) * 1000,
+          Math.floor(new Date(egressData.servedAt).getTime() / 1000),
           'servedAt should be the same'
         )
         assert.ok(egressRecord.cause.toString(), 'cause should be a link')
@@ -165,7 +169,9 @@ export const SpaceClient = Test.withContext({
           upload: connection,
         },
       })
-      const space = await alice.createSpace('test')
+      const space = await alice.createSpace('test', {
+        skipGatewayAuthorization: true,
+      })
       const auth = await alice.addSpace(await space.createAuthorization(alice))
       assert.ok(auth)
 
@@ -252,7 +258,7 @@ export const SpaceClient = Test.withContext({
         assert.equal(egressRecord.bytes, car.size, 'bytes should be the same')
         assert.equal(
           new Date(egressRecord.servedAt).getTime(),
-          Math.floor(new Date(egressData.servedAt).getTime() / 1000) * 1000,
+          Math.floor(new Date(egressData.servedAt).getTime() / 1000),
           'servedAt should be the same'
         )
         assert.ok(egressRecord.cause.toString(), 'cause should be a link')
@@ -273,7 +279,9 @@ export const SpaceClient = Test.withContext({
             upload: connection,
           },
         })
-        const space = await alice.createSpace('test')
+        const space = await alice.createSpace('test', {
+          skipGatewayAuthorization: true,
+        })
         const auth = await alice.addSpace(
           await space.createAuthorization(alice)
         )
@@ -364,7 +372,7 @@ export const SpaceClient = Test.withContext({
           assert.equal(egressRecord.bytes, car.size, 'bytes should be the same')
           assert.equal(
             new Date(egressRecord.servedAt).getTime(),
-            Math.floor(new Date(egressData.servedAt).getTime() / 1000) * 1000,
+            Math.floor(new Date(egressData.servedAt).getTime() / 1000),
             'servedAt should be the same'
           )
           assert.ok(egressRecord.cause.toString(), 'cause should be a link')
@@ -385,7 +393,9 @@ export const SpaceClient = Test.withContext({
             upload: connection,
           },
         })
-        const space = await alice.createSpace('test')
+        const space = await alice.createSpace('test', {
+          skipGatewayAuthorization: true,
+        })
         const auth = await alice.addSpace(
           await space.createAuthorization(alice)
         )
@@ -476,7 +486,7 @@ export const SpaceClient = Test.withContext({
           assert.equal(egressRecord.bytes, car.size, 'bytes should be the same')
           assert.equal(
             new Date(egressRecord.servedAt).getTime(),
-            Math.floor(new Date(egressData.servedAt).getTime() / 1000) * 1000,
+            Math.floor(new Date(egressData.servedAt).getTime() / 1000),
             'servedAt should be the same'
           )
           assert.ok(egressRecord.cause.toString(), 'cause should be a link')
@@ -499,7 +509,9 @@ export const SpaceClient = Test.withContext({
           upload: connection,
         },
       })
-      const space = await alice.createSpace('test')
+      const space = await alice.createSpace('test', {
+        skipGatewayAuthorization: true,
+      })
       const auth = await alice.addSpace(await space.createAuthorization(alice))
       assert.ok(auth)
 

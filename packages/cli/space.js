@@ -1,5 +1,8 @@
 import * as W3Space from '@storacha/client/space'
 import * as W3Account from '@storacha/client/account'
+import * as UcantoClient from '@ucanto/client'
+import { HTTP } from '@ucanto/transport'
+import * as CAR from '@ucanto/transport/car'
 import { getClient } from './lib.js'
 import process from 'node:process'
 import * as DIDMailto from '@storacha/did-mailto'
@@ -17,6 +20,8 @@ import * as Result from '@storacha/client/result'
  * @property {false} [caution]
  * @property {DIDMailto.EmailAddress|false} [customer]
  * @property {string|false} [account]
+ * @property {Array<{id: import('@ucanto/interface').DID, serviceEndpoint: string}>} [authorizeGatewayServices] - The DID Key or DID Web and URL of the Gateway to authorize to serve content from the created space.
+ * @property {boolean} [skipGatewayAuthorization] - Whether to skip the Gateway authorization. It means that the content of the space will not be served by any Gateway.
  *
  * @param {string|undefined} name
  * @param {CreateOptions} options
@@ -25,7 +30,28 @@ export const create = async (name, options) => {
   const client = await getClient()
   const spaces = client.spaces()
 
-  const space = await client.createSpace(await chooseName(name ?? '', spaces))
+  let space
+  if (options.skipGatewayAuthorization === true) {
+    space = await client.createSpace(await chooseName(name ?? '', spaces), {
+      skipGatewayAuthorization: true,
+    })
+  } else {
+    const gateways = options.authorizeGatewayServices ?? []
+    const connections = gateways.map(({ id, serviceEndpoint }) => {
+      /** @type {UcantoClient.ConnectionView<import('@storacha/client/types').ContentServeService>} */
+      const connection = UcantoClient.connect({
+        id: {
+          did: () => id,
+        },
+        codec: CAR.outbound,
+        channel: HTTP.open({ url: new URL(serviceEndpoint) }),
+      })
+      return connection
+    })
+    space = await client.createSpace(await chooseName(name ?? '', spaces), {
+      authorizeGatewayServices: connections,
+    })
+  }
 
   // Unless use opted-out from paper key recovery, we go through the flow
   if (options.recovery !== false) {

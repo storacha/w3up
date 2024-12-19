@@ -8,7 +8,9 @@ export const SubscriptionClient = Test.withContext({
       assert,
       { client, connection, service, plansStorage, grantAccess, mail }
     ) => {
-      const space = await client.createSpace('test')
+      const space = await client.createSpace('test', {
+        skipGatewayAuthorization: true,
+      })
       const email = 'alice@web.mail'
       const login = Account.login(client, email)
       const message = await mail.take()

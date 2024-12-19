@@ -132,7 +132,36 @@ cli
   .option('-c, --customer <email>', 'Billing account email')
   .option('-na, --no-account', 'Skip account setup')
   .option('-a, --account <email>', 'Managing account email')
-  .action(Space.create)
+  .option(
+    '-ag, --authorize-gateway-services <json>',
+    'Authorize Gateways to serve the content uploaded to this space, e.g: \'[{"id":"did:key:z6Mki...","serviceEndpoint":"https://gateway.example.com"}]\''
+  )
+  .option('-nga, --no-gateway-authorization', 'Skip Gateway Authorization')
+  .action((name, options) => {
+    let authorizeGatewayServices = []
+    if (options['authorize-gateway-services']) {
+      try {
+        authorizeGatewayServices = JSON.parse(
+          options['authorize-gateway-services']
+        )
+      } catch (err) {
+        console.error('Invalid JSON format for --authorize-gateway-services')
+        process.exit(1)
+      }
+    }
+
+    const parsedOptions = {
+      ...options,
+      // if defined it means we want to skip gateway authorization, so the client will not validate the gateway services
+      skipGatewayAuthorization:
+        options['gateway-authorization'] === false ||
+        options['gateway-authorization'] === undefined,
+      // default to empty array if not set, so the client will validate the gateway services
+      authorizeGatewayServices: authorizeGatewayServices || [],
+    }
+
+    return Space.create(name, parsedOptions)
+  })
 
 cli
   .command('space provision [name]')

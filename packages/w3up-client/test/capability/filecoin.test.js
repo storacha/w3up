@@ -5,7 +5,9 @@ import * as Test from '../test.js'
 export const FilecoinClient = Test.withContext({
   offer: {
     'should send an offer': async (assert, { client: alice }) => {
-      const space = await alice.createSpace('test')
+      const space = await alice.createSpace('test', {
+        skipGatewayAuthorization: true,
+      })
       const auth = await space.createAuthorization(alice)
       await alice.addSpace(auth)
       await alice.setCurrentSpace(space.did())
@@ -36,7 +38,9 @@ export const FilecoinClient = Test.withContext({
         throw new Error('could not compute proof')
       }
 
-      const space = await alice.createSpace('test')
+      const space = await alice.createSpace('test', {
+        skipGatewayAuthorization: true,
+      })
       const auth = await space.createAuthorization(alice)
       await alice.addSpace(auth)
       await alice.setCurrentSpace(space.did())

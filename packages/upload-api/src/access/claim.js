@@ -13,6 +13,7 @@ export const provide = (ctx) =>
 
 /**
  * Checks if the given Principal is an Account.
+ *
  * @param {API.Principal} principal
  * @returns {principal is API.Principal<API.DID<'mailto'>>}
  */
@@ -20,6 +21,7 @@ const isAccount = (principal) => principal.did().startsWith('did:mailto:')
 
 /**
  * Returns true when the delegation has a `ucan:*` capability.
+ *
  * @param {API.Delegation} delegation
  * @returns boolean
  */
