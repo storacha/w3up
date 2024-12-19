@@ -1,5 +1,26 @@
 # Changelog
 
+## [1.0.2](https://github.com/storacha/upload-service/compare/upload-client-v1.0.1...upload-client-v1.0.2) (2024-12-19)
+
+
+### Fixes
+
+* compatibility with legacy w3up client ([#59](https://github.com/storacha/upload-service/issues/59)) ([7185046](https://github.com/storacha/upload-service/commit/7185046e3186bef9b4f56f9e6c1c94a0c576fc53))
+* jsdoc ([5506c11](https://github.com/storacha/upload-service/commit/5506c11eeda8351dd21f6fff339057e69813eab2))
+* overflow slices ([#1595](https://github.com/storacha/upload-service/issues/1595)) ([949b84a](https://github.com/storacha/upload-service/commit/949b84ac808e6147178a4de693607ebd409388b4))
+* retry when PUT request fails ([#1601](https://github.com/storacha/upload-service/issues/1601)) ([7836dc4](https://github.com/storacha/upload-service/commit/7836dc46054cc328d54cb0833e394e263f11fb69))
+* thanks prettier ([11e34b4](https://github.com/storacha/upload-service/commit/11e34b40af2485757f8ba2056c08a100677dc393))
+* trigger release ([f0f9a56](https://github.com/storacha/upload-service/commit/f0f9a56bb28bc50e33845f07c859cd209562a338))
+
+
+### Other Changes
+
+* **main:** release client 1.0.6 ([27cb383](https://github.com/storacha/upload-service/commit/27cb383ea5aae32ca44cc2986f781458130fbffb))
+* **main:** release client 1.0.6 ([#104](https://github.com/storacha/upload-service/issues/104)) ([07f27a2](https://github.com/storacha/upload-service/commit/07f27a22a942bde67b55e785b2e3785906d63422))
+* **main:** release upload-api 1.1.8 ([aec53e7](https://github.com/storacha/upload-service/commit/aec53e714ea581421e1c55a6e282b765f5badaaa))
+* **main:** release upload-api 1.1.8 ([#103](https://github.com/storacha/upload-service/issues/103)) ([e71494a](https://github.com/storacha/upload-service/commit/e71494a12fbd6a93bf2871eec1b101d4b02af38f))
+* prettier ([40ebc05](https://github.com/storacha/upload-service/commit/40ebc052b0b2d0d789b254ce0e4ec6e7687f7e41))
+
 ## [1.0.1](https://github.com/storacha/upload-service/compare/upload-client-v1.0.0...upload-client-v1.0.1) (2024-11-12)
 
 
