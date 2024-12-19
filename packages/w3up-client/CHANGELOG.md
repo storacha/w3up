@@ -1,5 +1,17 @@
 # Changelog
 
+## [17.1.0](https://github.com/storacha/w3up/compare/w3up-client-v17.0.0...w3up-client-v17.1.0) (2024-12-19)
+
+
+### Features
+
+* **w3up-client:** add default gateway authorization ([#1604](https://github.com/storacha/w3up/issues/1604)) ([e669b55](https://github.com/storacha/w3up/commit/e669b5596aa65ec0c93b1cfd199217d64771aba4))
+
+
+### Other Changes
+
+* **capabilities:** top level filecoin cap ([#1606](https://github.com/storacha/w3up/issues/1606)) ([22d0bf9](https://github.com/storacha/w3up/commit/22d0bf9e540ffb8b76eb79453c4d881195abf2ef))
+
 ## [17.0.0](https://github.com/storacha/w3up/compare/w3up-client-v16.5.2...w3up-client-v17.0.0) (2024-12-09)
 
 
