@@ -1,5 +1,86 @@
 # Changelog
 
+## 1.0.0 (2024-12-19)
+
+
+### ⚠ BREAKING CHANGES
+
+* **upload-api:** integrate agent store for idempotence & invocation/receipt persistence  ([#1444](https://github.com/storacha/upload-service/issues/1444))
+* delegated capabilities required to use `uploadFile`, `uploadDirectory` and `uploadCAR` have changed. In order to use these methods your agent will now need to be delegated `blob/add`, `index/add`, `filecoin/offer` and `upload/add` capabilities. Note: no code changes are required.
+* coupon ([#1136](https://github.com/storacha/upload-service/issues/1136))
+* tweak readmes to get release-please to bump major version ([#1102](https://github.com/storacha/upload-service/issues/1102))
+
+### Features
+
+* add "plan/create-admin-session" capability ([#1411](https://github.com/storacha/upload-service/issues/1411)) ([50eeeb5](https://github.com/storacha/upload-service/commit/50eeeb502335ba0413318b5047869a275901824b))
+* add `subscription/list` capability ([#1088](https://github.com/storacha/upload-service/issues/1088)) ([471d7e5](https://github.com/storacha/upload-service/commit/471d7e5db24e12a06c1c52ae76bf95ff9471bac8))
+* add blob protocol to upload-client ([#1425](https://github.com/storacha/upload-service/issues/1425)) ([49aef56](https://github.com/storacha/upload-service/commit/49aef564a726d34dbbedbd83f5366d9320180f99))
+* add CLI ([#39](https://github.com/storacha/upload-service/issues/39)) ([112720e](https://github.com/storacha/upload-service/commit/112720e098d24b49e4f142fe52c2a1d316e5353f))
+* coupon ([#1136](https://github.com/storacha/upload-service/issues/1136)) ([1b94f2d](https://github.com/storacha/upload-service/commit/1b94f2d3f6538d717d38b21dcb76657fd1f3e268))
+* expose OwnedSpace and SharedSpace from access-client ([#1244](https://github.com/storacha/upload-service/issues/1244)) ([8ec1b44](https://github.com/storacha/upload-service/commit/8ec1b446590399aa236904c1b6937b7be5d83054))
+* generate sharded DAG index on client and invoke w `index/add` ([#1451](https://github.com/storacha/upload-service/issues/1451)) ([a6d9026](https://github.com/storacha/upload-service/commit/a6d9026536e60c0ce93b613acc6e337f2a21aeb2))
+* Generate Space proofs on the fly, on `access/claim` ([#1555](https://github.com/storacha/upload-service/issues/1555)) ([9e2b1d4](https://github.com/storacha/upload-service/commit/9e2b1d4dc721d3e61cea008719d172909c984344))
+* router ([#11](https://github.com/storacha/upload-service/issues/11)) ([c810735](https://github.com/storacha/upload-service/commit/c8107354da663120228f779814eafa0c9a3e80a2))
+* tweak readmes to get release-please to bump major version ([#1102](https://github.com/storacha/upload-service/issues/1102)) ([a411255](https://github.com/storacha/upload-service/commit/a4112551f5dbac00f4b5a0da8c81ea35783f3ef9))
+* two more interface tweaks ([#1287](https://github.com/storacha/upload-service/issues/1287)) ([bc3c364](https://github.com/storacha/upload-service/commit/bc3c36452454398ea8e0f574aed44b318561ad94))
+* upgrade ucanto/transport to 9.1.0 in all packages to get more verbose errors from HTTP transport on non-ok response ([#1312](https://github.com/storacha/upload-service/issues/1312)) ([d6978d7](https://github.com/storacha/upload-service/commit/d6978d7ab299be76987c6533d18e6857f6998fe6))
+* **upload-api:** integrate agent store for idempotence & invocation/receipt persistence  ([#1444](https://github.com/storacha/upload-service/issues/1444)) ([c9bf33e](https://github.com/storacha/upload-service/commit/c9bf33e5512397a654db933a5e6b5db0c7c22da5))
+* w3up client login ([#1120](https://github.com/storacha/upload-service/issues/1120)) ([8279bf6](https://github.com/storacha/upload-service/commit/8279bf6371182709b46e83e5ac86d89ed1f292e8))
+
+
+### Fixes
+
+* access client should request blob namespace capabilities ([#1378](https://github.com/storacha/upload-service/issues/1378)) ([fc5bb4a](https://github.com/storacha/upload-service/commit/fc5bb4a83d50374e0e1a6006a8dbd655173ec498))
+* access-client package.json uses https instead of git for one-webcrypto dep to help with yarn compat ([#1157](https://github.com/storacha/upload-service/issues/1157)) ([e1d0798](https://github.com/storacha/upload-service/commit/e1d079811cceb0a68da371ba422ba6147e0fae4a))
+* don't error when we can't figure out a name for a space ([#1177](https://github.com/storacha/upload-service/issues/1177)) ([a31f667](https://github.com/storacha/upload-service/commit/a31f6671b52d37b8493ca1690ca737ddd311558b))
+* fix IndexedDB reset function ([#1199](https://github.com/storacha/upload-service/issues/1199)) ([48cf555](https://github.com/storacha/upload-service/commit/48cf55596162f68833f4cea49364a9dd5a845362))
+* floating promises and add no-floating-promises to eslint-config-w3up ([#1198](https://github.com/storacha/upload-service/issues/1198)) ([1b8c5aa](https://github.com/storacha/upload-service/commit/1b8c5aa86ec3d177bf77df4e2916699c1f522598))
+* issue where typedoc docs would only show full docs for w3up-client ([#1141](https://github.com/storacha/upload-service/issues/1141)) ([0b8d3f3](https://github.com/storacha/upload-service/commit/0b8d3f3b52918b1b4d3b76ea6fea3fb0c837cd73))
+* migrate repo ([#1389](https://github.com/storacha/upload-service/issues/1389)) ([475a287](https://github.com/storacha/upload-service/commit/475a28743ff9f7138b46dfe4227d3c80ed75a6a2))
+* package metadata ([#1161](https://github.com/storacha/upload-service/issues/1161)) ([b8a1cc2](https://github.com/storacha/upload-service/commit/b8a1cc2e125a91be582998bda295e1ae1caab087))
+* point `main` at files included in the package ([#1241](https://github.com/storacha/upload-service/issues/1241)) ([c0b306d](https://github.com/storacha/upload-service/commit/c0b306df75b21d0979e407f04f0a23f67d5248af))
+* repo URLs ([#1550](https://github.com/storacha/upload-service/issues/1550)) ([e02ddf3](https://github.com/storacha/upload-service/commit/e02ddf3696553b03f8d2f7316de0a99a9303a60f))
+* support storing ArrayBuffers in conf ([#1236](https://github.com/storacha/upload-service/issues/1236)) ([9b1aafb](https://github.com/storacha/upload-service/commit/9b1aafbcf241d268e4f365ed99005458dda1a05a))
+* sync space names from proofs ([#1193](https://github.com/storacha/upload-service/issues/1193)) ([f552036](https://github.com/storacha/upload-service/commit/f552036913cf7172e93e83e27fd4af6f7b6a4673))
+* upgrade @ucanto/validator with bugfix ([#1151](https://github.com/storacha/upload-service/issues/1151)) ([d4e961b](https://github.com/storacha/upload-service/commit/d4e961bab09e88245e7d9323146849271e78eb57))
+* upgrade type-fest in access ([#1263](https://github.com/storacha/upload-service/issues/1263)) ([47a4589](https://github.com/storacha/upload-service/commit/47a458964aaf1ebe07db4e29db60e558b9871fb6))
+* upgrade ucanto core ([#1127](https://github.com/storacha/upload-service/issues/1127)) ([5ce4d22](https://github.com/storacha/upload-service/commit/5ce4d2292d7e980da4a2ea0f1583f608a81157d2))
+* upgrade ucanto libs and format filecoin api ([#1359](https://github.com/storacha/upload-service/issues/1359)) ([87ca098](https://github.com/storacha/upload-service/commit/87ca098186fe204ff3409a2684719f1c54148c97))
+* upload API test fixes ([6b0d72d](https://github.com/storacha/upload-service/commit/6b0d72dee3dc9ce5320ad8de333a718d644b5c3d))
+* use an ArrayBuffer for delegation bits in AgentData ([#1219](https://github.com/storacha/upload-service/issues/1219)) ([bddf874](https://github.com/storacha/upload-service/commit/bddf87445755fa977768d636481eaee678a06e79))
+* use one-webcrypto from npm ([#1525](https://github.com/storacha/upload-service/issues/1525)) ([9345c54](https://github.com/storacha/upload-service/commit/9345c5415bc0b0d6ce8ccdbe92eb155b11835fd8))
+
+
+### Other Changes
+
+* Add `pnpm dev` to watch-build all packages ([#1533](https://github.com/storacha/upload-service/issues/1533)) ([07970ef](https://github.com/storacha/upload-service/commit/07970efd443149158ebbfb2c4e745b5007eb9407))
+* **main:** release access 17.0.0 ([#1103](https://github.com/storacha/upload-service/issues/1103)) ([5b34dfb](https://github.com/storacha/upload-service/commit/5b34dfbbee6766c70b47882ab3148628318bb100))
+* **main:** release access 17.1.0 ([#1122](https://github.com/storacha/upload-service/issues/1122)) ([3f302a3](https://github.com/storacha/upload-service/commit/3f302a39c0ebb075c35f7feecc31cd196ab66389))
+* **main:** release access 18.0.0 ([#1132](https://github.com/storacha/upload-service/issues/1132)) ([aa4ba63](https://github.com/storacha/upload-service/commit/aa4ba63179b17acf1d8d44fd1b092f895d25cb93))
+* **main:** release access 18.0.1 ([#1142](https://github.com/storacha/upload-service/issues/1142)) ([3d7f118](https://github.com/storacha/upload-service/commit/3d7f118699641edc6ab19784f6b3fa0c93588028))
+* **main:** release access 18.0.2 ([#1158](https://github.com/storacha/upload-service/issues/1158)) ([1dd371b](https://github.com/storacha/upload-service/commit/1dd371b3a1216cd73d9b4e71e393cb193796e72e))
+* **main:** release access 18.0.3 ([#1166](https://github.com/storacha/upload-service/issues/1166)) ([dfbc3f1](https://github.com/storacha/upload-service/commit/dfbc3f14a708daeac636413fa1316968d866db37))
+* **main:** release access 18.0.4 ([#1200](https://github.com/storacha/upload-service/issues/1200)) ([f51b066](https://github.com/storacha/upload-service/commit/f51b0664940193512ab34481858ad9beb9749ea3))
+* **main:** release access 18.0.5 ([#1203](https://github.com/storacha/upload-service/issues/1203)) ([89080ca](https://github.com/storacha/upload-service/commit/89080ca0329030610684bd85b0cfcf65a6850baf))
+* **main:** release access 18.0.6 ([#1233](https://github.com/storacha/upload-service/issues/1233)) ([ddb413f](https://github.com/storacha/upload-service/commit/ddb413f1255be8b39bc66ebea7c52fa56c3d1850))
+* **main:** release access 18.0.7 ([#1237](https://github.com/storacha/upload-service/issues/1237)) ([bb5235f](https://github.com/storacha/upload-service/commit/bb5235ff841430036152989442770c298f6f9d63))
+* **main:** release access 18.1.0 ([#1243](https://github.com/storacha/upload-service/issues/1243)) ([4991f70](https://github.com/storacha/upload-service/commit/4991f701e6eda6a6ce7434bbfa4b11282b675c3d))
+* **main:** release access 18.1.1 ([#1265](https://github.com/storacha/upload-service/issues/1265)) ([3244a26](https://github.com/storacha/upload-service/commit/3244a26ac10fb76858903f5271111d350cca05e8))
+* **main:** release access 18.2.0 ([#1288](https://github.com/storacha/upload-service/issues/1288)) ([787fca6](https://github.com/storacha/upload-service/commit/787fca6d1132f8e4a40706e47630285f49ca6a73))
+* **main:** release access 18.3.0 ([#1319](https://github.com/storacha/upload-service/issues/1319)) ([5701761](https://github.com/storacha/upload-service/commit/5701761e57b749726f1d4503393f567db9b6188d))
+* **main:** release access 18.3.1 ([#1381](https://github.com/storacha/upload-service/issues/1381)) ([086759d](https://github.com/storacha/upload-service/commit/086759dffebacf82af8dda4457e45f7033d3b3c8))
+* **main:** release access 18.3.2 ([#1396](https://github.com/storacha/upload-service/issues/1396)) ([bcc958f](https://github.com/storacha/upload-service/commit/bcc958f5a39507fc14d435095ec583e2ed03934e))
+* **main:** release access 18.4.0 ([#1446](https://github.com/storacha/upload-service/issues/1446)) ([af9f44e](https://github.com/storacha/upload-service/commit/af9f44eafcf80ad56464167afbcc0fdaa9a85b67))
+* **main:** release access 19.0.0 ([#1462](https://github.com/storacha/upload-service/issues/1462)) ([b16a0bf](https://github.com/storacha/upload-service/commit/b16a0bf05fba0ec66d2ef4bb80a3926169338ad2))
+* **main:** release access 20.0.0 ([#1473](https://github.com/storacha/upload-service/issues/1473)) ([be8247f](https://github.com/storacha/upload-service/commit/be8247f0ee047f9d61375230f39f103724114859))
+* **main:** release access 20.0.1 ([#1529](https://github.com/storacha/upload-service/issues/1529)) ([a82c4fb](https://github.com/storacha/upload-service/commit/a82c4fbd417f337d5ceb96d8dfb0ce7e884500ff))
+* **main:** release access 20.1.0 ([#1541](https://github.com/storacha/upload-service/issues/1541)) ([89836c0](https://github.com/storacha/upload-service/commit/89836c08ef10c1fd38e6b864e746be45c27514aa))
+* **main:** release client 1.0.6 ([27cb383](https://github.com/storacha/upload-service/commit/27cb383ea5aae32ca44cc2986f781458130fbffb))
+* **main:** release client 1.0.6 ([#104](https://github.com/storacha/upload-service/issues/104)) ([07f27a2](https://github.com/storacha/upload-service/commit/07f27a22a942bde67b55e785b2e3785906d63422))
+* **main:** release upload-api 1.1.8 ([aec53e7](https://github.com/storacha/upload-service/commit/aec53e714ea581421e1c55a6e282b765f5badaaa))
+* **main:** release upload-api 1.1.8 ([#103](https://github.com/storacha/upload-service/issues/103)) ([e71494a](https://github.com/storacha/upload-service/commit/e71494a12fbd6a93bf2871eec1b101d4b02af38f))
+* package renames ([0f797ed](https://github.com/storacha/upload-service/commit/0f797ed298b570dd649aa18055f801b0ab6fbfd8))
+
 ## [20.1.0](https://github.com/storacha/w3up/compare/access-v20.0.1...access-v20.1.0) (2024-10-20)
 
 
