@@ -656,7 +656,7 @@ export const testClient = {
           assert.fail(error, 'should not throw when creating the space')
         }
       },
-    'should throw when the content serve authorization fails due to missing service configuration':
+    'should authorize the Storacha Gateway Service when no Gateway Services are provided':
       async (assert, { mail, grantAccess, connection }) => {
         // Step 1: Create a client for Alice and login
         const aliceClient = new Client(
@@ -679,23 +679,17 @@ export const testClient = {
         await grantAccess(message)
         const aliceAccount = await aliceLogin
 
-        try {
-          const spaceA = await aliceClient.createSpace(
-            'authorize-gateway-space',
-            {
-              account: aliceAccount,
-              authorizeGatewayServices: [], // No services to authorize
-            }
-          )
-          assert.fail(spaceA, 'should not create the space')
-        } catch (error) {
-          assert.match(
-            // @ts-expect-error
-            error.message,
-            /missing <authorizeGatewayServices> option/,
-            'should throw when creating the space'
-          )
-        }
+        process.env.DEFAULT_GATEWAY_ID = gateway.did()
+        process.env.DEFAULT_GATEWAY_URL = 'http://localhost:5001'
+
+        const spaceA = await aliceClient.createSpace(
+          'authorize-gateway-space',
+          {
+            account: aliceAccount,
+            authorizeGatewayServices: [], // If no Gateway Services are provided, authorize the Storacha Gateway Service
+          }
+        )
+        assert.ok(spaceA, 'should create the space')
       },
     'should throw when content serve service can not process the invocation':
       async (assert, { mail, grantAccess, connection }) => {

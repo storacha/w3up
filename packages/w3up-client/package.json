@@ -140,6 +140,7 @@
     "mock": "run-p mock:*",
     "mock:bucket-200": "PORT=8989 STATUS=200 node test/helpers/bucket-server.js",
     "mock:receipts-server": "PORT=9201 node test/helpers/receipts-server.js",
+    "mock:gateway-server": "PORT=5001 node test/helpers/gateway-server.js",
     "coverage": "c8 report -r html && open coverage/index.html",
     "rc": "npm version prerelease --preid rc",
     "docs": "npm run build && typedoc --out docs-generated"

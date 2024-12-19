@@ -12,11 +12,27 @@ import * as AccessCaps from '@web3-storage/capabilities'
 export function getContentServeMockService(result = { ok: {} }) {
   return {
     access: {
-      delegate: Server.provide(AccessCaps.Access.delegate, async () => {
+      delegate: Server.provide(AccessCaps.Access.delegate, async (data) => {
+        // console.log('Access Caps Delegate', data)
         return result
       }),
     },
   }
+}
+
+/**
+ * Creates a new Ucanto server with the given options.
+ *
+ * @param {any} id
+ * @param {any} service
+ */
+export function createUcantoServer(id, service) {
+  return Server.create({
+    id: id,
+    service,
+    codec: CAR.inbound,
+    validateAuthorization: () => ({ ok: {} }),
+  })
 }
 
 /**
@@ -27,12 +43,7 @@ export function getContentServeMockService(result = { ok: {} }) {
  * @param {string | undefined} [url]
  */
 export function getConnection(id, service, url = undefined) {
-  const server = Server.create({
-    id: id,
-    service,
-    codec: CAR.inbound,
-    validateAuthorization: () => ({ ok: {} }),
-  })
+  const server = createUcantoServer(id, service)
   const connection = Client.connect({
     id: id,
     codec: CAR.outbound,

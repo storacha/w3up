@@ -30,6 +30,9 @@ import { FilecoinClient } from './capability/filecoin.js'
 import { CouponAPI } from './coupon.js'
 export * as Access from './capability/access.js'
 import * as Result from './result.js'
+import * as UcantoClient from '@ucanto/client'
+import { HTTP } from '@ucanto/transport'
+import * as CAR from '@ucanto/transport/car'
 
 export {
   AccessClient,
@@ -255,6 +258,8 @@ export class Client extends Base {
    * In addition, it authorizes the listed Gateway Services to serve content from the created space.
    * It is done by delegating the `space/content/serve/*` capability to the Gateway Service.
    * User can skip the Gateway authorization by setting the `skipGatewayAuthorization` option to `true`.
+   * If no gateways are specified or the `skipGatewayAuthorization` flag is not set, the client will automatically grant access
+   * to the Storacha Gateway by default (https://freewaying.dag.haus/).
    *
    * @typedef {import('./types.js').ConnectionView<import('./types.js').ContentServeService>} ConnectionView
    *
@@ -304,16 +309,30 @@ export class Client extends Base {
 
     // Authorize the listed Gateway Services to serve content from the created space
     if (options.skipGatewayAuthorization !== true) {
-      if (
-        !options.authorizeGatewayServices ||
-        options.authorizeGatewayServices.length === 0
-      ) {
-        throw new Error(
-          'failed to authorize Gateway Services: missing <authorizeGatewayServices> option'
-        )
+      let authorizeGatewayServices = options.authorizeGatewayServices
+      if (!authorizeGatewayServices || authorizeGatewayServices.length === 0) {
+        // If no Gateway Services are provided, authorize the Storacha Gateway Service
+        authorizeGatewayServices = [
+          UcantoClient.connect({
+            id: {
+              did: () =>
+                /** @type {`did:${string}:${string}`} */ (
+                  /* c8 ignore next - default prod gateway id is not used in tests */
+                  process.env.DEFAULT_GATEWAY_ID ?? 'did:web:w3s.link'
+                ),
+            },
+            codec: CAR.outbound,
+            channel: HTTP.open({
+              url: new URL(
+                /* c8 ignore next - default prod gateway url is not used in tests */
+                process.env.DEFAULT_GATEWAY_URL ?? 'https://freeway.dag.haus'
+              ),
+            }),
+          }),
+        ]
       }
 
-      for (const serviceConnection of options.authorizeGatewayServices) {
+      for (const serviceConnection of authorizeGatewayServices) {
         await authorizeContentServe(this, space, serviceConnection)
       }
     }
@@ -609,7 +628,9 @@ export const authorizeContentServe = async (
     /* c8 ignore next 8 - can't mock this error */
     if (verificationResult.out.error) {
       throw new Error(
-        `failed to publish delegation for audience ${options.audience}: ${verificationResult.out.error.message}`,
+        `failed to publish delegation for audience ${audience.did()}: ${
+          verificationResult.out.error.message
+        }`,
         {
           cause: verificationResult.out.error,
         }
