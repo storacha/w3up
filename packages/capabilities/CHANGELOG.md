@@ -1,5 +1,12 @@
 # Changelog
 
+## [18.0.1](https://github.com/storacha/w3up/compare/capabilities-v18.0.0...capabilities-v18.0.1) (2024-12-19)
+
+
+### Other Changes
+
+* **capabilities:** top level filecoin cap ([#1606](https://github.com/storacha/w3up/issues/1606)) ([22d0bf9](https://github.com/storacha/w3up/commit/22d0bf9e540ffb8b76eb79453c4d881195abf2ef))
+
 ## [18.0.0](https://github.com/storacha/w3up/compare/capabilities-v17.4.1...capabilities-v18.0.0) (2024-12-05)
 
 
