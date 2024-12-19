@@ -1,5 +1,15 @@
 # Changelog
 
+## [1.0.1](https://github.com/storacha/upload-service/compare/did-mailto-v1.0.0...did-mailto-v1.0.1) (2024-12-19)
+
+
+### Other Changes
+
+* **main:** release client 1.0.6 ([27cb383](https://github.com/storacha/upload-service/commit/27cb383ea5aae32ca44cc2986f781458130fbffb))
+* **main:** release client 1.0.6 ([#104](https://github.com/storacha/upload-service/issues/104)) ([07f27a2](https://github.com/storacha/upload-service/commit/07f27a22a942bde67b55e785b2e3785906d63422))
+* **main:** release upload-api 1.1.8 ([aec53e7](https://github.com/storacha/upload-service/commit/aec53e714ea581421e1c55a6e282b765f5badaaa))
+* **main:** release upload-api 1.1.8 ([#103](https://github.com/storacha/upload-service/issues/103)) ([e71494a](https://github.com/storacha/upload-service/commit/e71494a12fbd6a93bf2871eec1b101d4b02af38f))
+
 ## 1.0.0 (2024-11-05)
 
 
