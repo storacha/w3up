@@ -814,6 +814,7 @@ export interface AdminStoreInspectSuccess {
 }
 export type AdminStoreInspectFailure = Ucanto.Failure
 // Filecoin
+export type Filecoin = InferInvokedCapability<typeof StorefrontCaps.filecoin>
 export type FilecoinOffer = InferInvokedCapability<
   typeof StorefrontCaps.filecoinOffer
 >
@@ -927,6 +928,7 @@ export type ServiceAbilityArray = [
   RateLimitAdd['can'],
   RateLimitRemove['can'],
   RateLimitList['can'],
+  Filecoin['can'],
   FilecoinOffer['can'],
   FilecoinSubmit['can'],
   FilecoinAccept['can'],

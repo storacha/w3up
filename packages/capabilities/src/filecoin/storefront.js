@@ -14,6 +14,18 @@ import { PieceLink } from './lib.js'
 import { equalWith, checkLink, and } from '../utils.js'
 
 /**
+ * Top-level capability for Filecoin operations.
+ */
+export const filecoin = capability({
+  can: 'filecoin/*',
+  /**
+   * DID of the space the content is stored in.
+   */
+  with: Schema.did(),
+  derives: equalWith,
+})
+
+/**
  * Capability allowing an agent to _request_ storing a content piece in
  * Filecoin.
  */
