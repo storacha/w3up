@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.4.1](https://github.com/storacha/w3ui/compare/core-v2.4.0...core-v2.4.1) (2024-12-19)
+
+
+### Bug Fixes
+
+* using the latest client to create spaces ([#655](https://github.com/storacha/w3ui/issues/655)) ([9e41b36](https://github.com/storacha/w3ui/commit/9e41b363b1646685a21a7441471d897bed9f4c2c))
+
 ## [2.4.0](https://github.com/storacha/w3ui/compare/core-v2.3.2...core-v2.4.0) (2024-12-04)
 
 
