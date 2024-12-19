@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.1](https://github.com/storacha/upload-service/compare/client-v1.1.0...client-v1.1.1) (2024-12-19)
+
+
+### Fixes
+
+* **w3up-client:** create space options ([#113](https://github.com/storacha/upload-service/issues/113)) ([5eec331](https://github.com/storacha/upload-service/commit/5eec331370f7399443835298d96d2411395edd03))
+
 ## [1.1.0](https://github.com/storacha/upload-service/compare/client-v1.0.6...client-v1.1.0) (2024-12-19)
 
 
