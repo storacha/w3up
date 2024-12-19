@@ -15,6 +15,7 @@
   "scripts": {
     "attw": "attw --pack .",
     "lint": "tsc && eslint '**/*.{js,ts}' && prettier --check '**/*.{js,ts,yml,json}' --ignore-path ../../.gitignore",
+    "lint:fix": "tsc && eslint '**/*.{js,ts}' --fix && prettier --write '**/*.{js,ts,yml,json}' --ignore-path ../../.gitignore",
     "build": "tsc --build",
     "dev": "tsc --build --watch",
     "check": "tsc --build",
