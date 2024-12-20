@@ -332,6 +332,9 @@ export class Client extends Base {
         ]
       }
 
+      // Save the space to authorize the client to use the space
+      await space.save()
+
       for (const serviceConnection of authorizeGatewayServices) {
         await authorizeContentServe(this, space, serviceConnection)
       }
