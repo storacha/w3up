@@ -1,6 +1,6 @@
 {
   "name": "@w3ui/core",
-  "version": "2.4.1",
+  "version": "2.4.2",
   "description": "w3ui core.",
   "type": "module",
   "main": "./dist/index.js",

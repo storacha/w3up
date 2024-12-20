@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.4.2](https://github.com/storacha/w3ui/compare/core-v2.4.1...core-v2.4.2) (2024-12-20)
+
+
+### Bug Fixes
+
+* **core:** update storacha/client version ([#658](https://github.com/storacha/w3ui/issues/658)) ([6827a18](https://github.com/storacha/w3ui/commit/6827a1872a12686bcf1d582f95585e3a9313e5a9))
+
 ## [2.4.1](https://github.com/storacha/w3ui/compare/core-v2.4.0...core-v2.4.1) (2024-12-19)
 
 

@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.5.4](https://github.com/storacha/w3ui/compare/react-v2.5.3...react-v2.5.4) (2024-12-20)
+
+
+### Bug Fixes
+
+* **core:** update storacha/client version ([#658](https://github.com/storacha/w3ui/issues/658)) ([6827a18](https://github.com/storacha/w3ui/commit/6827a1872a12686bcf1d582f95585e3a9313e5a9))
+
 ## [2.5.3](https://github.com/storacha/w3ui/compare/react-v2.5.2...react-v2.5.3) (2024-12-19)
 
 
