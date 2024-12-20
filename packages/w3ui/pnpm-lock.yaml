@@ -267,8 +267,8 @@ importers:
         specifier: ^3.4.0
         version: 3.4.0
       '@storacha/client':
-        specifier: ^1.1.1
-        version: 1.1.1(encoding@0.1.13)
+        specifier: ^1.1.2
+        version: 1.1.2(encoding@0.1.13)
       '@ucanto/client':
         specifier: ^9.0.1
         version: 9.0.1
@@ -1042,8 +1042,8 @@ packages:
   '@storacha/capabilities@1.2.0':
     resolution: {integrity: sha512-xnVCzZFALIrybbiEpdRg5FCA7HAnxsfJ7yWDOu1YDqWfvA5iBhG4jVM4ocGJ/bD65ov7KG0vP96tPnjprp4pKg==}
 
-  '@storacha/client@1.1.1':
-    resolution: {integrity: sha512-677TMJVFohDAjtE8J0IcjT6VubFoYYkrAKTHJfhBE8wU+dRlKsCPN+eyN9oz7EM9mtqICFgtCgBA0021vgRqjQ==}
+  '@storacha/client@1.1.2':
+    resolution: {integrity: sha512-zZiWCpUQy4kKEt4j2PR9wvsLlP9tr9T6MV+Kx+sh29EuRUCZhS2tjwShVajk79rQU0qv0tNDP2x3+4YSWDsjhg==}
     engines: {node: '>=18'}
 
   '@storacha/did-mailto@1.0.1':
@@ -4561,7 +4561,7 @@ snapshots:
       '@web3-storage/data-segment': 5.3.0
       uint8arrays: 5.1.0
 
-  '@storacha/client@1.1.1(encoding@0.1.13)':
+  '@storacha/client@1.1.2(encoding@0.1.13)':
     dependencies:
       '@ipld/dag-ucan': 3.4.0
       '@storacha/access': 1.0.0
