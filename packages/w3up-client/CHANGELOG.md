@@ -1,5 +1,12 @@
 # Changelog
 
+## [17.1.1](https://github.com/storacha/w3up/compare/w3up-client-v17.1.0...w3up-client-v17.1.1) (2024-12-20)
+
+
+### Fixes
+
+* **w3up-client:** authorize agent to use space ([#1610](https://github.com/storacha/w3up/issues/1610)) ([52ceb12](https://github.com/storacha/w3up/commit/52ceb12e29e04ab76f9863c17542088291685890))
+
 ## [17.1.0](https://github.com/storacha/w3up/compare/w3up-client-v17.0.0...w3up-client-v17.1.0) (2024-12-19)
 
 
