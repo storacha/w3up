@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.2](https://github.com/storacha/upload-service/compare/client-v1.1.1...client-v1.1.2) (2024-12-20)
+
+
+### Fixes
+
+* **w3up-client:** authorize agent to use space ([#115](https://github.com/storacha/upload-service/issues/115)) ([3719670](https://github.com/storacha/upload-service/commit/3719670d3b963221c1d02f15ae5f92a32ca07a52))
+
 ## [1.1.1](https://github.com/storacha/upload-service/compare/client-v1.1.0...client-v1.1.1) (2024-12-19)
 
 
