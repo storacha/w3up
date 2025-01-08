@@ -2,13 +2,13 @@ import type { AgentDataExport } from '@web3-storage/access/types'
 import type { ServiceConfig } from './service.js'
 
 import { StoreIndexedDB } from '@web3-storage/access/stores/store-indexeddb'
-import { Client, create as createStorachaClient } from '@storacha/client'
-import { Account } from '@storacha/client/account'
-import { Space } from '@storacha/client/space'
+import { Client, create as createStorachaClient } from '@web3-storage/w3up-client'
+import { Account } from '@web3-storage/w3up-client/account'
+import { Space } from '@web3-storage/w3up-client/space'
 import { createServiceConf } from './service.js'
 import { Driver } from '@web3-storage/access/drivers/types'
 
-export * from '@storacha/client/types'
+export * from '@web3-storage/w3up-client/types'
 export { Client, Account, Space, ServiceConfig }
 export type Store = Driver<AgentDataExport>
 
