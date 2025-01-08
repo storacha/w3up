@@ -269,14 +269,14 @@ export class Client extends Base {
    * @property {boolean} [skipGatewayAuthorization] - Whether to skip the Gateway authorization. It means that the content of the space will not be served by any Gateway.
    *
    * @param {string} name - The name of the space to create.
-   * @param {SpaceCreateOptions} options - Options for the space creation.
+   * @param {SpaceCreateOptions} [options] - Options for the space creation.
    * @returns {Promise<import("./space.js").OwnedSpace>} The created space owned by the agent.
    */
   async createSpace(name, options) {
     // Save the space to authorize the client to use the space
     const space = await this._agent.createSpace(name)
 
-    const account = options.account
+    const account = options?.account
     if (account) {
       // Provision the account with the space
       const provisionResult = await account.provision(space.did())
@@ -308,8 +308,8 @@ export class Client extends Base {
     }
 
     // Authorize the listed Gateway Services to serve content from the created space
-    if (options.skipGatewayAuthorization !== true) {
-      let authorizeGatewayServices = options.authorizeGatewayServices
+    if (options?.skipGatewayAuthorization !== true) {
+      let authorizeGatewayServices = options?.authorizeGatewayServices
       if (!authorizeGatewayServices || authorizeGatewayServices.length === 0) {
         // If no Gateway Services are provided, authorize the Storacha Gateway Service
         authorizeGatewayServices = [
@@ -325,7 +325,7 @@ export class Client extends Base {
             channel: HTTP.open({
               url: new URL(
                 /* c8 ignore next - default prod gateway url is not used in tests */
-                process.env.DEFAULT_GATEWAY_URL ?? 'https://freeway.dag.haus'
+                process.env.DEFAULT_GATEWAY_URL ?? 'https://w3s.link'
               ),
             }),
           }),
