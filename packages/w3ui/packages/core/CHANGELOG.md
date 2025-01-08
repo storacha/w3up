@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.4.3](https://github.com/storacha/w3ui/compare/core-v2.4.2...core-v2.4.3) (2025-01-08)
+
+
+### Bug Fixes
+
+* **core:** revert to web3-storage/w3up-client ([#660](https://github.com/storacha/w3ui/issues/660)) ([0a948c4](https://github.com/storacha/w3ui/commit/0a948c4f58af06ffeea1506690a8090df338ba7b))
+
 ## [2.4.2](https://github.com/storacha/w3ui/compare/core-v2.4.1...core-v2.4.2) (2024-12-20)
 
 

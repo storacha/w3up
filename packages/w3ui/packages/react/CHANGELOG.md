@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.5.5](https://github.com/storacha/w3ui/compare/react-v2.5.4...react-v2.5.5) (2025-01-08)
+
+
+### Bug Fixes
+
+* **core:** revert to web3-storage/w3up-client ([#660](https://github.com/storacha/w3ui/issues/660)) ([0a948c4](https://github.com/storacha/w3ui/commit/0a948c4f58af06ffeea1506690a8090df338ba7b))
+
 ## [2.5.4](https://github.com/storacha/w3ui/compare/react-v2.5.3...react-v2.5.4) (2024-12-20)
 
 
