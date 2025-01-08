@@ -1,5 +1,12 @@
 # Changelog
 
+## [17.1.2](https://github.com/storacha/w3up/compare/w3up-client-v17.1.1...w3up-client-v17.1.2) (2025-01-08)
+
+
+### Fixes
+
+* **w3up-client:** options in createSpace should be optional ([#1613](https://github.com/storacha/w3up/issues/1613)) ([52ccfc2](https://github.com/storacha/w3up/commit/52ccfc2b8208b9e58e37868d0e40e35ef647032c))
+
 ## [17.1.1](https://github.com/storacha/w3up/compare/w3up-client-v17.1.0...w3up-client-v17.1.1) (2024-12-20)
 
 
