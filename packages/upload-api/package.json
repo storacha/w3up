@@ -54,6 +54,9 @@
       "rate-limit": [
         "dist/src/rate-limit.d.ts"
       ],
+      "service": [
+        "dist/src/service.d.ts"
+      ],
       "space": [
         "dist/src/space.d.ts"
       ],
@@ -141,6 +144,10 @@
     "./rate-limit": {
       "types": "./dist/src/rate-limit.d.ts",
       "import": "./src/rate-limit.js"
+    },
+    "./service": {
+      "types": "./dist/src/service.d.ts",
+      "import": "./src/service.js"
     },
     "./space": {
       "types": "./dist/src/space.d.ts",
