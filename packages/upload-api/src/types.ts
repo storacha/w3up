@@ -33,6 +33,11 @@ import type { ProviderInput, ConnectionView } from '@ucanto/server'
 
 import { StorefrontService } from '@storacha/filecoin-api/types'
 import { ServiceContext as FilecoinServiceContext } from '@storacha/filecoin-api/storefront/api'
+import {
+  Service as LegacyService,
+  StoreServiceContext as LegacyStoreServiceContext,
+  AdminServiceContext as LegacyAdminServiceContext
+} from '@web3-storage/upload-api'
 import { DelegationsStorage as Delegations } from './types/delegations.js'
 import { ProvisionsStorage as Provisions } from './types/provisions.js'
 import { RateLimitsStorage as RateLimits } from './types/rate-limits.js'
@@ -271,7 +276,6 @@ export interface Service extends StorefrontService {
       RateLimitListFailure
     >
   }
-
   ucan: {
     conclude: ServiceMethod<
       UCANConclude,
@@ -280,8 +284,8 @@ export interface Service extends StorefrontService {
     >
     revoke: ServiceMethod<UCANRevoke, UCANRevokeSuccess, UCANRevokeFailure>
   }
-
   admin: {
+    store: LegacyService['admin']['store']
     upload: {
       inspect: ServiceMethod<
         AdminUploadInspect,
@@ -337,6 +341,8 @@ export interface Service extends StorefrontService {
   usage: {
     report: ServiceMethod<UsageReport, UsageReportSuccess, UsageReportFailure>
   }
+  // legacy handlers
+  store: LegacyService['store']
 }
 
 export type BlobServiceContext = SpaceServiceContext & {
@@ -382,6 +388,7 @@ export interface CustomerServiceContext {
 export interface AdminServiceContext {
   signer: Signer
   uploadTable: UploadTable
+  storeTable: LegacyAdminServiceContext['storeTable']
 }
 
 export interface ConsoleServiceContext {}
@@ -434,7 +441,8 @@ export interface UsageServiceContext {
 }
 
 export interface ServiceContext
-  extends AgentContext,
+  extends AdminServiceContext,
+    AgentContext,
     AccessServiceContext,
     ConsoleServiceContext,
     ConsumerServiceContext,
@@ -450,7 +458,8 @@ export interface ServiceContext
     UploadServiceContext,
     FilecoinServiceContext,
     IndexServiceContext,
-    UsageServiceContext {}
+    UsageServiceContext,
+    LegacyStoreServiceContext {}
 
 export interface UcantoServerContext extends ServiceContext, RevocationChecker {
   id: Signer

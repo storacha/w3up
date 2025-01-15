@@ -2,6 +2,7 @@ import * as API from '../../src/types.js'
 import { CAR, Invocation, Receipt } from '@ucanto/core'
 import { RecordNotFound } from '../../src/errors.js'
 
+/** @returns {API.AgentStore} */
 export const memory = () => new AgentStore()
 
 /**

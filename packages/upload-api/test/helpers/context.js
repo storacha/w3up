@@ -90,6 +90,14 @@ export const createContext = async (
         audience: dealTrackerSigner,
       },
     },
+    // Legacy dependencies.
+    // The following dependencies are legacy and will eventually be removed.
+    // @ts-expect-error legacy dependency not used or tested here
+    maxUploadSize: null,
+    // @ts-expect-error legacy dependency not used or tested here
+    storeTable: {},
+    // @ts-expect-error legacy dependency not used or tested here
+    carStoreBucket: {},
   }
 
   const connection = connect({
