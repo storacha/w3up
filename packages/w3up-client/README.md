@@ -13,7 +13,7 @@
 
 This library is the user-facing "porcelain" client for interacting with w3up services from JavaScript. It wraps the lower-level [`@storacha/access`][access-client-github] and [`@storacha/upload-client`][upload-client-github] client packages, which target individual w3up services. We recommend using `@storacha/client` instead of using those "plumbing" packages directly, but you may find them useful if you need more context on w3up's architecture and internals.
 
-**`w3up-client` requires Node 18 or higher**.
+**`w3up-client` requires modern browser or Node 18+**.
 
 > ⚠️❗ __Public Data__ 🌎: All data uploaded to w3up is available to anyone who requests it using the correct CID. Do not store any private or sensitive information in an unencrypted form using w3up.
 
@@ -116,6 +116,20 @@ const client = await create({ principal })
 ```
 
 Once initialized, you can access the client's `Agent` with the [`agent` getter][docs-Client#agent].
+
+##### Pre-built bundle
+You can also import a pre-built bundle, which adds the exports from the client to a _global_ variable `StorachaClient`:
+```html
+<!doctype html>
+<script src="https://cdn.jsdelivr.net/npm/@storacha/client/browser.min.js"></script>
+<script>
+  async function main () {
+    const client = await StorachaClient.create()
+    console.log(client.did())
+  }
+  main()
+</script>
+```
 
 #### Creating and registering Spaces
 

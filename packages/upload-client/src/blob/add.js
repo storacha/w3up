@@ -9,6 +9,7 @@ import retry, { AbortError } from 'p-retry'
 import { servicePrincipal, connection } from '../service.js'
 import { REQUEST_RETRIES } from '../constants.js'
 import { poll } from '../receipts.js'
+import { isCloudflareWorkers } from '../runtime.js'
 
 /**
  * @param {string} url
@@ -227,7 +228,7 @@ export async function add(
         try {
           const res = await fetchWithUploadProgress(address.url, {
             method: 'PUT',
-            mode: 'cors',
+            ...(!isCloudflareWorkers && { mode: 'cors' }),
             body: bytes,
             headers: address.headers,
             signal: options.signal,
