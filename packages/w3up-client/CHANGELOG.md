@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.3](https://github.com/storacha/upload-service/compare/client-v1.1.2...client-v1.1.3) (2025-01-20)
+
+
+### Other Changes
+
+* sync with w3up repo ([#119](https://github.com/storacha/upload-service/issues/119)) ([d86e52c](https://github.com/storacha/upload-service/commit/d86e52cfdb58c38a8499aaed03260f683eceae44))
+
 ## [1.1.2](https://github.com/storacha/upload-service/compare/client-v1.1.1...client-v1.1.2) (2024-12-20)
 
 
