@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.0](https://github.com/storacha/upload-service/compare/upload-api-v1.2.0...upload-api-v1.3.0) (2025-01-20)
+
+
+### Features
+
+* add legacy handlers ([#117](https://github.com/storacha/upload-service/issues/117)) ([1390106](https://github.com/storacha/upload-service/commit/1390106a3fb16636f00b6f1bf2f1809fc3afe25b))
+
 ## [1.2.0](https://github.com/storacha/upload-service/compare/upload-api-v1.1.8...upload-api-v1.2.0) (2024-12-19)
 
 
