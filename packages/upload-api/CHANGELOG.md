@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.1](https://github.com/storacha/upload-service/compare/upload-api-v1.3.0...upload-api-v1.3.1) (2025-01-20)
+
+
+### Fixes
+
+* clarify license ([157f93c](https://github.com/storacha/upload-service/commit/157f93c9d36463d5ee420f54f8f4975f345673db))
+
 ## [1.3.0](https://github.com/storacha/upload-service/compare/upload-api-v1.2.0...upload-api-v1.3.0) (2025-01-20)
 
 
