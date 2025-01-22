@@ -124,7 +124,7 @@ async function get(taskCid, options = {}) {
     headers: {},
   })
   // Get receipt from the potential multiple receipts in the message
-  const receipt = agentMessage.receipts.get(taskCid.toString())
+  const receipt = agentMessage.receipts.get(`${taskCid}`)
   if (!receipt) {
     return {
       error: new ReceiptMissing(taskCid),

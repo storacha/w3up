@@ -43,8 +43,8 @@
     "@ipld/dag-cbor": "^9.0.6",
     "@storacha/capabilities": "workspace:^",
     "@storacha/one-webcrypto": "^1.0.1",
-    "@ucanto/core": "^10.0.1",
-    "@ucanto/interface": "^10.0.1",
+    "@ucanto/core": "^10.2.1",
+    "@ucanto/interface": "^10.1.1",
     "carstream": "^2.1.0",
     "multiformats": "^13.0.1",
     "uint8arrays": "^5.0.3"

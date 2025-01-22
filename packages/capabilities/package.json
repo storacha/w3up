@@ -100,16 +100,16 @@
     "dist/src/**/*.d.ts.map"
   ],
   "dependencies": {
-    "@ucanto/core": "^10.0.1",
-    "@ucanto/interface": "^10.0.1",
-    "@ucanto/principal": "^9.0.1",
+    "@ucanto/core": "^10.2.1",
+    "@ucanto/interface": "^10.1.1",
+    "@ucanto/principal": "^9.0.2",
     "@ucanto/transport": "^9.1.1",
-    "@ucanto/validator": "^9.0.2",
+    "@ucanto/validator": "^9.0.3",
     "@web3-storage/data-segment": "^5.2.0",
     "uint8arrays": "^5.0.3"
   },
   "devDependencies": {
-    "@ipld/dag-ucan": "^3.4.0",
+    "@ipld/dag-ucan": "^3.4.5",
     "@storacha/eslint-config": "workspace:^",
     "@types/assert": "^1.5.6",
     "@types/mocha": "^10.0.0",

@@ -160,7 +160,6 @@ export class BrowserStorageNode {
         contentStore,
         allocationStore,
       }),
-      // @ts-expect-error
       resolveDIDKey,
       validateAuthorization: () => ({ ok: {} }),
     })
@@ -231,7 +230,6 @@ export class StorageNode {
         contentStore,
         allocationStore,
       }),
-      // @ts-expect-error
       resolveDIDKey,
       validateAuthorization: () => ({ ok: {} }),
     })

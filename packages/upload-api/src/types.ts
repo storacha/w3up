@@ -28,6 +28,7 @@ import type {
   Variant,
   HTTPRequest,
   HTTPResponse,
+  PrincipalResolver,
 } from '@ucanto/interface'
 import type { ProviderInput, ConnectionView } from '@ucanto/server'
 
@@ -461,7 +462,7 @@ export interface ServiceContext
     UsageServiceContext,
     LegacyStoreServiceContext {}
 
-export interface UcantoServerContext extends ServiceContext, RevocationChecker {
+export interface UcantoServerContext extends ServiceContext, RevocationChecker, PrincipalResolver {
   id: Signer
   codec?: InboundCodec
   errorReporter: ErrorReporter

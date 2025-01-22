@@ -54,11 +54,11 @@
     "dist/src/**/*.d.ts.map"
   ],
   "dependencies": {
-    "@ipld/dag-ucan": "^3.4.0",
+    "@ipld/dag-ucan": "^3.4.5",
     "@storacha/capabilities": "workspace:^",
     "@ucanto/client": "^9.0.1",
-    "@ucanto/core": "^10.0.1",
-    "@ucanto/interface": "^10.0.1",
+    "@ucanto/core": "^10.2.1",
+    "@ucanto/interface": "^10.1.1",
     "@ucanto/transport": "^9.1.1"
   },
   "devDependencies": {
@@ -66,14 +66,14 @@
     "@storacha/eslint-config": "workspace:^",
     "@types/assert": "^1.5.6",
     "@types/mocha": "^10.0.1",
-    "@ucanto/principal": "^9.0.1",
-    "@ucanto/server": "^10.0.0",
-    "@web3-storage/data-segment": "^4.0.0",
+    "@ucanto/principal": "^9.0.2",
+    "@ucanto/server": "^10.1.0",
+    "@web3-storage/data-segment": "^5.3.0",
     "assert": "^2.0.0",
     "c8": "^7.13.0",
     "hundreds": "^0.0.9",
     "mocha": "^10.2.0",
-    "multiformats": "^12.1.2",
+    "multiformats": "^13.3.1",
     "npm-run-all": "^4.1.5",
     "playwright-test": "^12.3.4",
     "typescript": "5.2.2"
