@@ -100,8 +100,8 @@ importers:
         specifier: ^4.9.0
         version: 4.33.0
       uint8arrays:
-        specifier: ^4.0.6
-        version: 4.0.10
+        specifier: ^5.1.0
+        version: 5.1.0
     devDependencies:
       '@storacha/eslint-config':
         specifier: workspace:^
@@ -13746,7 +13746,7 @@ snapshots:
       it-to-stream: 1.0.0
       merge-options: 3.0.4
       nanoid: 3.3.8
-      native-fetch: 3.0.0(node-fetch@2.7.0(encoding@0.1.13))
+      native-fetch: 3.0.0(node-fetch@2.7.0)
       node-fetch: 2.7.0(encoding@0.1.13)
       react-native-fetch-api: 3.0.0
       stream-to-it: 0.2.4
@@ -14948,7 +14948,7 @@ snapshots:
 
   nanoid@5.0.9: {}
 
-  native-fetch@3.0.0(node-fetch@2.7.0(encoding@0.1.13)):
+  native-fetch@3.0.0(node-fetch@2.7.0):
     dependencies:
       node-fetch: 2.7.0(encoding@0.1.13)
 

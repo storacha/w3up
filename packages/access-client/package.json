@@ -115,7 +115,7 @@
     "multiformats": "^13.3.1",
     "p-defer": "^4.0.0",
     "type-fest": "^4.9.0",
-    "uint8arrays": "^4.0.6"
+    "uint8arrays": "^5.1.0"
   },
   "devDependencies": {
     "@storacha/eslint-config": "workspace:^",
