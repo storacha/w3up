@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.2](https://github.com/storacha/upload-service/compare/filecoin-client-v1.0.1...filecoin-client-v1.0.2) (2025-01-22)
+
+
+### Other Changes
+
+* upgrade dependencies ([#124](https://github.com/storacha/upload-service/issues/124)) ([e743572](https://github.com/storacha/upload-service/commit/e743572e4a7caad5076472fe0b6e8bfeac7c44db))
+
 ## [1.0.1](https://github.com/storacha/upload-service/compare/filecoin-client-v1.0.0...filecoin-client-v1.0.1) (2024-12-19)
 
 
