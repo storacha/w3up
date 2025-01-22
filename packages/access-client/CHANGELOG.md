@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.0.2](https://github.com/storacha/upload-service/compare/access-v1.0.1...access-v1.0.2) (2025-01-22)
+
+
+### Fixes
+
+* type error ([a1e09c2](https://github.com/storacha/upload-service/commit/a1e09c26ee69cb0ad18c5b8e5e28c4846782b608))
+
+
+### Other Changes
+
+* update uint8arrays dependency ([a36b06f](https://github.com/storacha/upload-service/commit/a36b06f92677854f9bb819c0d7b6425d5b70e62c))
+
 ## [1.0.1](https://github.com/storacha/upload-service/compare/access-v1.0.0...access-v1.0.1) (2025-01-22)
 
 
