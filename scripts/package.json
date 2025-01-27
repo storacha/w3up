@@ -1,6 +1,7 @@
 {
   "name": "@storacha/upload-service-scripts",
   "version": "0.0.0",
+  "private": true,
   "main": "index.js",
   "type": "module",
   "license": "Apache-2.0 OR MIT",
