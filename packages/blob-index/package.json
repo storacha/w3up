@@ -31,12 +31,14 @@
     }
   },
   "scripts": {
-    "attw": "attw --pack .",
+    "dev": "tsc --build --watch --preserveWatchOutput",
+    "clean": "rm -rf dist coverage",
     "build": "tsc --build",
-    "dev": "tsc --build --watch",
-    "check": "tsc --build",
-    "lint": "tsc --build && eslint '**/*.{js,ts}' && prettier --check '**/*.{js,ts,yml,json}' --ignore-path ../../.gitignore",
+    "typecheck": "tsc --build",
+    "lint": "eslint '**/*.{js,ts}' && prettier --check '**/*.{js,ts,yml,json}' --ignore-path ../../.gitignore",
+    "lint:fix": "eslint --fix '**/*.{js,ts}' && prettier --write '**/*.{js,ts,yml,json}' --ignore-path ../../.gitignore",
     "test": "entail test/*.spec.js",
+    "attw": "attw --pack .",
     "coverage": "c8 --reporter text --reporter html npm run test"
   },
   "dependencies": {

@@ -1,0 +1,40 @@
+{
+  "$schema": "./node_modules/nx/schemas/nx-schema.json",
+  "targetDefaults": {
+    "build": {
+      "dependsOn": ["^build"],
+      "cache": true
+    },
+    "typecheck": {
+      "cache": true
+    },
+    "lint": {
+      "cache": true
+    },
+    "lint:fix": {
+      "cache": true
+    },
+    "test": {
+      "cache": true
+    },
+    "test:node": {
+      "cache": true
+    },
+    "test:browser": {
+      "cache": true
+    },
+    "testw": {
+      "cache": true
+    },
+    "coverage": {
+      "cache": true
+    },
+    "test:all": {
+      "cache": true
+    }
+  },
+  "defaultBase": "main",
+  "release": {
+    "projects": ["packages/*"]
+  }
+}

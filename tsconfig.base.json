@@ -1,3 +1,4 @@
+// Base options for all projects
 {
   "compilerOptions": {
     "strict": true,
@@ -32,22 +33,5 @@
     "skipLibCheck": true,
     "stripInternal": true,
     "resolveJsonModule": true
-  },
-  "typedocOptions": {
-    "entryPointStrategy": "packages",
-    "entryPoints": [
-      "packages/access-client",
-      "packages/blob-index",
-      "packages/capabilities",
-      "packages/upload-client",
-      "packages/filecoin-client",
-      "packages/w3up-client"
-    ],
-    "excludeExternals": true,
-    "darkHighlightTheme": "github-dark",
-    "navigationLinks": {
-      "Github": "https://github.com/storacha/upload-service"
-    },
-    "customCss": "./packages/w3up-typedoc-config/static/docs.css"
   }
 }

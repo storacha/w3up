@@ -14,15 +14,17 @@
   "types": "dist/src/index.d.ts",
   "main": "dist/src/index.js",
   "scripts": {
-    "attw": "attw --pack .",
-    "lint": "tsc --build && eslint '**/*.{js,ts}' && prettier --check '**/*.{js,ts,yml,json}' --ignore-path ../../.gitignore",
+    "dev": "tsc --build --watch --preserveWatchOutput",
     "build": "tsc --build",
-    "dev": "tsc --build --watch",
-    "check": "tsc --build",
-    "test": "pnpm -r run build && pnpm run test:node && pnpm run test:browser",
+    "clean": "rm -rf dist",
+    "typecheck": "tsc --build",
+    "lint": "eslint '**/*.{js,ts}' && prettier --check '**/*.{js,ts,yml,json}' --ignore-path ../../.gitignore",
+    "lint:fix": "eslint --fix '**/*.{js,ts}' && prettier --write '**/*.{js,ts,yml,json}' --ignore-path ../../.gitignore",
+    "test": "pnpm build && pnpm run test:node && pnpm run test:browser",
     "test:node": "mocha 'test/**/!(*.browser).test.js' -n experimental-vm-modules -n no-warnings",
     "test:browser": "playwright-test 'test/**/!(*.node).test.js'",
     "testw": "watch 'pnpm test' src test --interval 1",
+    "attw": "attw --pack .",
     "rc": "pnpm version prerelease --preid rc"
   },
   "exports": {
