@@ -184,7 +184,7 @@ export const createService = (context) => ({
     ...createAdminService(context),
     // @ts-expect-error `uploadTable` items now have a `cause` field. This does
     // not matter since `admin/store/inspect` handler does not use this table.
-    store: createLegacyAdminService(context).store
+    store: createLegacyAdminService(context).store,
   },
   space: createSpaceService(context),
   subscription: createSubscriptionService(context),
