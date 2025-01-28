@@ -1,0 +1,47 @@
+{
+  "name": "@w3ui/example-react-components",
+  "version": "1.2.0",
+  "description": "Components for React examples",
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.esm.js",
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "build": "bunchee",
+    "lint": "tsc --build && eslint '**/*.{js,jsx,ts,tsx}'"
+  },
+  "files": [
+    "dist/*",
+    "src"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/web3-storage/w3ui.git"
+  },
+  "author": "Travis Vachon",
+  "license": "Apache-2.0 OR MIT",
+  "dependencies": {
+    "@heroicons/react": "^2.0.17",
+    "@types/react": "^18.2.37",
+    "@w3ui/react": "workspace:^"
+  },
+  "devDependencies": {
+    "bunchee": "^5.5.0",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "react": "^18.2.0",
+    "typescript": "^5.3.2"
+  },
+  "peerDependencies": {
+    "react": "^16.8.0 || ^17.0.0 || ^18.0.0"
+  },
+  "eslintConfig": {
+    "extends": [
+      "../../../eslint.packages.js",
+      "plugin:react-hooks/recommended"
+    ]
+  },
+  "eslintIgnore": [
+    "node_modules",
+    "dist"
+  ]
+}

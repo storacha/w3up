@@ -1,0 +1,18 @@
+{
+  "compilerOptions": {
+    "lib": ["ES2022"]
+  },
+  "files": [],
+  "exclude": ["**/dist"],
+  "references": [
+    {
+      "path": "packages/core"
+    },
+    {
+      "path": "packages/react"
+    },
+    {
+      "path": "examples/react/components"
+    }
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "composite": true,
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "outDir": "./build/types"
+  },
+  "include": ["src", "test"],
+  "ts-node": {
+    "esm": true,
+    "transpileOnly": true
+  }
+}

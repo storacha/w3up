@@ -1,0 +1,36 @@
+{
+  "name": "w3ui",
+  "private": true,
+  "version": "0.0.0",
+  "description": "Headless, type-safe, UI components for the next generation Web3.Storage APIs.",
+  "author": "Alan Shaw",
+  "maintainers": [
+    "travis",
+    "yusefnapora",
+    "olizilla"
+  ],
+  "license": "Apache-2.0 OR MIT",
+  "packageManager": "pnpm@9.8.0+sha256.56a9e76b51796ca7f73b85e44cf83712862091f4d498c0ce4d5b7ecdc6ba18f7",
+  "scripts": {
+    "prepare": "pnpm run build && pnpm run compile",
+    "build": "pnpm run --recursive --if-present build",
+    "dev": "pnpm run --filter './packages/*' --if-present --parallel dev",
+    "clean": "rm -rf node_modules coverage packages/*/{dist,build,node_modules}",
+    "compile": "pnpm run --recursive --if-present compile",
+    "format": "pnpm --recursive --if-present run lint --fix",
+    "format:check": "lint",
+    "lint": "pnpm --recursive --if-present run lint",
+    "test": "pnpm run --filter './packages/**' --recursive test",
+    "typecheck": "tsc -b",
+    "test:examples": "pnpm run --filter './examples/**' test",
+    "build:examples": "pnpm run --filter './examples/**' --no-bail build || true",
+    "serve:examples": "serve examples",
+    "playwright:install": "pnpm --filter './examples/test/playwright' exec playwright install"
+  },
+  "dependencies": {
+    "hd-scripts": "^4.1.0"
+  },
+  "devDependencies": {
+    "serve": "^14.1.2"
+  }
+}

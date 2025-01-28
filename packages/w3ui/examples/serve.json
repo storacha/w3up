@@ -1,0 +1,12 @@
+{
+  "unlisted": ["README.md", "test", "serve.json", "template"],
+  "rewrites": [
+    { "source": "/:ui/:eg", "destination": "/:ui/:eg/dist/index.html" },
+    { "source": "/:ui/:eg/", "destination": "/:ui/:eg/dist/index.html" },
+    {
+      "source": "/:ui/:eg/favicon.ico",
+      "destination": "/:ui/:eg/dist/favicon.ico"
+    },
+    { "source": "/:ui/:eg/assets/:x", "destination": "/:ui/:eg/dist/assets/:x" }
+  ]
+}

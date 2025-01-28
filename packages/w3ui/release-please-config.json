@@ -1,0 +1,7 @@
+{
+  "separate-pull-requests": false,
+  "packages": {
+    "packages/core": {},
+    "packages/react": {}
+  }
+}
