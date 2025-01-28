@@ -1,6 +1,14 @@
 {
   "$schema": "./../../node_modules/nx/schemas/project-schema.json",
   "targets": {
-    "test": {}
+    "test": {},
+    "test:node": {
+      "// parallelism": "Uses the mock server, so don't run it in parallel with other tasks.",
+      "parallelism": false
+    },
+    "test:browser": {
+      "// parallelism": "Uses the mock server, so don't run it in parallel with other tasks.",
+      "parallelism": false
+    }
   }
 }

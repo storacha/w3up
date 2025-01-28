@@ -13,6 +13,7 @@
   "type": "module",
   "types": "dist/src/index.d.ts",
   "main": "dist/src/index.js",
+  "// scripts": "The `test-:*` scripts are internal only, to be run by `npm-run-all` in parallel with the mock servers.",
   "scripts": {
     "dev": "tsc --build --watch --preserveWatchOutput",
     "build": "tsc --build",
@@ -21,7 +22,8 @@
     "attw": "attw --pack .",
     "lint": "eslint '**/*.{js,ts}' && prettier --check '**/*.{js,ts,yml,json}' --ignore-path ../../.gitignore",
     "lint:fix": "eslint --fix '**/*.{js,ts}' && prettier --write '**/*.{js,ts,yml,json}' --ignore-path ../../.gitignore",
-    "test:node": "hundreds -r html -r text mocha 'test/**/!(*.browser).test.js' -n experimental-vm-modules -n no-warnings",
+    "test:node": "npm-run-all --parallel --race --npm-path pnpm mock:* 'test-:node'",
+    "test-:node": "hundreds -r html -r text mocha 'test/**/!(*.browser).test.js' -n experimental-vm-modules -n no-warnings",
     "test:browser": "npm-run-all --parallel --race --npm-path pnpm mock:* 'test-:browser'",
     "test-:browser": "playwright-test 'test/**/!(*.node).test.js'",
     "mock": "run /^mock:/",

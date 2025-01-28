@@ -4,13 +4,8 @@
   "private": true,
   "packageManager": "pnpm@9.8.0+sha256.56a9e76b51796ca7f73b85e44cf83712862091f4d498c0ce4d5b7ecdc6ba18f7",
   "scripts": {
-    "dev": "nx run-many --exclude w3up -t dev --parallel=100 --output-style=stream",
-    "build": "nx run-many --exclude w3up -t build",
-    "clean": "nx run-many --exclude w3up -t clean",
-    "typecheck": "nx run-many --exclude w3up -t typecheck",
-    "lint": "nx run-many --exclude w3up -t lint",
-    "lint:fix": "nx run-many --exclude w3up -t lint:fix",
-    "test": "nx run-many --exclude w3up -t test",
+    "lint": "eslint *.{js,ts} scripts && prettier --check '**/*.{js,ts,yml,json}' --ignore-path .gitignore",
+    "lint:fix": "eslint --fix *.{js,ts} scripts && prettier --write '**/*.{js,ts,yml,json}' --ignore-path .gitignore",
     "docs": "pnpm run build && typedoc --plugin typedoc-plugin-missing-exports --out docs",
     "docs:markdown": "pnpm run build && docusaurus generate-typedoc"
   },

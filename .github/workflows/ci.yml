@@ -1,0 +1,32 @@
+name: CI
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+# Needed for nx-set-shas when run on the main branch
+permissions:
+  actions: read
+  contents: read
+
+jobs:
+  main:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # Fetch full history so `nx affected` can determine what to run
+          fetch-depth: 0
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          cache: 'pnpm'
+      - name: Install dependencies
+        run: pnpm install
+
+      # Set the base and head that `nx affected` will use
+      - uses: nrwl/nx-set-shas@v4
+
+      # Run CI tasks over all affected projects
+      - run: pnpm nx affected -t typecheck lint build test depcheck attw
