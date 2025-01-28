@@ -36,7 +36,7 @@ import { ServiceContext as FilecoinServiceContext } from '@storacha/filecoin-api
 import {
   Service as LegacyService,
   StoreServiceContext as LegacyStoreServiceContext,
-  AdminServiceContext as LegacyAdminServiceContext
+  AdminServiceContext as LegacyAdminServiceContext,
 } from '@web3-storage/upload-api'
 import { DelegationsStorage as Delegations } from './types/delegations.js'
 import { ProvisionsStorage as Provisions } from './types/provisions.js'

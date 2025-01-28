@@ -186,7 +186,9 @@ export class BrowserStorageNode {
   async deactivate() {
     try {
       await fetch(new URL('/reset', this.baseURL), { method: 'POST' })
-    } catch {}
+    } catch {
+      // Ignore errors
+    }
   }
 }
 
