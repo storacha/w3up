@@ -30,6 +30,9 @@
     },
     "test:all": {
       "cache": true
+    },
+    "attw": {
+      "dependsOn": ["build"]
     }
   },
   "defaultBase": "main",

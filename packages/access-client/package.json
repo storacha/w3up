@@ -119,6 +119,7 @@
     "uint8arrays": "^5.1.0"
   },
   "devDependencies": {
+    "@arethetypeswrong/cli": "^0.17.3",
     "@storacha/eslint-config": "workspace:^",
     "@types/assert": "^1.5.6",
     "@types/inquirer": "^9.0.4",

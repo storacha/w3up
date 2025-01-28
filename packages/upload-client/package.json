@@ -19,7 +19,6 @@
     "build": "tsc --build",
     "clean": "rm -rf dist",
     "typecheck": "tsc --build",
-    "attw": "attw --pack .",
     "lint": "eslint '**/*.{js,ts}' && prettier --check '**/*.{js,ts,yml,json}' --ignore-path ../../.gitignore",
     "lint:fix": "eslint --fix '**/*.{js,ts}' && prettier --write '**/*.{js,ts,yml,json}' --ignore-path ../../.gitignore",
     "test:node": "npm-run-all --parallel --race --npm-path pnpm mock:* 'test-:node'",
@@ -31,6 +30,7 @@
     "mock:bucket-200": "PORT=9200 STATUS=200 node test/helpers/bucket-server.js",
     "mock:bucket-400": "PORT=9400 STATUS=400 node test/helpers/bucket-server.js",
     "mock:bucket-500": "PORT=9500 STATUS=500 node test/helpers/bucket-server.js",
+    "attw": "attw --pack .",
     "rc": "npm version prerelease --preid rc"
   },
   "exports": {
@@ -41,7 +41,6 @@
     "./index": "./dist/src/index/index.js",
     "./sharding": "./dist/src/sharding.js",
     "./upload": "./dist/src/upload/index.js",
-    "./store": "./dist/src/store.js",
     "./unixfs": "./dist/src/unixfs.js",
     "./types": "./dist/src/types.js"
   },
@@ -101,6 +100,7 @@
     "varint": "^6.0.0"
   },
   "devDependencies": {
+    "@arethetypeswrong/cli": "^0.17.3",
     "@storacha/eslint-config": "workspace:^",
     "@types/assert": "^1.5.6",
     "@types/mocha": "^10.0.1",

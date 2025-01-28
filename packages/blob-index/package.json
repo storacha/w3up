@@ -38,7 +38,7 @@
     "lint": "eslint '**/*.{js,ts}' && prettier --check '**/*.{js,ts,yml,json}' --ignore-path ../../.gitignore",
     "lint:fix": "eslint --fix '**/*.{js,ts}' && prettier --write '**/*.{js,ts,yml,json}' --ignore-path ../../.gitignore",
     "test": "entail test/*.spec.js",
-    "attw": "attw --pack .",
+    "attw": "attw --profile esm-only --pack .",
     "coverage": "c8 --reporter text --reporter html npm run test"
   },
   "dependencies": {
@@ -52,6 +52,7 @@
     "uint8arrays": "^5.0.3"
   },
   "devDependencies": {
+    "@arethetypeswrong/cli": "^0.17.3",
     "@storacha/eslint-config": "workspace:^",
     "@ucanto/transport": "^9.1.1",
     "c8": "^7.14.0",

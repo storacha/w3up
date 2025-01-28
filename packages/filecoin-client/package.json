@@ -63,6 +63,7 @@
     "@ucanto/transport": "^9.1.1"
   },
   "devDependencies": {
+    "@arethetypeswrong/cli": "^0.17.3",
     "@ipld/dag-json": "^10.1.4",
     "@storacha/eslint-config": "workspace:^",
     "@types/assert": "^1.5.6",

@@ -152,6 +152,7 @@
     "@ucanto/transport": "^9.1.1"
   },
   "devDependencies": {
+    "@arethetypeswrong/cli": "^0.17.3",
     "@ipld/car": "^5.1.1",
     "@ipld/unixfs": "^3.0.0",
     "@storacha/eslint-config": "workspace:^",

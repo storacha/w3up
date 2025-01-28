@@ -40,6 +40,7 @@
     "attw": "attw --pack ."
   },
   "devDependencies": {
+    "@arethetypeswrong/cli": "^0.17.3",
     "@storacha/eslint-config": "workspace:^",
     "@types/assert": "^1.5.6",
     "@types/mocha": "^10.0.1",
