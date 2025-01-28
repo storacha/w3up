@@ -1,5 +1,6 @@
 {
   "$schema": "./node_modules/nx/schemas/nx-schema.json",
+  "nxCloudId": "6797a708eb6e881b2f2559e0",
   "targetDefaults": {
     "build": {
       "dependsOn": ["^build"],
@@ -15,12 +16,10 @@
       "cache": true
     },
     "test": {
+      "dependsOn": ["test:*"],
       "cache": true
     },
-    "test:node": {
-      "cache": true
-    },
-    "test:browser": {
+    "test:*": {
       "cache": true
     },
     "testw": {

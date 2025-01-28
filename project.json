@@ -1,0 +1,23 @@
+{
+  "$schema": "./node_modules/nx/schemas/project-schema.json",
+  "targets": {
+    "lint": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "eslint *.{js,ts} scripts",
+          "prettier --check '**/*.{js,ts,yml,json}' --ignore-path .gitignore"
+        ]
+      }
+    },
+    "lint:fix": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "eslint --fix *.{js,ts} scripts",
+          "prettier --write '**/*.{js,ts,yml,json}' --ignore-path .gitignore"
+        ]
+      }
+    }
+  }
+}
