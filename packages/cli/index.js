@@ -153,8 +153,8 @@ export async function upload(firstPath, opts) {
   const uploadFn = opts?.car
     ? client.uploadCAR.bind(client, files[0])
     : files.length === 1 && opts?.wrap === false
-    ? client.uploadFile.bind(client, files[0])
-    : client.uploadDirectory.bind(client, files)
+      ? client.uploadFile.bind(client, files[0])
+      : client.uploadDirectory.bind(client, files)
 
   let totalSent = 0
   const getStoringMessage = () =>

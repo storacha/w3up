@@ -462,7 +462,10 @@ export interface ServiceContext
     UsageServiceContext,
     LegacyStoreServiceContext {}
 
-export interface UcantoServerContext extends ServiceContext, RevocationChecker, PrincipalResolver {
+export interface UcantoServerContext
+  extends ServiceContext,
+    RevocationChecker,
+    PrincipalResolver {
   id: Signer
   codec?: InboundCodec
   errorReporter: ErrorReporter
