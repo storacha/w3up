@@ -137,7 +137,8 @@ export const test = {
     const { registry } = context
     const data = new Uint8Array([11, 22, 34, 44, 55])
     const digest = await sha256.digest(data)
-    const dereg = await registry.deregister(space, digest)
+    const cause = await randomCID()
+    const dereg = await registry.deregister({space, digest, cause})
     assert.ok(dereg.error)
     assert.equal(dereg.error?.name, EntryNotFound.name)
   },
@@ -155,7 +156,8 @@ export const test = {
     const find0 = await registry.find(space, digest)
     assert.ok(find0.ok)
 
-    const dereg = await registry.deregister(space, digest)
+    const deregCause = await randomCID()
+    const dereg = await registry.deregister({space, digest, cause: deregCause})
     assert.ok(dereg.ok)
 
     const find1 = await registry.find(space, digest)
