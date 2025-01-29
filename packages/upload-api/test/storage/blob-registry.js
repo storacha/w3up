@@ -30,6 +30,7 @@ export class Registry {
 
   /** @type {API.BlobAPI.Registry['deregister']} */
   async deregister({space, digest, cause}) {
+    // `cause` is unused in this function but required in production for recording the space usage delta.
     const entries = this.data.get(space) ?? []
     const entry = entries.find((e) => equals(e.blob.digest.bytes, digest.bytes))
     if (!entry) return error(new EntryNotFound())
