@@ -4,8 +4,7 @@
     "outDir": "dist",
     "emitDeclarationOnly": true
   },
-  "include": ["src", "test", "package.json"],
-  "exclude": ["**/node_modules/**"],
+  "include": ["src", "test"],
   "typedocOptions": {
     "entryPoints": ["./src"]
   }

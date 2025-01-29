@@ -4,8 +4,7 @@
     "outDir": "dist",
     "lib": ["ESNext", "DOM"]
   },
-  "include": ["src", "scripts", "test", "package.json"],
-  "exclude": ["**/node_modules/**"],
+  "include": ["src", "scripts", "test"],
   "references": [
     { "path": "../access-client" },
     { "path": "../blob-index" },

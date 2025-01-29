@@ -16,19 +16,20 @@
       "cache": true
     },
     "test": {
-      "dependsOn": ["test:*"],
+      "dependsOn": ["^build", "test:!(watch)"],
       "cache": true
     },
-    "test:*": {
+    "test:!(watch)": {
+      "dependsOn": ["^build"],
       "cache": true
+    },
+    "test:watch": {
+      "dependsOn": ["^build"]
     },
     "testw": {
       "cache": true
     },
     "coverage": {
-      "cache": true
-    },
-    "test:all": {
       "cache": true
     },
     "attw": {

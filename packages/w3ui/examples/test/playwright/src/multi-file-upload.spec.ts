@@ -1,10 +1,8 @@
 import { test, expect } from '@playwright/test'
 
-for (const ui of [
-  'react',
-]) {
+for (const ui of ['react']) {
   test(`${ui}: multi file upload`, async ({ page }) => {
-    await page.goto(`/${ui}/multi-file-upload/`)
+    await page.goto(`/example-${ui}-multi-file-upload/dist/`)
     await expect(page).toHaveTitle('W3UI Multi File Upload Example App')
 
     const input = page.getByRole('textbox', { name: 'Email' })

@@ -8,7 +8,10 @@
   "types": "./dist/index.d.ts",
   "scripts": {
     "build": "bunchee",
-    "lint": "tsc --build && eslint '**/*.{js,jsx,ts,tsx}'"
+    "clean": "rm -rf dist",
+    "typecheck": "tsc --build",
+    "lint": "eslint '**/*.{js,jsx,ts,tsx}' && prettier --check '**/*.{js,jsx,ts,tsx,yml,json}' --ignore-path ../../.gitignore",
+    "lint:fix": "eslint --fix '**/*.{js,jsx,ts,tsx}' && prettier --write '**/*.{js,jsx,ts,tsx,yml,json}' --ignore-path ../../.gitignore"
   },
   "files": [
     "dist/*",

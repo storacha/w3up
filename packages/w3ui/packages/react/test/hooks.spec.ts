@@ -2,25 +2,35 @@ import { test, expect } from 'vitest'
 import 'fake-indexeddb/auto'
 import { renderHook, waitFor } from '@testing-library/react'
 import * as DID from '@ipld/dag-ucan/did'
-import { Principal, ConnectionView } from '@ucanto/interface'
+import { Principal, Transport } from '@ucanto/interface'
 import { connect } from '@ucanto/client'
-import { CAR, HTTP } from '@ucanto/transport'
+import { CAR } from '@ucanto/transport'
 
 import { useDatamodel } from '../src/hooks'
+import { Service } from '@w3ui/core'
 
 test('should create a new client instance if and only if servicePrincipal or connection change', async () => {
+  // A channel that ignores and never completes requests
+  const nullChannel: Transport.Channel<Service> = {
+    request(_request) {
+      return new Promise(() => {})
+    },
+  }
+
   let servicePrincipal: Principal = DID.parse('did:web:web3.storage')
-  let connection: ConnectionView<any> = connect({
+  let connection = connect({
     id: servicePrincipal,
     codec: CAR.outbound,
-    channel: HTTP.open<any>({
-      url: new URL('https://up.web3.storage'),
-      method: 'POST'
-    })
+    channel: nullChannel,
   })
-  const { result, rerender } = renderHook(() => useDatamodel({ servicePrincipal, connection }))
+
+  const { result, rerender } = renderHook(() =>
+    useDatamodel({ servicePrincipal, connection })
+  )
   // wait for client to be initialized
-  await waitFor(() => { expect(result.current.client).toBeTruthy() })
+  await waitFor(() => {
+    expect(result.current.client).toBeTruthy()
+  })
 
   const firstClient = result.current.client
   expect(firstClient).not.toBeFalsy()
@@ -31,18 +41,21 @@ test('should create a new client instance if and only if servicePrincipal or con
   servicePrincipal = DID.parse('did:web:web3.porridge')
   rerender()
   // wait for the client to change
-  await waitFor(() => { expect(result.current.client).not.toBe(firstClient) })
+  await waitFor(() => {
+    expect(result.current.client).not.toBe(firstClient)
+  })
   const secondClient = result.current.client
 
   connection = connect({
     id: servicePrincipal,
     codec: CAR.outbound,
-    channel: HTTP.open<any>({
-      url: new URL('https://up.web3.porridge'),
-      method: 'POST'
-    })
+    channel: nullChannel,
   })
   rerender()
-  await waitFor(() => { expect(result.current.client).not.toBe(firstClient) })
-  await waitFor(() => { expect(result.current.client).not.toBe(secondClient) })
+  await waitFor(() => {
+    expect(result.current.client).not.toBe(firstClient)
+  })
+  await waitFor(() => {
+    expect(result.current.client).not.toBe(secondClient)
+  })
 })

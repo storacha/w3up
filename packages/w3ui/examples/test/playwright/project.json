@@ -1,0 +1,10 @@
+{
+  "targets": {
+    "test": {
+      "dependsOn": ["^build", "install-playwright"]
+    },
+    "test:debug": {
+      "dependsOn": ["^build", "install-playwright"]
+    }
+  }
+}

@@ -25,7 +25,7 @@
     "test-:node": "hundreds -r html -r text mocha 'test/**/!(*.browser).test.js' -n experimental-vm-modules -n no-warnings",
     "test:browser": "npm-run-all --parallel --race --npm-path pnpm mock:* 'test-:browser'",
     "test-:browser": "playwright-test 'test/**/!(*.node).test.js'",
-    "mock": "run /^mock:/",
+    "mock": "npm-run-all --parallel mock:*",
     "mock:receipts-server": "PORT=9201 node test/helpers/receipts-server.js",
     "mock:bucket-200": "PORT=9200 STATUS=200 node test/helpers/bucket-server.js",
     "mock:bucket-400": "PORT=9400 STATUS=400 node test/helpers/bucket-server.js",

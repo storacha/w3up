@@ -4,10 +4,13 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "start": "vite",
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "start": "vite preview",
+    "clean": "rm -rf dist",
+    "typecheck": "tsc --build",
+    "lint": "eslint '**/*.{js,jsx,ts,tsx}' && prettier --check '**/*.{js,jsx,ts,tsx,yml,json}' --ignore-path ../../.gitignore",
+    "lint:fix": "eslint --fix '**/*.{js,jsx,ts,tsx}' && prettier --write '**/*.{js,jsx,ts,tsx,yml,json}' --ignore-path ../../.gitignore"
   },
   "dependencies": {
     "@heroicons/react": "^2.0.17",

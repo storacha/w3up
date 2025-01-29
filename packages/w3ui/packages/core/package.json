@@ -7,9 +7,12 @@
   "module": "./dist/index.esm.js",
   "types": "./dist/index.d.ts",
   "scripts": {
-    "build": "bunchee",
     "dev": "bunchee --watch",
-    "lint": "tsc --build && eslint '**/*.{js,jsx,ts,tsx}'",
+    "build": "bunchee",
+    "clean": "rm -rf dist",
+    "typecheck": "tsc --build",
+    "lint": "eslint '**/*.{js,ts}' && prettier --check '**/*.{js,ts,yml,json}' --ignore-path ../../.gitignore",
+    "lint:fix": "eslint --fix '**/*.{js,ts}' && prettier --write '**/*.{js,ts,yml,json}' --ignore-path ../../.gitignore",
     "test": "vitest run",
     "test:watch": "vitest watch"
   },

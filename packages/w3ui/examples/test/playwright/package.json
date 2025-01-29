@@ -3,14 +3,22 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "serve": "serve ../../",
+    "serve": "serve node_modules/@w3ui",
     "test": "playwright test",
-    "test:debug": "playwright test --project=chromium --headed"
+    "test:debug": "playwright test --project=chromium --headed",
+    "install-playwright": "playwright install"
   },
   "author": "olzilla",
   "license": "Apache-2.0 OR MIT",
   "devDependencies": {
     "@playwright/test": "^1.29.2",
     "serve": "^14.1.2"
+  },
+  "dependencies": {
+    "@w3ui/example-react-components": "workspace:^",
+    "@w3ui/example-react-file-upload": "workspace:^",
+    "@w3ui/example-react-multi-file-upload": "workspace:^",
+    "@w3ui/example-react-sign-up-in": "workspace:^",
+    "@w3ui/example-react-uploads-list": "workspace:^"
   }
 }
