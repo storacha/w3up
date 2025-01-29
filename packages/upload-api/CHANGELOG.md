@@ -6,6 +6,7 @@
 ### Other Changes
 
 * **upload-api:** add comment for clarity ([c678bde](https://github.com/storacha/upload-service/commit/c678bde352ba44e9f320f731411705b2233e83ee))
+* **upload-api:** refactor(blob-registry): pass cause as a parameter to deregister ([632348d](https://github.com/storacha/upload-service/commit/632348d1529808f67873f332c695a504ca5bd7c4))
 
 ## [1.3.2](https://github.com/storacha/upload-service/compare/upload-api-v1.3.1...upload-api-v1.3.2) (2025-01-22)
 
