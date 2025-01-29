@@ -2,7 +2,6 @@
   <a href="https://beta.ui.web3.storage"><img width="250" src="https://bafybeianokbu4dgpfd2mq3za3wejtpscsy25ad6vocmmtxskcq6zig4cuq.ipfs.w3s.link/w3ui-logo-stroke.png" alt="Web3.Storage UI logo" /></a>
 </h1>
 
-
 <h3 align="center">Headless, type-safe, UI components for the next generation Web3.Storage APIs.</h3>
 
 <p align="center">
@@ -23,43 +22,18 @@ The documentation at [beta.ui.web3.storage](https://beta.ui.web3.storage) is cur
 
 ### Examples
 
-* **Sign up / Sign in** [React](https://github.com/web3-storage/w3ui/tree/main/examples/react/sign-up-in)
+- **Sign up / Sign in** [React](https://github.com/web3-storage/w3ui/tree/main/examples/react/sign-up-in)
 
-    Demonstrates email authentication flow for the service, including private key creation and email validation.
+  Demonstrates email authentication flow for the service, including private key creation and email validation.
 
-* **Single File Upload** [React](https://github.com/web3-storage/w3ui/tree/main/examples/react/file-upload)
+- **Single File Upload** [React](https://github.com/web3-storage/w3ui/tree/main/examples/react/file-upload)
 
-    The simplest file upload using a file input. Includes the auth flow from "Sign up / Sign in".
+  The simplest file upload using a file input. Includes the auth flow from "Sign up / Sign in".
 
-* **Multiple File Upload** coming soon! [React](https://github.com/web3-storage/w3ui/tree/main/examples/react/multi-file-upload)
+- **Multiple File Upload** coming soon! [React](https://github.com/web3-storage/w3ui/tree/main/examples/react/multi-file-upload)
 
-    Slightly more complicated file and directory upload. Includes the auth flow from "Sign up / Sign in".
+  Slightly more complicated file and directory upload. Includes the auth flow from "Sign up / Sign in".
 
-* **Uploads List** coming soon! [React](https://github.com/web3-storage/w3ui/tree/main/examples/react/uploads-list)
+- **Uploads List** coming soon! [React](https://github.com/web3-storage/w3ui/tree/main/examples/react/uploads-list)
 
-    A demo of the list of uploads that have been made to an account.
-
-## Contributing
-
-Feel free to join in. All welcome. Please read our [contributing guidelines](https://github.com/web3-storage/w3ui/blob/main/CONTRIBUTING.md) and/or [open an issue](https://github.com/web3-storage/w3ui/issues)!
-
-### Getting started
-
-To contribute to this project, clone the w3ui repository and enter the `w3ui` directory
-
-  ```sh
-  git clone https://github.com/web3-storage/w3ui
-  cd w3ui
-  ```
-
-Install dependencies and build:
-
-  ```sh
-  pnpm install
-  ```
-
-Then pick an example app from the list, `cd` into it's directory and run `pnpm start` to try it out.
-
-## License
-
-Dual-licensed under [MIT + Apache 2.0](https://github.com/web3-storage/w3ui/blob/main/LICENSE.md)
+  A demo of the list of uploads that have been made to an account.
