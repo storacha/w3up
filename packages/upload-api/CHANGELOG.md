@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.3](https://github.com/storacha/upload-service/compare/upload-api-v1.3.2...upload-api-v1.3.3) (2025-01-29)
+
+
+### Other Changes
+
+* **upload-api:** add comment for clarity ([c678bde](https://github.com/storacha/upload-service/commit/c678bde352ba44e9f320f731411705b2233e83ee))
+
 ## [1.3.2](https://github.com/storacha/upload-service/compare/upload-api-v1.3.1...upload-api-v1.3.2) (2025-01-22)
 
 
