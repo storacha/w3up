@@ -8,7 +8,7 @@ import * as API from '../types.js'
  * @returns {API.ServiceMethod<API.SpaceBlobRemove, API.SpaceBlobRemoveSuccess, API.SpaceBlobRemoveFailure>}
  */
 export function blobRemoveProvider(context) {
-  return Server.provide(SpaceBlob.remove, async ({ capability }) => {
+  return Server.provide(SpaceBlob.remove, async ({ capability, invocation }) => {
     const space = capability.with
     const digest = Digest.decode(capability.nb.digest)
 
@@ -20,7 +20,7 @@ export function blobRemoveProvider(context) {
       return exists
     }
 
-    const dereg = await context.registry.deregister(space, digest)
+    const dereg = await context.registry.deregister({space, digest, cause: invocation.link()})
     if (dereg.error) {
       // unlikely as we just found it...but possible I guess
       if (dereg.error.name === 'EntryNotFound') {

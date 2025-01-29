@@ -29,7 +29,7 @@ export class Registry {
   }
 
   /** @type {API.BlobAPI.Registry['deregister']} */
-  async deregister(space, digest) {
+  async deregister({space, digest, cause}) {
     const entries = this.data.get(space) ?? []
     const entry = entries.find((e) => equals(e.blob.digest.bytes, digest.bytes))
     if (!entry) return error(new EntryNotFound())
