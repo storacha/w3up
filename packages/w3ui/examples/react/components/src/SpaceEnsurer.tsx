@@ -1,5 +1,5 @@
 import { useW3 } from '@w3ui/react'
-import React, { useEffect, ReactNode } from 'react'
+import { useEffect, ReactNode } from 'react'
 import { Loader } from './Loader'
 
 export function SpaceEnsurer({ children }: { children: ReactNode }): ReactNode {

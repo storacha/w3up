@@ -2,7 +2,7 @@
   "composite": true,
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
-    "outDir": "./dist"
+    "noEmit": true
   },
   "files": ["src/index.ts"],
   "include": ["src", "test"]

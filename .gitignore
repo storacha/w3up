@@ -59,3 +59,9 @@ override.tf.json
 # Ignore CLI configuration files
 .terraformrc
 terraform.rc
+
+# Output of 'npm pack'
+# (We don't generally create these manually, but `attw` creates them when it
+# runs. It also deletes them, but this ignore list is reused by `nx watch`, and
+# if we *do* ever have one hang around, we do want to ignore it.)
+*.tgz

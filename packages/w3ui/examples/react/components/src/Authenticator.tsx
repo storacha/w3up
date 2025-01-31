@@ -1,4 +1,4 @@
-import React, { ReactNode } from 'react'
+import { ReactNode } from 'react'
 import { Authenticator, useAuthenticator } from '@w3ui/react'
 import { Loader } from './Loader'
 

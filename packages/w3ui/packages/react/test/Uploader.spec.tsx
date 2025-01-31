@@ -1,4 +1,3 @@
-import React from 'react'
 import 'fake-indexeddb/auto'
 import { test, expect, vi, afterEach } from 'vitest'
 import user from '@testing-library/user-event'

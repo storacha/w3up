@@ -1,6 +1,6 @@
 import type { ContextState, ContextActions, ServiceConfig } from '@w3ui/core'
 
-import React, { createContext, useContext, ReactNode } from 'react'
+import { createContext, useContext, ReactNode } from 'react'
 import { useDatamodel } from '../hooks.js'
 
 export { ContextState, ContextActions }

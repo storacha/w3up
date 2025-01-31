@@ -10,7 +10,6 @@ export async function randomBytes(size) {
     const chunk = new Uint8Array(Math.min(size, 65_536))
     if (!globalThis.crypto) {
       try {
-        // @ts-expect-error no types for webcrypto
         const { webcrypto } = await import('node:crypto')
         webcrypto.getRandomValues(chunk)
       } catch (error) {

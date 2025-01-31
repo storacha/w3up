@@ -1,4 +1,4 @@
-import React, { ReactNode } from 'react'
+import { ReactNode } from 'react'
 import { ArrowPathIcon } from '@heroicons/react/20/solid'
 import { ProgressStatus, UploadProgress } from '@w3ui/react'
 
