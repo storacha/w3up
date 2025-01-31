@@ -1,7 +1,12 @@
 module.exports = {
   extends: ['./node_modules/hd-scripts/eslint/ts.js'],
   parserOptions: {
-    project: ['./tsconfig.json', 'packages/*/tsconfig.json', 'examples/*/*/tsconfig.json'],
+    project: [
+      './tsconfig.json',
+      'packages/*/tsconfig.json',
+      'examples/*/*/tsconfig.json',
+    ],
+    tsconfigRootDir: __dirname,
     ecmaFeatures: {
       jsx: true,
     },
@@ -20,7 +25,13 @@ module.exports = {
     'jsdoc/require-param': 'off',
     'jsdoc/newline-after-description': 'off',
     'jsdoc/require-param-type': 'off',
-    'import/extensions': 'off'
+    'import/extensions': 'off',
+    'comma-dangle': 'off',
+    'multiline-ternary': 'off',
+    '@typescript-eslint/comma-dangle': 'off',
+    '@typescript-eslint/space-before-function-paren': 'off',
+    '@typescript-eslint/indent': 'off',
+    '@typescript-eslint/member-delimiter-style': 'off',
   },
-  ignorePatterns: ['dist/', 'vitest.config.ts']
+  ignorePatterns: ['dist/', 'vitest.config.ts'],
 }

@@ -11,8 +11,8 @@
     "build": "bunchee",
     "clean": "rm -rf dist",
     "typecheck": "tsc --build",
-    "lint": "eslint '**/*.{js,jsx,ts,tsx}' && prettier --check '**/*.{js,jsx,ts,tsx,yml,json}' --ignore-path ../../.gitignore",
-    "lint:fix": "eslint --fix '**/*.{js,jsx,ts,tsx}' && prettier --write '**/*.{js,jsx,ts,tsx,yml,json}' --ignore-path ../../.gitignore",
+    "lint": "eslint '**/*.{js,jsx,ts,tsx}' && prettier --check '**/*.{js,jsx,ts,tsx,yml,json}' --ignore-path ../../../../.gitignore",
+    "lint:fix": "eslint --fix '**/*.{js,jsx,ts,tsx}' && prettier --write '**/*.{js,jsx,ts,tsx,yml,json}' --ignore-path ../../../../.gitignore",
     "test": "vitest run",
     "test:watch": "vitest watch"
   },

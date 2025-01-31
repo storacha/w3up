@@ -12,8 +12,8 @@ import { Service } from '@w3ui/core'
 test('should create a new client instance if and only if servicePrincipal or connection change', async () => {
   // A channel that ignores and never completes requests
   const nullChannel: Transport.Channel<Service> = {
-    request(_request) {
-      return new Promise(() => {})
+    async request(_request) {
+      return await new Promise(() => {})
     },
   }
 

@@ -22,12 +22,6 @@
     "typedoc-plugin-markdown": "^3.17.0",
     "typescript": "link:@nx/js/typescript"
   },
-  "prettier": {
-    "trailingComma": "es5",
-    "tabWidth": 2,
-    "semi": false,
-    "singleQuote": true
-  },
   "engines": {
     "node": ">=16"
   },

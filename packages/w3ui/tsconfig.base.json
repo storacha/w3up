@@ -13,7 +13,7 @@
     "noUnusedParameters": true,
     "noUncheckedIndexedAccess": true,
     "strictNullChecks": true,
-    "jsx": "react",
+    "jsx": "react-jsx",
     "declaration": true,
     "emitDeclarationOnly": true,
     "esModuleInterop": true,

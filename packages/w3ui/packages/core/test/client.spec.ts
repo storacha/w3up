@@ -12,7 +12,9 @@ test('createClient', async () => {
 
 test('createSpace', async () => {
   const { client } = await createClient()
-  const space = await client.createSpace('test', { skipGatewayAuthorization: true })
+  const space = await client.createSpace('test', {
+    skipGatewayAuthorization: true,
+  })
   expect(space).toBeTruthy()
   expect(space.did().startsWith('did:key:')).toBe(true)
 })

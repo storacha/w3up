@@ -9,8 +9,8 @@
     "start": "vite preview",
     "clean": "rm -rf dist",
     "typecheck": "tsc --build",
-    "lint": "eslint '**/*.{js,jsx,ts,tsx}' && prettier --check '**/*.{js,jsx,ts,tsx,yml,json}' --ignore-path ../../.gitignore",
-    "lint:fix": "eslint --fix '**/*.{js,jsx,ts,tsx}' && prettier --write '**/*.{js,jsx,ts,tsx,yml,json}' --ignore-path ../../.gitignore"
+    "lint": "eslint '**/*.{js,jsx,ts,tsx}' && prettier --check '**/*.{js,jsx,ts,tsx,yml,json}' --ignore-path ../../../../../.gitignore",
+    "lint:fix": "eslint --fix '**/*.{js,jsx,ts,tsx}' && prettier --write '**/*.{js,jsx,ts,tsx,yml,json}' --ignore-path ../../../../../.gitignore"
   },
   "dependencies": {
     "@heroicons/react": "^2.0.17",
@@ -32,5 +32,10 @@
     "postcss": "^8.4.21",
     "tailwindcss": "^3.2.4",
     "vite": "^5.0.0"
+  },
+  "eslintConfig": {
+    "extends": [
+      "../../../eslint.packages.js"
+    ]
   }
 }

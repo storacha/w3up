@@ -7,14 +7,10 @@ import React, {
   createContext,
   useContext,
   useCallback,
-  useMemo
+  useMemo,
 } from 'react'
 import { createComponent, createElement } from 'ariakit-react-utils'
-import {
-  useW3,
-  ContextState,
-  ContextActions
-} from './providers/Provider.jsx'
+import { useW3, ContextState, ContextActions } from './providers/Provider.jsx'
 
 export type AuthenticatorContextState = ContextState & {
   /**
@@ -52,7 +48,7 @@ export const AuthenticatorContextDefaultValue: AuthenticatorContextValue = [
   {
     accounts: [],
     spaces: [],
-    submitted: false
+    submitted: false,
   },
   {
     setEmail: () => {
@@ -63,14 +59,19 @@ export const AuthenticatorContextDefaultValue: AuthenticatorContextValue = [
     },
     logout: () => {
       throw new Error('missing logout function')
-    }
-  }
+    },
+  },
 ]
 
-export const AuthenticatorContext = createContext<AuthenticatorContextValue>(AuthenticatorContextDefaultValue)
+export const AuthenticatorContext = createContext<AuthenticatorContextValue>(
+  AuthenticatorContextDefaultValue
+)
 
-export type AuthenticatorRootOptions<T extends As = typeof Fragment> = Options<T>
-export type AuthenticatorRootProps<T extends As = typeof Fragment> = Props<AuthenticatorRootOptions<T>>
+export type AuthenticatorRootOptions<T extends As = typeof Fragment> =
+  Options<T>
+export type AuthenticatorRootProps<T extends As = typeof Fragment> = Props<
+  AuthenticatorRootOptions<T>
+>
 
 /**
  * Top level component of the headless Authenticator.
@@ -97,7 +98,9 @@ export const AuthenticatorRoot: Component<AuthenticatorRootProps> =
         setSubmitted(true)
         try {
           if (client === undefined) throw new Error('missing client')
-          await client.login(email as '{string}@{string}', { signal: controller?.signal })
+          await client.login(email as '{string}@{string}', {
+            signal: controller?.signal,
+          })
         } catch (error: any) {
           if (!controller.signal.aborted) {
             // eslint-disable-next-line no-console
@@ -119,8 +122,8 @@ export const AuthenticatorRoot: Component<AuthenticatorRootProps> =
           setEmail,
           cancelLogin: () => {
             loginAbortController?.abort()
-          }
-        }
+          },
+        },
       ],
       [state, actions, email, submitted, handleRegisterSubmit]
     )
@@ -132,7 +135,9 @@ export const AuthenticatorRoot: Component<AuthenticatorRootProps> =
   })
 
 export type AuthenticatorFormOptions<T extends As = 'form'> = Options<T>
-export type AuthenticatorFormProps<T extends As = 'form'> = Props<AuthenticatorFormOptions<T>>
+export type AuthenticatorFormProps<T extends As = 'form'> = Props<
+  AuthenticatorFormOptions<T>
+>
 
 /**
  * Form component for the headless Authenticator.
@@ -140,13 +145,16 @@ export type AuthenticatorFormProps<T extends As = 'form'> = Props<AuthenticatorF
  * A `form` designed to work with `Authenticator`. Any passed props will
  * be passed along to the `form` component.
  */
-export const AuthenticatorForm: Component<AuthenticatorFormProps> = createComponent((props) => {
-  const [{ handleRegisterSubmit }] = useAuthenticator()
-  return createElement('form', { ...props, onSubmit: handleRegisterSubmit })
-})
+export const AuthenticatorForm: Component<AuthenticatorFormProps> =
+  createComponent((props) => {
+    const [{ handleRegisterSubmit }] = useAuthenticator()
+    return createElement('form', { ...props, onSubmit: handleRegisterSubmit })
+  })
 
 export type AuthenticatorEmailInputOptions<T extends As = 'input'> = Options<T>
-export type AuthenticatorEmailInputProps<T extends As = 'input'> = Props<AuthenticatorEmailInputOptions<T>>
+export type AuthenticatorEmailInputProps<T extends As = 'input'> = Props<
+  AuthenticatorEmailInputOptions<T>
+>
 
 /**
  * Input component for the headless Uploader.
@@ -154,8 +162,8 @@ export type AuthenticatorEmailInputProps<T extends As = 'input'> = Props<Authent
  * An email `input` designed to work with `Authenticator.Form`. Any passed props will
  * be passed along to the `input` component.
  */
-export const AuthenticatorEmailInput: Component<AuthenticatorEmailInputProps> = createComponent(
-  (props) => {
+export const AuthenticatorEmailInput: Component<AuthenticatorEmailInputProps> =
+  createComponent((props) => {
     const [{ email }, { setEmail }] = useAuthenticator()
     const onChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
       setEmail(e.target.value)
@@ -164,13 +172,15 @@ export const AuthenticatorEmailInput: Component<AuthenticatorEmailInputProps> = 
       ...props,
       type: 'email',
       value: email,
-      onChange
+      onChange,
     })
-  }
-)
+  })
 
-export type AuthenticatorCancelButtonOptions<T extends As = 'button'> = Options<T>
-export type AuthenticatorCancelButtonProps<T extends As = 'button'> = Props<AuthenticatorCancelButtonOptions<T>>
+export type AuthenticatorCancelButtonOptions<T extends As = 'button'> =
+  Options<T>
+export type AuthenticatorCancelButtonProps<T extends As = 'button'> = Props<
+  AuthenticatorCancelButtonOptions<T>
+>
 
 /**
  * A button that will cancel login.
@@ -178,22 +188,21 @@ export type AuthenticatorCancelButtonProps<T extends As = 'button'> = Props<Auth
  * A `button` designed to work with `Authenticator.Form`. Any passed props will
  * be passed along to the `button` component.
  */
-export const AuthenticatorCancelButton: Component<AuthenticatorCancelButtonProps> = createComponent(
-  (props) => {
+export const AuthenticatorCancelButton: Component<AuthenticatorCancelButtonProps> =
+  createComponent((props) => {
     const [, { cancelLogin }] = useAuthenticator()
     return createElement('button', { ...props, onClick: cancelLogin })
-  }
-)
+  })
 
 /**
  * Use the scoped authenticator context state from a parent `Authenticator`.
  */
-export function useAuthenticator (): AuthenticatorContextValue {
+export function useAuthenticator(): AuthenticatorContextValue {
   return useContext(AuthenticatorContext)
 }
 
 export const Authenticator = Object.assign(AuthenticatorRoot, {
   Form: AuthenticatorForm,
   EmailInput: AuthenticatorEmailInput,
-  CancelButton: AuthenticatorCancelButton
+  CancelButton: AuthenticatorCancelButton,
 })

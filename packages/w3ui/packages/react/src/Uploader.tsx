@@ -1,4 +1,10 @@
-import type { As, Component, Props, Options, HTMLProps } from 'ariakit-react-utils'
+import type {
+  As,
+  Component,
+  Props,
+  Options,
+  HTMLProps,
+} from 'ariakit-react-utils'
 import type { ChangeEvent, FormEventHandler } from 'react'
 import type { AnyLink, CARMetadata, ProgressStatus } from '@w3ui/core'
 
@@ -8,7 +14,7 @@ import React, {
   useCallback,
   createContext,
   useState,
-  Fragment
+  Fragment,
 } from 'react'
 import { createComponent, createElement } from 'ariakit-react-utils'
 import { useW3 } from './providers/Provider.jsx'
@@ -106,7 +112,7 @@ export const UploaderContextDefaultValue: UploaderContextValue = [
     storedDAGShards: [],
     uploadProgress: {},
     wrapInDirectory: false,
-    uploadAsCAR: false
+    uploadAsCAR: false,
   },
   {
     setFile: () => {
@@ -120,11 +126,13 @@ export const UploaderContextDefaultValue: UploaderContextValue = [
     },
     setUploadAsCAR: () => {
       throw new Error('missing set upload as CAR function')
-    }
-  }
+    },
+  },
 ]
 
-export const UploaderContext = createContext<UploaderContextValue>(UploaderContextDefaultValue)
+export const UploaderContext = createContext<UploaderContextValue>(
+  UploaderContextDefaultValue
+)
 
 interface OnUploadCompleteProps {
   file?: File
@@ -139,7 +147,9 @@ export type UploaderRootOptions<T extends As = typeof Fragment> = Options<T> & {
   defaultWrapInDirectory?: boolean
   defaultUploadAsCAR?: boolean
 }
-export type UploaderRootProps<T extends As = typeof Fragment> = Props<UploaderRootOptions<T>>
+export type UploaderRootProps<T extends As = typeof Fragment> = Props<
+  UploaderRootOptions<T>
+>
 
 /**
  * Top level component of the headless Uploader.
@@ -149,17 +159,28 @@ export type UploaderRootProps<T extends As = typeof Fragment> = Props<UploaderRo
  * web3.storage.
  */
 export const UploaderRoot: Component<UploaderRootProps> = createComponent(
-  ({ onUploadComplete, defaultWrapInDirectory = false, defaultUploadAsCAR = false, ...props }) => {
+  ({
+    onUploadComplete,
+    defaultWrapInDirectory = false,
+    defaultUploadAsCAR = false,
+    ...props
+  }) => {
     const [{ client }] = useW3()
     const [files, setFiles] = useState<File[]>()
     const file = files?.[0]
-    const setFile = (file: File | undefined): void => { (file != null) && setFiles([file]) }
-    const [wrapInDirectory, setWrapInDirectory] = useState(defaultWrapInDirectory)
+    const setFile = (file: File | undefined): void => {
+      file != null && setFiles([file])
+    }
+    const [wrapInDirectory, setWrapInDirectory] = useState(
+      defaultWrapInDirectory
+    )
     const [uploadAsCAR, setUploadAsCAR] = useState(defaultUploadAsCAR)
     const [dataCID, setDataCID] = useState<AnyLink>()
     const [status, setStatus] = useState(UploadStatus.Idle)
     const [error, setError] = useState<Error>()
-    const [storedDAGShards, setStoredDAGShards] = useState<UploaderContextState['storedDAGShards']>([])
+    const [storedDAGShards, setStoredDAGShards] = useState<
+      UploaderContextState['storedDAGShards']
+    >([])
     const [uploadProgress, setUploadProgress] = useState<UploadProgress>({})
 
     const setFilesAndReset = (files?: File[]): void => {
@@ -169,14 +190,16 @@ export const UploaderRoot: Component<UploaderRootProps> = createComponent(
 
     const handleUploadSubmit: FormEventHandler<HTMLFormElement> = (e) => {
       e.preventDefault()
-      if ((client === undefined)) {
+      if (client === undefined) {
         // eslint-disable-next-line no-console
-        console.error('No client available for upload. Ignoring upload attempt.')
+        console.error(
+          'No client available for upload. Ignoring upload attempt.'
+        )
         return
       }
 
       // The application should only attempt to submit once files are selected.
-      if ((files === undefined) || (file === undefined)) {
+      if (files === undefined || file === undefined) {
         // eslint-disable-next-line no-console
         console.error('No no files given to upload. Ignoring upload attempt.')
         return
@@ -188,21 +211,25 @@ export const UploaderRoot: Component<UploaderRootProps> = createComponent(
         const storedShards: CARMetadata[] = []
         setStoredDAGShards(storedShards)
         const uploadOptions = {
-          onShardStored (meta: CARMetadata) {
+          onShardStored(meta: CARMetadata) {
             storedShards.push(meta)
             setStoredDAGShards([...storedShards])
           },
-          onUploadProgress (status: ProgressStatus) {
-            setUploadProgress(statuses => ({ ...statuses, [status.url ?? '']: status }))
-          }
+          onUploadProgress(status: ProgressStatus) {
+            setUploadProgress((statuses) => ({
+              ...statuses,
+              [status.url ?? '']: status,
+            }))
+          },
         }
-        const cid = files.length > 1
-          ? await client.uploadDirectory(files, uploadOptions)
-          : (uploadAsCAR
-              ? await client.uploadCAR(file, uploadOptions)
-              : (wrapInDirectory
-                  ? await client.uploadDirectory(files, uploadOptions)
-                  : await client.uploadFile(file, uploadOptions)))
+        const cid =
+          files.length > 1
+            ? await client.uploadDirectory(files, uploadOptions)
+            : uploadAsCAR
+            ? await client.uploadCAR(file, uploadOptions)
+            : wrapInDirectory
+            ? await client.uploadDirectory(files, uploadOptions)
+            : await client.uploadFile(file, uploadOptions)
 
         setDataCID(cid)
         setStatus(UploadStatus.Succeeded)
@@ -212,43 +239,38 @@ export const UploaderRoot: Component<UploaderRootProps> = createComponent(
       }
 
       doUpload().catch((error_: unknown) => {
-        const error = (error_ instanceof Error) ? error_ : new Error(String(error_))
+        const error =
+          error_ instanceof Error ? error_ : new Error(String(error_))
         setError(error)
         setStatus(UploadStatus.Failed)
       })
     }
 
-    const uploaderContextValue =
-      useMemo<UploaderContextValue>(
-        () => [
-          {
-            file,
-            files,
-            dataCID,
-            status,
-            error,
-            handleUploadSubmit,
-            storedDAGShards,
-            uploadProgress,
-            wrapInDirectory,
-            uploadAsCAR
-          },
-          {
-            setFile: (file?: File) => { setFilesAndReset((file === undefined) ? file : [file]) },
-            setFiles: setFilesAndReset,
-            setWrapInDirectory,
-            setUploadAsCAR
-          }
-        ],
-        [
+    const uploaderContextValue = useMemo<UploaderContextValue>(
+      () => [
+        {
           file,
+          files,
           dataCID,
           status,
           error,
           handleUploadSubmit,
-          setFile
-        ]
-      )
+          storedDAGShards,
+          uploadProgress,
+          wrapInDirectory,
+          uploadAsCAR,
+        },
+        {
+          setFile: (file?: File) => {
+            setFilesAndReset(file === undefined ? file : [file])
+          },
+          setFiles: setFilesAndReset,
+          setWrapInDirectory,
+          setUploadAsCAR,
+        },
+      ],
+      [file, dataCID, status, error, handleUploadSubmit, setFile]
+    )
 
     return (
       <UploaderContext.Provider value={uploaderContextValue}>
@@ -259,7 +281,9 @@ export const UploaderRoot: Component<UploaderRootProps> = createComponent(
 )
 
 export type UploaderInputOptions<T extends As = 'input'> = Options<T>
-export type UploaderInputProps<T extends As = 'input'> = Props<UploaderInputOptions<T>> & {
+export type UploaderInputProps<T extends As = 'input'> = Props<
+  UploaderInputOptions<T>
+> & {
   allowDirectory?: boolean
 }
 
@@ -269,48 +293,58 @@ export type UploaderInputProps<T extends As = 'input'> = Props<UploaderInputOpti
  * A file `input` designed to work with `Uploader`. Any passed props will
  * be passed along to the `input` component.
  */
-export const UploaderInput: Component<UploaderInputProps> = createComponent(({ allowDirectory, ...props }) => {
-  const [{ uploadAsCAR }, { setFiles }] = useContext(UploaderContext)
-  const onChange = useCallback(
-    (e: ChangeEvent<HTMLInputElement>) => {
-      if (e.target.files != null) {
-        setFiles([...e.target.files])
-      }
-    },
-    [setFiles]
-  )
-  const inputProps: HTMLProps<Options> = { ...props, type: 'file', onChange }
-  if (allowDirectory === true) {
-    // this attribute behaves weirdly - having it either be the string true or not
-    // set at all seems to be the only way to get it working the way you'd expect
-    inputProps.webkitdirectory = 'true'
+export const UploaderInput: Component<UploaderInputProps> = createComponent(
+  ({ allowDirectory, ...props }) => {
+    const [{ uploadAsCAR }, { setFiles }] = useContext(UploaderContext)
+    const onChange = useCallback(
+      (e: ChangeEvent<HTMLInputElement>) => {
+        if (e.target.files != null) {
+          setFiles([...e.target.files])
+        }
+      },
+      [setFiles]
+    )
+    const inputProps: HTMLProps<Options> = { ...props, type: 'file', onChange }
+    if (allowDirectory === true) {
+      // this attribute behaves weirdly - having it either be the string true or not
+      // set at all seems to be the only way to get it working the way you'd expect
+      inputProps.webkitdirectory = 'true'
+    }
+    const acceptNotSet = inputProps.accept === undefined
+    if (uploadAsCAR && acceptNotSet) {
+      inputProps.accept = '.car'
+    }
+    return createElement('input', inputProps)
   }
-  const acceptNotSet = (inputProps.accept === undefined)
-  if (uploadAsCAR && acceptNotSet) {
-    inputProps.accept = '.car'
-  }
-  return createElement('input', inputProps)
-})
+)
 
 export type WrapInDirectoryCheckboxOptions<T extends As = 'input'> = Options<T>
-export type WrapInDirectoryCheckboxProps<T extends As = 'input'> = Props<WrapInDirectoryCheckboxOptions<T>>
+export type WrapInDirectoryCheckboxProps<T extends As = 'input'> = Props<
+  WrapInDirectoryCheckboxOptions<T>
+>
 
 /**
  * A checkbox that controls whether the uploader will wrap single files in a directory.
  */
-export const WrapInDirectoryCheckbox: Component<WrapInDirectoryCheckboxProps> = createComponent((props) => {
-  const [{ wrapInDirectory }, { setWrapInDirectory }] = useContext(UploaderContext)
-  const onChange = useCallback(
-    (e: ChangeEvent<HTMLInputElement>) => {
+export const WrapInDirectoryCheckbox: Component<WrapInDirectoryCheckboxProps> =
+  createComponent((props) => {
+    const [{ wrapInDirectory }, { setWrapInDirectory }] =
+      useContext(UploaderContext)
+    const onChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
       setWrapInDirectory(e.target.checked)
-    },
-    []
-  )
-  return createElement('input', { ...props, type: 'checkbox', checked: wrapInDirectory, onChange })
-})
+    }, [])
+    return createElement('input', {
+      ...props,
+      type: 'checkbox',
+      checked: wrapInDirectory,
+      onChange,
+    })
+  })
 
 export type UploaderFormOptions<T extends As = 'form'> = Options<T>
-export type UploaderFormProps<T extends As = 'form'> = Props<UploaderFormOptions<T>>
+export type UploaderFormProps<T extends As = 'form'> = Props<
+  UploaderFormOptions<T>
+>
 
 /**
  * Form component for the headless Uploader.
@@ -318,16 +352,25 @@ export type UploaderFormProps<T extends As = 'form'> = Props<UploaderFormOptions
  * A `form` designed to work with `Uploader`. Any passed props will
  * be passed along to the `form` component.
  */
-export const UploaderForm: Component<UploaderFormProps> = createComponent((props) => {
-  const [{ handleUploadSubmit }] = useContext(UploaderContext)
-  return createElement('form', { ...props, onSubmit: handleUploadSubmit satisfies React.ComponentProps<'form'>['onSubmit'] })
-})
+export const UploaderForm: Component<UploaderFormProps> = createComponent(
+  (props) => {
+    const [{ handleUploadSubmit }] = useContext(UploaderContext)
+    return createElement('form', {
+      ...props,
+      onSubmit:
+        handleUploadSubmit satisfies React.ComponentProps<'form'>['onSubmit'],
+    })
+  }
+)
 
 /**
  * Use the scoped uploader context state from a parent `Uploader`.
  */
-export function useUploader (): UploaderContextValue {
+export function useUploader(): UploaderContextValue {
   return useContext(UploaderContext)
 }
 
-export const Uploader = Object.assign(UploaderRoot, { Input: UploaderInput, Form: UploaderForm })
+export const Uploader = Object.assign(UploaderRoot, {
+  Input: UploaderInput,
+  Form: UploaderForm,
+})
