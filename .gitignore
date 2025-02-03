@@ -65,3 +65,6 @@ terraform.rc
 # runs. It also deletes them, but this ignore list is reused by `nx watch`, and
 # if we *do* ever have one hang around, we do want to ignore it.)
 *.tgz
+
+# TypeScript
+*.tsbuildinfo
