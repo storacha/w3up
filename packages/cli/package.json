@@ -34,6 +34,7 @@
     "@storacha/capabilities": "workspace:^",
     "@storacha/eslint-config": "workspace:^",
     "@storacha/upload-api": "workspace:^",
+    "@types/node": "^22.13.0",
     "@types/update-notifier": "^6.0.5",
     "@ucanto/interface": "^10.1.1",
     "@ucanto/principal": "^9.0.2",

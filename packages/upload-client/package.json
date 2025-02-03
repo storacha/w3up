@@ -104,6 +104,7 @@
     "@storacha/eslint-config": "workspace:^",
     "@types/assert": "^1.5.6",
     "@types/mocha": "^10.0.1",
+    "@types/node": "^20.8.4",
     "@types/varint": "^6.0.1",
     "@ucanto/principal": "^9.0.2",
     "@ucanto/server": "^10.1.0",

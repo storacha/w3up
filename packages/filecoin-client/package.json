@@ -68,6 +68,7 @@
     "@storacha/eslint-config": "workspace:^",
     "@types/assert": "^1.5.6",
     "@types/mocha": "^10.0.1",
+    "@types/node": "^20.8.4",
     "@ucanto/principal": "^9.0.2",
     "@ucanto/server": "^10.1.0",
     "@web3-storage/data-segment": "^5.3.0",
