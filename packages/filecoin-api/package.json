@@ -158,31 +158,31 @@
   "dependencies": {
     "@ipld/dag-ucan": "^3.4.5",
     "@storacha/capabilities": "workspace:^",
-    "@ucanto/client": "^9.0.1",
-    "@ucanto/core": "^10.2.1",
+    "@ucanto/client": "catalog:",
+    "@ucanto/core": "catalog:",
     "@ucanto/interface": "^10.1.1",
     "@ucanto/server": "^10.1.0",
-    "@ucanto/transport": "^9.1.1",
+    "@ucanto/transport": "catalog:",
     "@web3-storage/content-claims": "^5.0.0",
     "@web3-storage/data-segment": "^5.2.0",
-    "fr32-sha2-256-trunc254-padded-binary-tree-multihash": "^3.3.0",
-    "p-map": "^6.0.0"
+    "fr32-sha2-256-trunc254-padded-binary-tree-multihash": "catalog:",
+    "p-map": "catalog:"
   },
   "devDependencies": {
-    "@arethetypeswrong/cli": "^0.17.3",
+    "@arethetypeswrong/cli": "catalog:",
     "@storacha/eslint-config": "workspace:^",
     "@storacha/filecoin-client": "workspace:^",
-    "@storacha/one-webcrypto": "^1.0.1",
+    "@storacha/one-webcrypto": "catalog:",
     "@types/assert": "^1.5.10",
     "@types/mocha": "^10.0.1",
-    "@ucanto/client": "^9.0.1",
+    "@ucanto/client": "catalog:",
     "@ucanto/principal": "^9.0.2",
-    "@web-std/blob": "^3.0.5",
+    "@web-std/blob": "catalog:",
     "c8": "^10.1.2",
     "mocha": "^10.2.0",
     "multiformats": "^13.3.1",
-    "p-wait-for": "^5.0.2",
-    "typescript": "5.2.2"
+    "p-wait-for": "catalog:",
+    "typescript": "catalog:"
   },
   "eslintConfig": {
     "extends": [

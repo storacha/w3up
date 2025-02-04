@@ -31,29 +31,29 @@
   },
   "homepage": "https://github.com/web3-storage/w3ui/tree/main/packages/react",
   "dependencies": {
-    "@ariakit/react": "^0.3.6",
-    "@ariakit/react-core": "^0.3.6",
+    "@ariakit/react": "catalog:",
+    "@ariakit/react-core": "catalog:",
     "@w3ui/core": "workspace:^",
-    "ariakit-react-utils": "0.17.0-next.27"
+    "ariakit-react-utils": "catalog:"
   },
   "devDependencies": {
     "@ipld/dag-ucan": "^3.2.0",
-    "@testing-library/react": "^14.1.2",
-    "@testing-library/user-event": "^14.5.1",
-    "@types/react": "^18.2.37",
-    "@ucanto/client": "^9.0.1",
+    "@testing-library/react": "catalog:",
+    "@testing-library/user-event": "catalog:",
+    "@types/react": "catalog:",
+    "@ucanto/client": "catalog:",
     "@ucanto/interface": "^10.0.1",
     "@ucanto/principal": "^9.0.1",
-    "@ucanto/transport": "^9.1.1",
-    "bunchee": "^5.5.0",
-    "eslint-plugin-react-hooks": "^4.6.0",
-    "fake-indexeddb": "^5.0.1",
-    "happy-dom": "^12.10.3",
-    "jsdom": "^23.0.1",
+    "@ucanto/transport": "catalog:",
+    "bunchee": "catalog:",
+    "eslint-plugin-react-hooks": "catalog:",
+    "fake-indexeddb": "catalog:",
+    "happy-dom": "catalog:",
+    "jsdom": "catalog:",
     "multiformats": "^13.1.0",
-    "react": "^18.2.0",
-    "typescript": "^5.3.2",
-    "vitest": "^1.0.1"
+    "react": "catalog:",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
   },
   "peerDependencies": {
     "react": "^16.8.0 || ^17.0.0 || ^18.0.0"

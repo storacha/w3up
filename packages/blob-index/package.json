@@ -42,22 +42,22 @@
     "coverage": "c8 --reporter text --reporter html npm run test"
   },
   "dependencies": {
-    "@ipld/dag-cbor": "^9.0.6",
+    "@ipld/dag-cbor": "catalog:",
     "@storacha/capabilities": "workspace:^",
-    "@storacha/one-webcrypto": "^1.0.1",
-    "@ucanto/core": "^10.2.1",
+    "@storacha/one-webcrypto": "catalog:",
+    "@ucanto/core": "catalog:",
     "@ucanto/interface": "^10.1.1",
-    "carstream": "^2.1.0",
+    "carstream": "catalog:",
     "multiformats": "^13.0.1",
     "uint8arrays": "^5.0.3"
   },
   "devDependencies": {
-    "@arethetypeswrong/cli": "^0.17.3",
+    "@arethetypeswrong/cli": "catalog:",
     "@storacha/eslint-config": "workspace:^",
-    "@ucanto/transport": "^9.1.1",
+    "@ucanto/transport": "catalog:",
     "c8": "^7.14.0",
     "entail": "^2.1.2",
-    "typescript": "5.2.2"
+    "typescript": "catalog:"
   },
   "eslintConfig": {
     "extends": [

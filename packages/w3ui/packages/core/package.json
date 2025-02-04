@@ -32,12 +32,12 @@
   "homepage": "https://github.com/web3-storage/w3ui/tree/main/packages/core",
   "dependencies": {
     "@ipld/dag-ucan": "^3.4.0",
-    "@ucanto/client": "^9.0.1",
+    "@ucanto/client": "catalog:",
     "@ucanto/interface": "^10.0.1",
     "@ucanto/principal": "^9.0.1",
-    "@ucanto/transport": "^9.1.1",
+    "@ucanto/transport": "catalog:",
     "@web3-storage/access": "^20.0.1",
-    "@web3-storage/did-mailto": "^2.1.0",
+    "@web3-storage/did-mailto": "catalog:",
     "@web3-storage/w3up-client": "17.1.2"
   },
   "eslintConfig": {
@@ -50,9 +50,9 @@
     "dist"
   ],
   "devDependencies": {
-    "bunchee": "^5.5.0",
-    "fake-indexeddb": "^5.0.1",
-    "happy-dom": "^12.10.3",
-    "vitest": "^1.0.1"
+    "bunchee": "catalog:",
+    "fake-indexeddb": "catalog:",
+    "happy-dom": "catalog:",
+    "vitest": "catalog:"
   }
 }

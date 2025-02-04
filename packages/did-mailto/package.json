@@ -40,12 +40,12 @@
     "attw": "attw --pack ."
   },
   "devDependencies": {
-    "@arethetypeswrong/cli": "^0.17.3",
+    "@arethetypeswrong/cli": "catalog:",
     "@storacha/eslint-config": "workspace:^",
     "@types/assert": "^1.5.6",
     "@types/mocha": "^10.0.1",
     "mocha": "^10.2.0",
-    "typescript": "5.2.2"
+    "typescript": "catalog:"
   },
   "eslintConfig": {
     "extends": [

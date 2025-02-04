@@ -10,24 +10,24 @@
     "docs:markdown": "pnpm run build && docusaurus generate-typedoc"
   },
   "devDependencies": {
-    "@docusaurus/core": "^3.0.0",
-    "@docusaurus/preset-classic": "^3.0.0",
-    "@nx/js": "^20.3.2",
-    "docusaurus-plugin-typedoc": "^0.21.0",
-    "lint-staged": "^13.2.0",
-    "nx": "20.3.2",
+    "@docusaurus/core": "catalog:",
+    "@docusaurus/preset-classic": "catalog:",
+    "@nx/js": "catalog:",
+    "docusaurus-plugin-typedoc": "catalog:",
+    "lint-staged": "catalog:",
+    "nx": "catalog:",
     "prettier": "2.8.3",
-    "react": "^18.2.0",
-    "typedoc": "^0.25.3",
-    "typedoc-plugin-markdown": "^3.17.0",
-    "typescript": "link:@nx/js/typescript"
+    "react": "catalog:",
+    "typedoc": "catalog:",
+    "typedoc-plugin-markdown": "catalog:",
+    "typescript": "catalog:"
   },
   "engines": {
     "node": ">=16"
   },
   "dependencies": {
-    "depcheck": "^1.4.3",
-    "typedoc-plugin-missing-exports": "^2.1.0"
+    "depcheck": "catalog:",
+    "typedoc-plugin-missing-exports": "catalog:"
   },
   "pnpm": {
     "peerDependencyRules": {

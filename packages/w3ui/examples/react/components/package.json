@@ -24,15 +24,15 @@
   "author": "Travis Vachon",
   "license": "Apache-2.0 OR MIT",
   "dependencies": {
-    "@heroicons/react": "^2.0.17",
-    "@types/react": "^18.2.37",
+    "@heroicons/react": "catalog:",
+    "@types/react": "catalog:",
     "@w3ui/react": "workspace:^"
   },
   "devDependencies": {
-    "bunchee": "^5.5.0",
-    "eslint-plugin-react-hooks": "^4.6.0",
-    "react": "^18.2.0",
-    "typescript": "^5.3.2"
+    "bunchee": "catalog:",
+    "eslint-plugin-react-hooks": "catalog:",
+    "react": "catalog:",
+    "typescript": "catalog:"
   },
   "peerDependencies": {
     "react": "^16.8.0 || ^17.0.0 || ^18.0.0"

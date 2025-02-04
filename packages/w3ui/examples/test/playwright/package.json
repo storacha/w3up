@@ -11,8 +11,8 @@
   "author": "olzilla",
   "license": "Apache-2.0 OR MIT",
   "devDependencies": {
-    "@playwright/test": "^1.29.2",
-    "serve": "^14.1.2"
+    "@playwright/test": "catalog:",
+    "serve": "catalog:"
   },
   "dependencies": {
     "@w3ui/example-react-components": "workspace:^",
