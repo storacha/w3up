@@ -8,8 +8,8 @@ import { toBlock } from './block.js'
 export async function toCAR(bytes) {
   const block = await toBlock(bytes)
   const { writer, out } = CarWriter.create(block.cid)
-  writer.put(block)
-  writer.close()
+  void writer.put(block)
+  void writer.close()
 
   const chunks = []
   for await (const chunk of out) {

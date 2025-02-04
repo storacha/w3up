@@ -25,5 +25,25 @@
     "skipLibCheck": true,
     "stripInternal": true,
     "resolveJsonModule": true
-  }
+  },
+  "references": [
+    {
+      "path": "../upload-api"
+    },
+    {
+      "path": "../eslint-config-w3up"
+    },
+    {
+      "path": "../capabilities"
+    },
+    {
+      "path": "../access-client"
+    },
+    {
+      "path": "../did-mailto"
+    },
+    {
+      "path": "../w3up-client"
+    }
+  ]
 }

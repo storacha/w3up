@@ -191,9 +191,9 @@ export async function upload(firstPath, opts) {
       } else {
         spinner.text = getStoringMessage()
       }
-      opts?.json &&
-        opts?.verbose &&
+      if (opts?.json && opts?.verbose) {
         console.log(dagJSON.stringify({ shard: cid, size, piece }))
+      }
     },
     shardSize: opts?.['shard-size'] && parseInt(String(opts?.['shard-size'])),
     concurrentRequests:

@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/indent */
 import type {
   Capabilities,
   ConnectionView,
@@ -111,7 +110,6 @@ export interface Service {
   access: {
     authorize: ServiceMethod<AccessAuthorize, AccessAuthorizeSuccess, Failure>
     claim: ServiceMethod<AccessClaim, AccessClaimSuccess, AccessClaimFailure>
-    // eslint-disable-next-line @typescript-eslint/ban-types
     confirm: ServiceMethod<
       AccessConfirm,
       AccessConfirmSuccess,

@@ -1,11 +1,15 @@
 {
   "extends": "../../tsconfig.base.json",
-  "compilerOptions": {
-    "outDir": "dist",
-    "emitDeclarationOnly": true
-  },
-  "include": ["src", "test"],
-  "typedocOptions": {
-    "entryPoints": ["./src"]
-  }
+  "files": [],
+  "references": [
+    {
+      "path": "./tsconfig.lib.json"
+    },
+    {
+      "path": "./tsconfig.spec.json"
+    },
+    {
+      "path": "../eslint-config-w3up"
+    }
+  ]
 }

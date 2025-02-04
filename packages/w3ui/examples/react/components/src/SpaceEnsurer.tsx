@@ -1,6 +1,6 @@
 import { useW3 } from '@w3ui/react'
 import { useEffect, ReactNode } from 'react'
-import { Loader } from './Loader'
+import { Loader } from './Loader.js'
 
 export function SpaceEnsurer({ children }: { children: ReactNode }): ReactNode {
   const [{ client }] = useW3()

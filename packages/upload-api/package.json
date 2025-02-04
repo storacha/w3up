@@ -88,84 +88,84 @@
   },
   "exports": {
     ".": {
-      "types": "./dist/src/lib.d.ts",
-      "import": "./src/lib.js"
+      "types": "./dist/lib.d.ts",
+      "import": "./dist/lib.js"
     },
     "./types": {
-      "types": "./dist/src/types.d.ts",
-      "import": "./src/types.js"
+      "types": "./dist/types.d.ts",
+      "import": "./dist/types.js"
     },
     "./access": {
-      "types": "./dist/src/access.d.ts",
-      "import": "./src/access.js"
+      "types": "./dist/access.d.ts",
+      "import": "./dist/access.js"
     },
     "./admin": {
-      "types": "./dist/src/admin.d.ts",
-      "import": "./src/admin.js"
+      "types": "./dist/admin.d.ts",
+      "import": "./dist/admin.js"
     },
     "./blob": {
-      "types": "./dist/src/blob.d.ts",
-      "import": "./src/blob.js"
+      "types": "./dist/blob.d.ts",
+      "import": "./dist/blob.js"
     },
     "./console": {
-      "types": "./dist/src/console.d.ts",
-      "import": "./src/console.js"
+      "types": "./dist/console.d.ts",
+      "import": "./dist/console.js"
     },
     "./consumer": {
-      "types": "./dist/src/consumer.d.ts",
-      "import": "./src/consumer.js"
+      "types": "./dist/consumer.d.ts",
+      "import": "./dist/consumer.js"
     },
     "./customer": {
-      "types": "./dist/src/customer.d.ts",
-      "import": "./src/customer.js"
+      "types": "./dist/customer.d.ts",
+      "import": "./dist/customer.js"
     },
     "./errors": {
-      "types": "./dist/src/errors.d.ts",
-      "import": "./src/errors.js"
+      "types": "./dist/errors.d.ts",
+      "import": "./dist/errors.js"
     },
     "./index": {
-      "types": "./dist/src/index.d.ts",
-      "import": "./src/index.js"
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
     },
     "./plan": {
-      "types": "./dist/src/plan.d.ts",
-      "import": "./src/plan.js"
+      "types": "./dist/plan.d.ts",
+      "import": "./dist/plan.js"
     },
     "./provider": {
-      "types": "./dist/src/provider.d.ts",
-      "import": "./src/provider.js"
+      "types": "./dist/provider.d.ts",
+      "import": "./dist/provider.js"
     },
     "./rate-limit": {
-      "types": "./dist/src/rate-limit.d.ts",
-      "import": "./src/rate-limit.js"
+      "types": "./dist/rate-limit.d.ts",
+      "import": "./dist/rate-limit.js"
     },
     "./space": {
-      "types": "./dist/src/space.d.ts",
-      "import": "./src/space.js"
+      "types": "./dist/space.d.ts",
+      "import": "./dist/space.js"
     },
     "./subscription": {
-      "types": "./dist/src/subscription.d.ts",
-      "import": "./src/subscription.js"
+      "types": "./dist/subscription.d.ts",
+      "import": "./dist/subscription.js"
     },
     "./ucan": {
-      "types": "./dist/src/ucan.d.ts",
-      "import": "./src/ucan.js"
+      "types": "./dist/ucan.d.ts",
+      "import": "./dist/ucan.js"
     },
     "./upload": {
-      "types": "./dist/src/upload.d.ts",
-      "import": "./src/upload.js"
+      "types": "./dist/upload.d.ts",
+      "import": "./dist/upload.js"
     },
     "./usage": {
-      "types": "./dist/src/usage.d.ts",
-      "import": "./src/usage.js"
+      "types": "./dist/usage.d.ts",
+      "import": "./dist/usage.js"
     },
     "./utils/revocation": {
-      "types": "./dist/src/utils/revocation.d.ts",
-      "import": "./src/utils/revocation.js"
+      "types": "./dist/utils/revocation.d.ts",
+      "import": "./dist/utils/revocation.js"
     },
     "./validate": {
-      "types": "./dist/src/validate.d.ts",
-      "import": "./src/validate.js"
+      "types": "./dist/validate.d.ts",
+      "import": "./dist/validate.js"
     },
     "./test": {
       "types": "./dist/test/lib.d.ts",
@@ -178,13 +178,15 @@
     "./test/external-service": {
       "types": "./dist/test/external-service/index.d.ts",
       "import": "./test/external-service/index.js"
+    },
+    "./test/utils": {
+      "types": "./dist/test/helpers/utils.d.ts",
+      "import": "./test/helpers/utils.js"
     }
   },
   "scripts": {
     "dev": "tsc --build --watch --preserveWatchOutput",
-    "build": "tsc --build",
-    "clean": "rm -rf dist",
-    "typecheck": "tsc --build",
+    "clean": "rm -rf dist *.tsbuildinfo",
     "lint": "eslint '**/*.{js,ts}' && prettier --check '**/*.{js,ts,yml,json}' --ignore-path ../../.gitignore",
     "lint:fix": "eslint --fix '**/*.{js,ts}' && prettier --write '**/*.{js,ts,yml,json}' --ignore-path ../../.gitignore",
     "test": "mocha --bail --timeout 10s -n no-warnings -n experimental-vm-modules -n experimental-fetch 'test/**/*.spec.js'",
@@ -216,6 +218,7 @@
     "@storacha/eslint-config": "workspace:^",
     "@storacha/one-webcrypto": "catalog:",
     "@types/mocha": "^10.0.1",
+    "@typescript-eslint/eslint-plugin": "catalog:",
     "@ucanto/core": "catalog:",
     "@web-std/blob": "catalog:",
     "is-subset": "catalog:",
@@ -226,9 +229,6 @@
     "extends": [
       "@storacha/eslint-config"
     ],
-    "parserOptions": {
-      "project": "./tsconfig.json"
-    },
     "env": {
       "es2022": true,
       "mocha": true,
@@ -240,7 +240,10 @@
       "coverage",
       "src/types.js",
       "test/types.js"
-    ]
+    ],
+    "rules": {
+      "@typescript-eslint/no-empty-object-type": "off"
+    }
   },
   "depcheck": {
     "specials": [

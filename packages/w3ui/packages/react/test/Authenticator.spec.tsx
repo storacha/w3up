@@ -1,18 +1,18 @@
 import 'fake-indexeddb/auto'
 import { test, expect, vi } from 'vitest'
-import user from '@testing-library/user-event'
+import { userEvent as user } from '@testing-library/user-event'
 import { render, screen } from '@testing-library/react'
 import {
   Context,
   ContextDefaultValue,
   ContextValue,
-} from '../src/providers/Provider'
+} from '../src/providers/Provider.js'
 import {
   Authenticator,
   AuthenticatorContext,
   AuthenticatorContextDefaultValue,
   AuthenticatorContextValue,
-} from '../src/Authenticator'
+} from '../src/Authenticator.js'
 
 test('CancelButton', async () => {
   const cancelLogin = vi.fn()

@@ -2,7 +2,8 @@
 {
   "compilerOptions": {
     "strict": true,
-    "outDir": "dist",
+    "outDir": "${configDir}/dist",
+    "rootDir": "${configDir}/src",
     // project options
     "allowJs": true,
     "checkJs": true,

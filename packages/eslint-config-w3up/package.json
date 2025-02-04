@@ -8,15 +8,16 @@
     "url": "https://github.com/storacha/upload-service.git",
     "directory": "packages/eslint-config-w3up"
   },
-  "main": "index.js",
+  "main": "./src/index.js",
   "scripts": {
+    "clean": "rm -rf dist *.tsbuildinfo",
     "lint": "eslint '**/*.{js,ts}' && prettier --check '**/*.{js,ts,yml,json}' --ignore-path ../../.gitignore",
     "lint:fix": "eslint --fix '**/*.{js,ts}' && prettier --write '**/*.{js,ts,yml,json}' --ignore-path ../../.gitignore"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@typescript-eslint/eslint-plugin": "^6.9.1",
+    "@typescript-eslint/eslint-plugin": "catalog:",
     "@typescript-eslint/parser": "catalog:",
     "eslint-plugin-jsdoc": "catalog:"
   },
@@ -24,9 +25,12 @@
     "eslint": "^8.56.0"
   },
   "eslintConfig": {
-    "extends": "./index.js",
+    "extends": "./src/index.js",
     "env": {
       "node": true
-    }
+    },
+    "ignorePatterns": [
+      "dist"
+    ]
   }
 }

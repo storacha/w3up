@@ -7,7 +7,7 @@ module.exports = {
     'plugin:jsdoc/recommended',
   ],
   parserOptions: {
-    EXPERIMENTAL_useProjectService: true,
+    projectService: true,
   },
   rules: {
     '@typescript-eslint/no-floating-promises': 'error',

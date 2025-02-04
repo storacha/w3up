@@ -1,17 +1,24 @@
 {
   "extends": "../../tsconfig.base.json",
-  "compilerOptions": {
-    "outDir": "dist",
-    "lib": ["ESNext", "DOM"]
-  },
-  "include": ["src", "scripts", "test"],
+  "files": [],
   "references": [
-    { "path": "../access-client" },
-    { "path": "../blob-index" },
-    { "path": "../filecoin-client" },
-    { "path": "../capabilities" }
-  ],
-  "typedocOptions": {
-    "entryPoints": ["./src"]
-  }
+    {
+      "path": "./tsconfig.lib.json"
+    },
+    {
+      "path": "./tsconfig.spec.json"
+    },
+    {
+      "path": "../filecoin-client"
+    },
+    {
+      "path": "../capabilities"
+    },
+    {
+      "path": "../blob-index"
+    },
+    {
+      "path": "../eslint-config-w3up"
+    }
+  ]
 }

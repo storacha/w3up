@@ -1,0 +1,59 @@
+// See README.tsconfigs.md for details on how these work in this repo.
+
+{
+  "extends": "./tsconfig.base.json",
+  "files": [], // intentionally empty
+  "references": [
+    {
+      "path": "./packages/eslint-config-w3up"
+    },
+    {
+      "path": "./packages/filecoin-client"
+    },
+    {
+      "path": "./packages/access-client"
+    },
+    {
+      "path": "./packages/upload-client"
+    },
+    {
+      "path": "./packages/capabilities"
+    },
+    {
+      "path": "./packages/filecoin-api"
+    },
+    {
+      "path": "./packages/w3up-client"
+    },
+    {
+      "path": "./packages/blob-index"
+    },
+    {
+      "path": "./packages/did-mailto"
+    },
+    {
+      "path": "./packages/upload-api"
+    },
+    {
+      "path": "./packages/w3ui/packages/react"
+    },
+    {
+      "path": "./packages/w3ui/packages/core"
+    },
+    {
+      "path": "./packages/w3ui/examples/react/multi-file-upload"
+    },
+    {
+      "path": "./packages/w3ui/examples/react/uploads-list"
+    },
+    {
+      "path": "./packages/w3ui/examples/react/file-upload"
+    },
+    {
+      "path": "./packages/w3ui/examples/react/components"
+    },
+    {
+      "path": "./packages/w3ui/examples/react/sign-up-in"
+    }
+  ]
+}

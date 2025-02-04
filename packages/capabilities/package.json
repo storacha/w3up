@@ -14,9 +14,7 @@
   "main": "src/index.js",
   "scripts": {
     "dev": "tsc --build --watch --preserveWatchOutput",
-    "build": "tsc --build",
-    "clean": "rm -rf dist",
-    "typecheck": "tsc --build",
+    "clean": "rm -rf dist *.tsbuildinfo",
     "lint": "eslint '**/*.{js,ts}' && prettier --check '**/*.{js,ts,yml,json}' --ignore-path ../../.gitignore",
     "lint:fix": "eslint --fix '**/*.{js,ts}' && prettier --write '**/*.{js,ts,yml,json}' --ignore-path ../../.gitignore",
     "test:node": "mocha 'test/**/*.test.js' -n experimental-vm-modules -n no-warnings",
@@ -27,56 +25,56 @@
   },
   "exports": {
     ".": {
-      "types": "./dist/src/index.d.ts",
-      "import": "./src/index.js"
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
     },
     "./*": {
-      "types": "./dist/src/*.d.ts",
-      "import": "./src/*.js"
+      "types": "./dist/*.d.ts",
+      "import": "./dist/*.js"
     },
     "./test/helpers/*": {
       "types": "./dist/test/helpers/*.d.ts",
       "import": "./test/helpers/*.js"
     },
     "./blob": {
-      "types": "./dist/src/blob.d.ts",
-      "import": "./src/blob.js"
+      "types": "./dist/blob.d.ts",
+      "import": "./dist/blob.js"
     },
     "./filecoin": {
-      "types": "./dist/src/filecoin/index.d.ts",
-      "import": "./src/filecoin/index.js"
+      "types": "./dist/filecoin/index.d.ts",
+      "import": "./dist/filecoin/index.js"
     },
     "./filecoin/storefront": {
-      "types": "./dist/src/filecoin/storefront.d.ts",
-      "import": "./src/filecoin/storefront.js"
+      "types": "./dist/filecoin/storefront.d.ts",
+      "import": "./dist/filecoin/storefront.js"
     },
     "./filecoin/aggregator": {
-      "types": "./dist/src/filecoin/aggregator.d.ts",
-      "import": "./src/filecoin/aggregator.js"
+      "types": "./dist/filecoin/aggregator.d.ts",
+      "import": "./dist/filecoin/aggregator.js"
     },
     "./filecoin/deal-tracker": {
-      "types": "./dist/src/filecoin/deal-tracker.d.ts",
-      "import": "./src/filecoin/deal-tracker.js"
+      "types": "./dist/filecoin/deal-tracker.d.ts",
+      "import": "./dist/filecoin/deal-tracker.js"
     },
     "./filecoin/dealer": {
-      "types": "./dist/src/filecoin/dealer.d.ts",
-      "import": "./src/filecoin/dealer.js"
+      "types": "./dist/filecoin/dealer.d.ts",
+      "import": "./dist/filecoin/dealer.js"
     },
     "./space/index": {
-      "types": "./dist/src/space/index.d.ts",
-      "import": "./src/space/index.js"
+      "types": "./dist/space/index.d.ts",
+      "import": "./dist/space/index.js"
     },
     "./space/blob": {
-      "types": "./dist/src/space/blob.d.ts",
-      "import": "./src/space/blob.js"
+      "types": "./dist/space/blob.d.ts",
+      "import": "./dist/space/blob.js"
     },
     "./web3.storage/blob": {
-      "types": "./dist/src/web3.storage/blob.d.ts",
-      "import": "./src/web3.storage/blob.js"
+      "types": "./dist/web3.storage/blob.d.ts",
+      "import": "./dist/web3.storage/blob.js"
     },
     "./types": {
-      "types": "./dist/src/types.d.ts",
-      "import": "./src/types.js"
+      "types": "./dist/types.d.ts",
+      "import": "./dist/types.js"
     }
   },
   "typesVersions": {
@@ -116,6 +114,7 @@
     "@types/assert": "^1.5.6",
     "@types/mocha": "^10.0.0",
     "@types/node": "^20.8.4",
+    "@typescript-eslint/eslint-plugin": "catalog:",
     "assert": "catalog:",
     "mocha": "^10.2.0",
     "playwright-test": "catalog:",
@@ -127,9 +126,6 @@
     "extends": [
       "@storacha/eslint-config"
     ],
-    "parserOptions": {
-      "project": "./tsconfig.json"
-    },
     "env": {
       "es2022": true,
       "mocha": true,
@@ -141,7 +137,10 @@
       "docs",
       "coverage",
       "src/types.js"
-    ]
+    ],
+    "rules": {
+      "@typescript-eslint/no-empty-object-type": "off"
+    }
   },
   "depcheck": {
     "specials": [

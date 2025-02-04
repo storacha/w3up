@@ -1,0 +1,15 @@
+{
+  "extends": "./tsconfig.json",
+  "include": ["src"],
+  "references": [
+    {
+      "path": "../did-mailto/tsconfig.lib.json"
+    },
+    {
+      "path": "../capabilities/tsconfig.lib.json"
+    },
+    {
+      "path": "../eslint-config-w3up/tsconfig.lib.json"
+    }
+  ]
+}

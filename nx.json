@@ -5,10 +5,6 @@
       "dependsOn": ["^build"],
       "cache": true
     },
-    "typecheck": {
-      "dependsOn": ["^build"],
-      "cache": true
-    },
     "lint": {
       "cache": true
     },
@@ -39,5 +35,13 @@
   "defaultBase": "main",
   "release": {
     "projects": ["packages/*"]
-  }
+  },
+  "plugins": [
+    {
+      "plugin": "@nx/js/typescript",
+      "options": {
+        "build": true
+      }
+    }
+  ]
 }

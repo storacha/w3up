@@ -2,9 +2,11 @@ module.exports = {
   extends: ['./node_modules/hd-scripts/eslint/ts.js'],
   parserOptions: {
     project: [
-      './tsconfig.json',
-      'packages/*/tsconfig.json',
-      'examples/*/*/tsconfig.json',
+      'packages/*/tsconfig.lib.json',
+      'examples/*/*/tsconfig.lib.json',
+      'examples/*/*/tsconfig.app.json',
+      'packages/*/tsconfig.spec.json',
+      'examples/*/*/tsconfig.spec.json',
     ],
     tsconfigRootDir: __dirname,
     ecmaFeatures: {
@@ -32,6 +34,10 @@ module.exports = {
     '@typescript-eslint/space-before-function-paren': 'off',
     '@typescript-eslint/indent': 'off',
     '@typescript-eslint/member-delimiter-style': 'off',
+    '@typescript-eslint/restrict-plus-operands': [
+      'error',
+      { skipCompoundAssignments: false },
+    ],
   },
   ignorePatterns: ['dist/', 'vitest.config.ts'],
 }

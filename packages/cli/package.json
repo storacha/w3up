@@ -9,7 +9,6 @@
   },
   "scripts": {
     "dev": "pnpm typecheck --watch --preserveWatchOutput",
-    "typecheck": "tsc",
     "lint": "eslint '**/*.{js,ts}' && prettier --check '**/*.{js,ts,yml,json}' --ignore-path ../../.gitignore",
     "lint:fix": "eslint --fix '**/*.{js,ts}' && prettier --write '**/*.{js,ts,yml,json}' --ignore-path ../../.gitignore",
     "test": "entail **/*.spec.js"
@@ -36,6 +35,7 @@
     "@storacha/upload-api": "workspace:^",
     "@types/node": "^22.13.0",
     "@types/update-notifier": "catalog:",
+    "@typescript-eslint/eslint-plugin": "catalog:",
     "@ucanto/interface": "^10.1.1",
     "@ucanto/principal": "^9.0.2",
     "@ucanto/server": "^10.1.0",

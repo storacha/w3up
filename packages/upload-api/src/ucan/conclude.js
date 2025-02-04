@@ -47,6 +47,13 @@ export function getConcludeReceipt(concludeFx) {
   })
 }
 
+// * @template {API.Signer} Signer
+// * @template {API.Principal} Principal
+// * @template {API.Receipt} Receipt
+// * @param {Signer} id
+// * @param {Principal} serviceDid
+// * @param {Receipt} receipt
+
 /**
  * @param {API.Signer} id
  * @param {API.Principal} serviceDid

@@ -105,7 +105,11 @@ export const activate = async ({ http } = {}) => {
       new Promise((resolve, reject) => {
         httpServer.closeAllConnections()
         httpServer.close((err) => {
-          err ? reject(err) : resolve(undefined)
+          if (err) {
+            reject(err)
+          } else {
+            resolve(undefined)
+          }
         })
       }),
   })

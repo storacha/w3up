@@ -1,18 +1,30 @@
 {
   "extends": "../../tsconfig.base.json",
-  "compilerOptions": {
-    "outDir": "dist",
-    "types": ["mocha"]
-  },
-  "include": ["src", "test"],
-  "exclude": ["**/node_modules/**", "dist"],
+  "files": [],
   "references": [
-    { "path": "../blob-index" },
-    { "path": "../capabilities" },
-    { "path": "../access-client" },
-    { "path": "../filecoin-api" }
-  ],
-  "typedocOptions": {
-    "entryPoints": ["./src"]
-  }
+    {
+      "path": "./tsconfig.lib.json"
+    },
+    {
+      "path": "./tsconfig.spec.json"
+    },
+    {
+      "path": "../filecoin-api"
+    },
+    {
+      "path": "../did-mailto"
+    },
+    {
+      "path": "../capabilities"
+    },
+    {
+      "path": "../access-client"
+    },
+    {
+      "path": "../eslint-config-w3up"
+    },
+    {
+      "path": "../blob-index"
+    }
+  ]
 }

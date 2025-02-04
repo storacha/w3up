@@ -389,7 +389,9 @@ export const test = {
     const receipt = await Receipt.issue({
       issuer: alice,
       ran: invocation,
-      result: { ok: 'hello' },
+      // Type assertion to work around type bug:
+      // https://github.com/ipld/js-dag-ucan/pull/108
+      result: { ok: /** @type {{}} */ ('hello') },
     })
 
     // Create conclude invocation

@@ -6,7 +6,7 @@ import { Principal, Transport } from '@ucanto/interface'
 import { connect } from '@ucanto/client'
 import { CAR } from '@ucanto/transport'
 
-import { useDatamodel } from '../src/hooks'
+import { useDatamodel } from '../src/hooks.js'
 import { Service } from '@w3ui/core'
 
 test('should create a new client instance if and only if servicePrincipal or connection change', async () => {

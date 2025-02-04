@@ -1,12 +1,27 @@
 {
   "extends": "../../tsconfig.base.json",
-  "compilerOptions": {
-    "outDir": "dist",
-    "lib": ["ESNext", "DOM"]
-  },
-  "include": ["src", "scripts", "test"],
-  "typedocOptions": {
-    "entryPoints": ["./src"]
-  },
-  "references": [{ "path": "../capabilities" }, { "path": "../did-mailto" }]
+  "files": [],
+  "references": [
+    {
+      "path": "./tsconfig.lib.json"
+    },
+    {
+      "path": "./tsconfig.spec.json"
+    },
+    {
+      "path": "../did-mailto"
+    },
+    {
+      "path": "../capabilities"
+    },
+    {
+      "path": "../eslint-config-w3up"
+    },
+    {
+      "path": "./tsconfig.lib.json"
+    },
+    {
+      "path": "./tsconfig.spec.json"
+    }
+  ]
 }

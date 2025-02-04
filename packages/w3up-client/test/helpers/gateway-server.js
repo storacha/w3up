@@ -3,7 +3,7 @@ import {
   createUcantoServer,
   getContentServeMockService,
 } from '../mocks/service.js'
-import { gateway } from '../../../upload-api/test/helpers/utils.js'
+import { gateway } from '@storacha/upload-api/test/utils'
 
 const port = 5001
 

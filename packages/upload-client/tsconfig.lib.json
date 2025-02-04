@@ -1,0 +1,18 @@
+{
+  "extends": "./tsconfig.json",
+  "include": ["src"],
+  "references": [
+    {
+      "path": "../filecoin-client/tsconfig.lib.json"
+    },
+    {
+      "path": "../capabilities/tsconfig.lib.json"
+    },
+    {
+      "path": "../blob-index/tsconfig.lib.json"
+    },
+    {
+      "path": "../eslint-config-w3up/tsconfig.lib.json"
+    }
+  ]
+}

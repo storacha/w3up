@@ -15,9 +15,7 @@
   "main": "dist/src/index.js",
   "scripts": {
     "dev": "tsc --build --watch --preserveWatchOutput",
-    "build": "tsc --build",
-    "clean": "rm -rf dist",
-    "typecheck": "tsc --build",
+    "clean": "rm -rf dist *.tsbuildinfo",
     "lint": "eslint '**/*.{js,ts}' && prettier --check '**/*.{js,ts,yml,json}' --ignore-path ../../.gitignore",
     "lint:fix": "eslint --fix '**/*.{js,ts}' && prettier --write '**/*.{js,ts,yml,json}' --ignore-path ../../.gitignore",
     "test:node": "mocha 'test/**/!(*.browser).test.js' -n experimental-vm-modules -n no-warnings",
@@ -28,40 +26,40 @@
   },
   "exports": {
     ".": {
-      "types": "./dist/src/index.d.ts",
-      "import": "./dist/src/index.js"
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
     },
     "./agent": {
-      "types": "./dist/src/agent.d.ts",
-      "import": "./dist/src/agent.js"
+      "types": "./dist/agent.d.ts",
+      "import": "./dist/agent.js"
     },
     "./space": {
-      "types": "./dist/src/space.d.ts",
-      "import": "./dist/src/space.js"
+      "types": "./dist/space.d.ts",
+      "import": "./dist/space.js"
     },
     "./provider": {
-      "types": "./dist/src/provider.d.ts",
-      "import": "./dist/src/provider.js"
+      "types": "./dist/provider.d.ts",
+      "import": "./dist/provider.js"
     },
     "./access": {
-      "types": "./dist/src/access.d.ts",
-      "import": "./dist/src/access.js"
+      "types": "./dist/access.d.ts",
+      "import": "./dist/access.js"
     },
     "./encoding": {
-      "types": "./dist/src/encoding.d.ts",
-      "import": "./dist/src/encoding.js"
+      "types": "./dist/encoding.d.ts",
+      "import": "./dist/encoding.js"
     },
     "./types": {
-      "types": "./dist/src/types.d.ts",
-      "import": "./dist/src/types.js"
+      "types": "./dist/types.d.ts",
+      "import": "./dist/types.js"
     },
     "./drivers/*": {
-      "types": "./dist/src/drivers/*.d.ts",
-      "import": "./dist/src/drivers/*.js"
+      "types": "./dist/drivers/*.d.ts",
+      "import": "./dist/drivers/*.js"
     },
     "./stores/*": {
-      "types": "./dist/src/stores/*.d.ts",
-      "import": "./dist/src/stores/*.js"
+      "types": "./dist/stores/*.d.ts",
+      "import": "./dist/stores/*.js"
     }
   },
   "typesVersions": {
@@ -128,6 +126,7 @@
     "@types/sinon": "catalog:",
     "@types/varint": "catalog:",
     "@types/ws": "catalog:",
+    "@typescript-eslint/eslint-plugin": "catalog:",
     "@ucanto/server": "^10.1.0",
     "assert": "catalog:",
     "mocha": "^10.2.0",
@@ -140,9 +139,6 @@
     "extends": [
       "@storacha/eslint-config"
     ],
-    "parserOptions": {
-      "project": "./tsconfig.json"
-    },
     "env": {
       "browser": true,
       "es2022": true,

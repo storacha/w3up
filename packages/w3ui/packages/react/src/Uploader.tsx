@@ -17,7 +17,7 @@ import React, {
   Fragment,
 } from 'react'
 import { createComponent, createElement } from 'ariakit-react-utils'
-import { useW3 } from './providers/Provider.jsx'
+import { useW3 } from './providers/Provider.js'
 
 export type UploadProgress = Record<string, ProgressStatus>
 

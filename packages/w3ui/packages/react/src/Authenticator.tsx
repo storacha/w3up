@@ -10,7 +10,7 @@ import React, {
   useMemo,
 } from 'react'
 import { createComponent, createElement } from 'ariakit-react-utils'
-import { useW3, ContextState, ContextActions } from './providers/Provider.jsx'
+import { useW3, ContextState, ContextActions } from './providers/Provider.js'
 
 export type AuthenticatorContextState = ContextState & {
   /**

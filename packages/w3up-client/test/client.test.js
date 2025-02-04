@@ -20,7 +20,7 @@ import {
   alice,
   confirmConfirmationUrl,
   gateway,
-} from '../../upload-api/test/helpers/utils.js'
+} from '@storacha/upload-api/test/utils'
 import * as SpaceCapability from '@storacha/capabilities/space'
 import { getConnection, getContentServeMockService } from './mocks/service.js'
 
@@ -896,9 +896,7 @@ export const testClient = {
         await alice
           .remove(fileLink, { shards: true })
           .then((ok) => ({ ok: {} }))
-          .catch((error) => {
-            error
-          }),
+          .catch((error) => error),
         { ok: {} }
       )
 
@@ -947,9 +945,7 @@ export const testClient = {
           await alice
             .remove(fileLink)
             .then((ok) => ({ ok: {} }))
-            .catch((error) => {
-              error
-            }),
+            .catch((error) => error),
           { ok: {} }
         )
 

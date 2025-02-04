@@ -7,7 +7,7 @@ import {
   UploadProgress,
   AnyLink,
 } from '@w3ui/react'
-import { UploadLoader } from './Loader'
+import { UploadLoader } from './Loader.js'
 
 function humanFileSize(bytes: number): string {
   const size = (bytes / (1024 * 1024)).toFixed(2)

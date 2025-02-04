@@ -71,7 +71,20 @@ export const test = (suite) => {
   }
 }
 
+/**
+ * @returns {(
+ *   Promise<
+ *     import('@storacha/upload-api/types').UcantoServerTestContext
+ *     & {
+ *       connect: () => Promise<import('@storacha/client').Client>
+ *       client: import('@storacha/client').Client
+ *       cleanup: () => void
+ *     }
+ *   >
+ * )}
+ */
 export const setup = async () => {
+  /** @type {import('@storacha/upload-api/types').UcantoServerTestContext} */
   const context = await Context.createContext({
     assert,
   })

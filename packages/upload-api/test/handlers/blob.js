@@ -678,7 +678,7 @@ export const test = {
       }
 
       // Add page if it has size
-      blobList.out.ok.size > 0 && listPages.push(blobList.out.ok.results)
+      if (blobList.out.ok.size > 0) listPages.push(blobList.out.ok.results)
 
       if (blobList.out.ok.after) {
         cursor = blobList.out.ok.after

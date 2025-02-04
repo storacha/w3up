@@ -18,10 +18,10 @@
     "dist"
   ],
   "exports": {
-    ".": "./dist/src/index.js",
-    "./sharded-dag-index": "./dist/src/sharded-dag-index.js",
-    "./types": "./dist/src/api.js",
-    "./util": "./dist/src/util.js"
+    ".": "./dist/index.js",
+    "./sharded-dag-index": "./dist/sharded-dag-index.js",
+    "./types": "./dist/api.js",
+    "./util": "./dist/util.js"
   },
   "typesVersions": {
     "*": {
@@ -32,9 +32,7 @@
   },
   "scripts": {
     "dev": "tsc --build --watch --preserveWatchOutput",
-    "clean": "rm -rf dist coverage",
-    "build": "tsc --build",
-    "typecheck": "tsc --build",
+    "clean": "rm -rf dist *.tsbuildinfo coverage",
     "lint": "eslint '**/*.{js,ts}' && prettier --check '**/*.{js,ts,yml,json}' --ignore-path ../../.gitignore",
     "lint:fix": "eslint --fix '**/*.{js,ts}' && prettier --write '**/*.{js,ts,yml,json}' --ignore-path ../../.gitignore",
     "test": "entail test/*.spec.js",
@@ -54,6 +52,7 @@
   "devDependencies": {
     "@arethetypeswrong/cli": "catalog:",
     "@storacha/eslint-config": "workspace:^",
+    "@typescript-eslint/eslint-plugin": "catalog:",
     "@ucanto/transport": "catalog:",
     "c8": "^7.14.0",
     "entail": "^2.1.2",
@@ -63,16 +62,16 @@
     "extends": [
       "@storacha/eslint-config"
     ],
-    "parserOptions": {
-      "project": "./tsconfig.json"
-    },
     "env": {
-      "mocha": true
+      "es2022": true,
+      "mocha": true,
+      "browser": true,
+      "node": true
     },
     "ignorePatterns": [
       "dist",
       "coverage",
-      "src/types.js"
+      "src/api.js"
     ]
   },
   "engines": {

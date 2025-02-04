@@ -1,16 +1,21 @@
 {
   "extends": "../../tsconfig.base.json",
-  "compilerOptions": {
-    "outDir": "dist",
-    "types": ["mocha"]
-  },
-  "include": ["src", "test"],
-  "exclude": ["**/node_modules/**", "dist"],
+  "files": [],
   "references": [
-    { "path": "../capabilities" },
-    { "path": "../filecoin-client" }
-  ],
-  "typedocOptions": {
-    "entryPoints": ["./src"]
-  }
+    {
+      "path": "./tsconfig.lib.json"
+    },
+    {
+      "path": "./tsconfig.spec.json"
+    },
+    {
+      "path": "../capabilities"
+    },
+    {
+      "path": "../filecoin-client"
+    },
+    {
+      "path": "../eslint-config-w3up"
+    }
+  ]
 }

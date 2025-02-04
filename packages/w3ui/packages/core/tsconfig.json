@@ -1,12 +1,12 @@
 {
-  "composite": true,
-  "extends": "../../tsconfig.base.json",
-  "compilerOptions": {
-    "noEmit": true
-  },
-  "include": ["src", "test"],
-  "ts-node": {
-    "esm": true,
-    "transpileOnly": true
-  }
+  "extends": "../../../../tsconfig.base.json",
+  "files": [],
+  "references": [
+    {
+      "path": "./tsconfig.lib.json"
+    },
+    {
+      "path": "./tsconfig.spec.json"
+    }
+  ]
 }

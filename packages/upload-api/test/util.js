@@ -100,8 +100,8 @@ export async function randomCAR(size) {
   const root = CID.create(1, raw.code, hash)
 
   const { writer, out } = CarWriter.create(root)
-  writer.put({ cid: root, bytes })
-  writer.close()
+  void writer.put({ cid: root, bytes })
+  void writer.close()
 
   const chunks = []
   for await (const chunk of out) {

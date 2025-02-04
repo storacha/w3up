@@ -2,7 +2,7 @@ import { AgentData } from '@storacha/access/agent'
 import { Client } from '../../src/client.js'
 import * as Test from '../test.js'
 import { Space } from '@storacha/capabilities'
-import { gatewaySigner } from '../../../upload-api/test/helpers/utils.js'
+import { gatewaySigner } from '@storacha/upload-api/test/utils'
 import { randomCAR } from '../helpers/random.js'
 
 export const SpaceClient = Test.withContext({

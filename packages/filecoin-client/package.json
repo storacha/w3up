@@ -15,9 +15,7 @@
   "main": "src/index.js",
   "scripts": {
     "dev": "tsc --build --watch --preserveWatchOutput",
-    "build": "tsc --build",
-    "clean": "rm -rf dist",
-    "typecheck": "tsc --build",
+    "clean": "rm -rf dist *.tsbuildinfo",
     "lint": "eslint '**/*.{js,ts}' && prettier --check '**/*.{js,ts,yml,json}' --ignore-path ../../.gitignore",
     "lint:fix": "eslint --fix '**/*.{js,ts}' && prettier --write '**/*.{js,ts,yml,json}' --ignore-path ../../.gitignore",
     "test:node": "hundreds -r html -r text mocha 'test/**/!(*.browser).test.js' -n experimental-vm-modules -n no-warnings",
@@ -26,11 +24,11 @@
     "rc": "npm version prerelease --preid rc"
   },
   "exports": {
-    ".": "./dist/src/index.js",
-    "./aggregator": "./dist/src/aggregator.js",
-    "./dealer": "./dist/src/dealer.js",
-    "./storefront": "./dist/src/storefront.js",
-    "./types": "./dist/src/types.js"
+    ".": "./dist/index.js",
+    "./aggregator": "./dist/aggregator.js",
+    "./dealer": "./dist/dealer.js",
+    "./storefront": "./dist/storefront.js",
+    "./types": "./dist/types.js"
   },
   "typesVersions": {
     "*": {
@@ -69,6 +67,7 @@
     "@types/assert": "^1.5.6",
     "@types/mocha": "^10.0.1",
     "@types/node": "^20.8.4",
+    "@typescript-eslint/eslint-plugin": "catalog:",
     "@ucanto/principal": "^9.0.2",
     "@ucanto/server": "^10.1.0",
     "@web3-storage/data-segment": "^5.3.0",
@@ -84,9 +83,6 @@
     "extends": [
       "@storacha/eslint-config"
     ],
-    "parserOptions": {
-      "project": "./tsconfig.json"
-    },
     "env": {
       "es2022": true,
       "mocha": true,

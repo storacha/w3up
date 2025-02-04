@@ -1,21 +1,36 @@
 {
   "extends": "../../tsconfig.base.json",
-  "compilerOptions": {
-    "outDir": "dist",
-    "composite": true,
-    "noUnusedParameters": false
-  },
-  "include": ["./src", "./test"],
-  "typedocOptions": {
-    "entryPoints": ["./src"]
-  },
+  "files": [],
   "references": [
-    { "path": "../access-client" },
-    { "path": "../blob-index" },
-    { "path": "../capabilities" },
-    { "path": "../upload-client" },
-    { "path": "../filecoin-client" },
-    { "path": "../did-mailto" },
-    { "path": "../upload-api" }
+    {
+      "path": "./tsconfig.lib.json"
+    },
+    {
+      "path": "./tsconfig.spec.json"
+    },
+    {
+      "path": "../upload-client"
+    },
+    {
+      "path": "../filecoin-client"
+    },
+    {
+      "path": "../did-mailto"
+    },
+    {
+      "path": "../capabilities"
+    },
+    {
+      "path": "../blob-index"
+    },
+    {
+      "path": "../access-client"
+    },
+    {
+      "path": "../upload-api"
+    },
+    {
+      "path": "../eslint-config-w3up"
+    }
   ]
 }

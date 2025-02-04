@@ -137,12 +137,14 @@ const setupBlobAddResponse = async function (
   const blobAllocateReceipt = await Receipt.issue({
     issuer,
     ran: blobAllocateTask.cid,
+    // Type assertion to work around type bug:
+    // https://github.com/ipld/js-dag-ucan/pull/108
     result: {
-      ok: {
+      ok: /** @type {{}} */ ({
         address: {
           url,
         },
-      },
+      }),
     },
   })
   const blobConcludeAllocate = await createConcludeInvocation(
@@ -177,7 +179,9 @@ const setupBlobAddResponse = async function (
     ? await Receipt.issue({
         issuer,
         ran: blobPutTask.cid,
-        result: { error: new Error() },
+        // Type assertion to work around type bug:
+        // https://github.com/ipld/js-dag-ucan/pull/108
+        result: { error: /** @type {{}} */ (new Error()) },
       })
     : await generateAcceptReceipt(blobPutTask.cid.toString())
   const blobConcludePut = await createConcludeInvocation(
@@ -205,7 +209,9 @@ const setupBlobAddResponse = async function (
     ? await Receipt.issue({
         issuer,
         ran: blobAcceptTask.cid,
-        result: { error: new Error() },
+        // Type assertion to work around type bug:
+        // https://github.com/ipld/js-dag-ucan/pull/108
+        result: { error: /** @type {{}} */ (new Error()) },
       })
     : await generateAcceptReceipt(blobAcceptTask.cid.toString())
   const blobConcludeAccept = await createConcludeInvocation(

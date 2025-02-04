@@ -39,10 +39,9 @@ import * as Index from '@storacha/capabilities/space/index'
 
 ### Capability types
 
-The capability objects exported by this package are defined using ucanto's type-inference based capability parser. This results in concrete types that capture the details of each capability, allowing type-safe invocation and validation. 
+The capability objects exported by this package are defined using ucanto's type-inference based capability parser. This results in concrete types that capture the details of each capability, allowing type-safe invocation and validation.
 
 When inspecting the concrete types of a capability object (e.g. in your IDE), you may see something similar to the following:
-
 
 ```ts
 const add: TheCapabilityParser<DerivedMatch<{
@@ -62,7 +61,7 @@ While this is a fairly complex type signature, most of the types exist to suppor
 
 ### Using the exported capabilities
 
-The capability object exposes three methods via the `TheCapabilityParser` interface: `create`, `invoke`, and `delegate`. 
+The capability object exposes three methods via the `TheCapabilityParser` interface: `create`, `invoke`, and `delegate`.
 
 #### `create`
 
@@ -76,7 +75,7 @@ const cap = Store.add.create({
   nb: {
     link: 'bagbaieraspawtgooy5lptr7loyd3fxjsrgkamre3y6au3ga4df5bkhrxdkmq',
     size: 20,
-  }
+  },
 })
 ```
 
@@ -131,7 +130,7 @@ const invocation = Store.add.invoke({
   nb: {
     link: 'bagbaieraspawtgooy5lptr7loyd3fxjsrgkamre3y6au3ga4df5bkhrxdkmq',
     size: 20,
-  }
+  },
 })
 ```
 
@@ -160,4 +159,3 @@ const delegation = await Store.add.delegate({
   with: 'did:key:z6MkwFPNubhwM66HNKeJYtBu1Rv9n1LZdJhbyhLFg97Qr6FG',
 })
 ```
-

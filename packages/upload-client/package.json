@@ -16,9 +16,7 @@
   "// scripts": "The `test-:*` scripts are internal only, to be run by `npm-run-all` in parallel with the mock servers.",
   "scripts": {
     "dev": "tsc --build --watch --preserveWatchOutput",
-    "build": "tsc --build",
-    "clean": "rm -rf dist",
-    "typecheck": "tsc --build",
+    "clean": "rm -rf dist *.tsbuildinfo",
     "lint": "eslint '**/*.{js,ts}' && prettier --check '**/*.{js,ts,yml,json}' --ignore-path ../../.gitignore",
     "lint:fix": "eslint --fix '**/*.{js,ts}' && prettier --write '**/*.{js,ts,yml,json}' --ignore-path ../../.gitignore",
     "test:node": "npm-run-all --parallel --race --npm-path pnpm mock:* 'test-:node'",
@@ -34,15 +32,15 @@
     "rc": "npm version prerelease --preid rc"
   },
   "exports": {
-    ".": "./dist/src/index.js",
-    "./blob": "./dist/src/blob/index.js",
-    "./car": "./dist/src/car.js",
-    "./fetch-with-upload-progress": "./dist/src/fetch-with-upload-progress.js",
-    "./index": "./dist/src/index/index.js",
-    "./sharding": "./dist/src/sharding.js",
-    "./upload": "./dist/src/upload/index.js",
-    "./unixfs": "./dist/src/unixfs.js",
-    "./types": "./dist/src/types.js"
+    ".": "./dist/index.js",
+    "./blob": "./dist/blob/index.js",
+    "./car": "./dist/car.js",
+    "./fetch-with-upload-progress": "./dist/fetch-with-upload-progress.js",
+    "./index": "./dist/index/index.js",
+    "./sharding": "./dist/sharding.js",
+    "./upload": "./dist/upload/index.js",
+    "./unixfs": "./dist/unixfs.js",
+    "./types": "./dist/types.js"
   },
   "typesVersions": {
     "*": {
@@ -106,6 +104,7 @@
     "@types/mocha": "^10.0.1",
     "@types/node": "^20.8.4",
     "@types/varint": "catalog:",
+    "@typescript-eslint/eslint-plugin": "catalog:",
     "@ucanto/principal": "^9.0.2",
     "@ucanto/server": "^10.1.0",
     "@web3-storage/content-claims": "^5.1.3",
@@ -131,6 +130,9 @@
       "mocha": true,
       "browser": true,
       "node": true
+    },
+    "globals": {
+      "AsyncIterator": "readonly"
     },
     "ignorePatterns": [
       "dist",

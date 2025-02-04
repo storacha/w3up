@@ -8,7 +8,6 @@
     "build": "vite build",
     "start": "vite preview",
     "clean": "rm -rf dist *.tsbuildinfo",
-    "typecheck": "tsc --build",
     "lint": "eslint '**/*.{js,jsx,ts,tsx}' && prettier --check '**/*.{js,jsx,ts,tsx,yml,json}' --ignore-path ../../../../../.gitignore",
     "lint:fix": "eslint --fix '**/*.{js,jsx,ts,tsx}' && prettier --write '**/*.{js,jsx,ts,tsx,yml,json}' --ignore-path ../../../../../.gitignore"
   },

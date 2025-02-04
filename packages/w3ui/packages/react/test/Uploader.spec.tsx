@@ -1,14 +1,14 @@
 import 'fake-indexeddb/auto'
 import { test, expect, vi, afterEach } from 'vitest'
-import user from '@testing-library/user-event'
+import { userEvent as user } from '@testing-library/user-event'
 import { render, screen, cleanup } from '@testing-library/react'
 import * as Link from 'multiformats/link'
 import {
   Context,
   ContextDefaultValue,
   ContextValue,
-} from '../src/providers/Provider'
-import { Uploader } from '../src/Uploader'
+} from '../src/providers/Provider.js'
+import { Uploader } from '../src/Uploader.js'
 
 afterEach(() => {
   cleanup()

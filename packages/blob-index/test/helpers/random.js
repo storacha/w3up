@@ -1,4 +1,3 @@
-/* global crypto */
 import { CID } from 'multiformats'
 import { sha256 } from 'multiformats/hashes/sha2'
 import * as CAR from '@ucanto/transport/car'

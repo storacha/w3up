@@ -18,8 +18,8 @@
     "dist"
   ],
   "exports": {
-    ".": "./dist/src/index.js",
-    "./types": "./dist/src/types.js"
+    ".": "./dist/index.js",
+    "./types": "./dist/types.js"
   },
   "typesVersions": {
     "*": {
@@ -30,9 +30,7 @@
   },
   "scripts": {
     "dev": "tsc --build --watch --preserveWatchOutput",
-    "build": "tsc --build",
-    "clean": "rm -rf dist",
-    "typecheck": "tsc --build",
+    "clean": "rm -rf dist *.tsbuildinfo",
     "lint": "eslint '**/*.{js,ts}' && prettier --check '**/*.{js,ts,yml,json}' --ignore-path ../../.gitignore",
     "lint:fix": "eslint --fix '**/*.{js,ts}' && prettier --write '**/*.{js,ts,yml,json}' --ignore-path ../../.gitignore",
     "test": "mocha --bail --timeout 10s -n no-warnings -n experimental-vm-modules -n experimental-fetch test/**/*.spec.js",
@@ -44,6 +42,7 @@
     "@storacha/eslint-config": "workspace:^",
     "@types/assert": "^1.5.6",
     "@types/mocha": "^10.0.1",
+    "@typescript-eslint/eslint-plugin": "catalog:",
     "mocha": "^10.2.0",
     "typescript": "catalog:"
   },
@@ -51,9 +50,6 @@
     "extends": [
       "@storacha/eslint-config"
     ],
-    "parserOptions": {
-      "project": "./tsconfig.json"
-    },
     "env": {
       "mocha": true
     },

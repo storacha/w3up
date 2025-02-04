@@ -75,60 +75,60 @@
   },
   "exports": {
     ".": {
-      "types": "./dist/src/lib.d.ts",
-      "import": "./src/lib.js"
+      "types": "./dist/lib.d.ts",
+      "import": "./dist/lib.js"
     },
     "./types": {
-      "types": "./dist/src/types.d.ts",
-      "import": "./src/types.js"
+      "types": "./dist/types.d.ts",
+      "import": "./dist/types.js"
     },
     "./aggregator/api": {
-      "types": "./dist/src/aggregator/api.d.ts",
-      "import": "./src/aggregator/api.js"
+      "types": "./dist/aggregator/api.d.ts",
+      "import": "./dist/aggregator/api.js"
     },
     "./aggregator/service": {
-      "types": "./dist/src/aggregator/service.d.ts",
-      "import": "./src/aggregator/service.js"
+      "types": "./dist/aggregator/service.d.ts",
+      "import": "./dist/aggregator/service.js"
     },
     "./aggregator/events": {
-      "types": "./dist/src/aggregator/events.d.ts",
-      "import": "./src/aggregator/events.js"
+      "types": "./dist/aggregator/events.d.ts",
+      "import": "./dist/aggregator/events.js"
     },
     "./dealer/api": {
-      "types": "./dist/src/dealer/api.d.ts",
-      "import": "./src/dealer/api.js"
+      "types": "./dist/dealer/api.d.ts",
+      "import": "./dist/dealer/api.js"
     },
     "./dealer/service": {
-      "types": "./dist/src/dealer/service.d.ts",
-      "import": "./src/dealer/service.js"
+      "types": "./dist/dealer/service.d.ts",
+      "import": "./dist/dealer/service.js"
     },
     "./dealer/events": {
-      "types": "./dist/src/dealer/events.d.ts",
-      "import": "./src/dealer/events.js"
+      "types": "./dist/dealer/events.d.ts",
+      "import": "./dist/dealer/events.js"
     },
     "./deal-tracker/api": {
-      "types": "./dist/src/deal-tracker/api.d.ts",
-      "import": "./src/deal-tracker/api.js"
+      "types": "./dist/deal-tracker/api.d.ts",
+      "import": "./dist/deal-tracker/api.js"
     },
     "./deal-tracker/service": {
-      "types": "./dist/src/deal-tracker/service.d.ts",
-      "import": "./src/deal-tracker/service.js"
+      "types": "./dist/deal-tracker/service.d.ts",
+      "import": "./dist/deal-tracker/service.js"
     },
     "./storefront/api": {
-      "types": "./dist/src/storefront/api.d.ts",
-      "import": "./src/storefront/api.js"
+      "types": "./dist/storefront/api.d.ts",
+      "import": "./dist/storefront/api.js"
     },
     "./storefront/service": {
-      "types": "./dist/src/storefront/service.d.ts",
-      "import": "./src/storefront/service.js"
+      "types": "./dist/storefront/service.d.ts",
+      "import": "./dist/storefront/service.js"
     },
     "./storefront/events": {
-      "types": "./dist/src/storefront/events.d.ts",
-      "import": "./src/storefront/events.js"
+      "types": "./dist/storefront/events.d.ts",
+      "import": "./dist/storefront/events.js"
     },
     "./errors": {
-      "types": "./dist/src/errors.d.ts",
-      "import": "./src/errors.js"
+      "types": "./dist/errors.d.ts",
+      "import": "./dist/errors.js"
     },
     "./test": {
       "types": "./dist/test/lib.d.ts",
@@ -145,9 +145,7 @@
   },
   "scripts": {
     "dev": "tsc --build --watch --preserveWatchOutput",
-    "build": "tsc --build",
-    "clean": "rm -rf dist coverage",
-    "typecheck": "tsc --build",
+    "clean": "rm -rf dist *.tsbuildinfo coverage",
     "lint": "eslint '**/*.{js,ts}' && prettier --check '**/*.{js,ts,yml,json}' --ignore-path ../../.gitignore",
     "lint:fix": "eslint --fix '**/*.{js,ts}' && prettier --write '**/*.{js,ts,yml,json}' --ignore-path ../../.gitignore",
     "test": "mocha --bail --timeout 10s -n no-warnings -n experimental-vm-modules -n experimental-fetch test/**/*.spec.js",
@@ -175,6 +173,7 @@
     "@storacha/one-webcrypto": "catalog:",
     "@types/assert": "^1.5.10",
     "@types/mocha": "^10.0.1",
+    "@typescript-eslint/eslint-plugin": "catalog:",
     "@ucanto/client": "catalog:",
     "@ucanto/principal": "^9.0.2",
     "@web-std/blob": "catalog:",
@@ -188,11 +187,9 @@
     "extends": [
       "@storacha/eslint-config"
     ],
-    "parserOptions": {
-      "project": "./tsconfig.json"
-    },
     "env": {
       "browser": true,
+      "es2022": true,
       "mocha": true
     },
     "ignorePatterns": [
@@ -204,7 +201,10 @@
       "src/storefront/api.js",
       "src/types.js",
       "test/types.js"
-    ]
+    ],
+    "rules": {
+      "@typescript-eslint/no-empty-object-type": "off"
+    }
   },
   "depcheck": {
     "specials": [

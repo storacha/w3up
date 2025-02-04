@@ -23,7 +23,8 @@ catalog:
   '@types/update-notifier': ^6.0.5
   '@types/varint': ^6.0.1
   '@types/ws': ^8.5.4
-  '@typescript-eslint/parser': ^6.9.1
+  '@typescript-eslint/eslint-plugin': ^8.23.0
+  '@typescript-eslint/parser': ^8.23.0
   '@ucanto/client': ^9.0.1
   '@ucanto/core': ^10.2.1
   '@ucanto/transport': ^9.1.1
