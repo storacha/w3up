@@ -297,7 +297,7 @@ export async function add(
       throw new Error(
         `failed ${UCAN.conclude.can} for ${HTTPCapabilities.put.can} invocation`,
         {
-          cause: result.out.error,
+          cause: ucanConclude.out.error,
         }
       )
     }
