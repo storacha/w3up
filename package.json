@@ -5,35 +5,20 @@
   "packageManager": "pnpm@10.1.0+sha512.c89847b0667ddab50396bbbd008a2a43cf3b581efd59cf5d9aa8923ea1fb4b8106c041d540d08acb095037594d73ebc51e1ec89ee40c88b30b8a66c0fae0ac1b",
   "scripts": {
     "lint": "eslint *.{js,ts} scripts && prettier --check '**/*.{js,ts,yml,json}' --ignore-path .gitignore",
-    "lint:fix": "eslint --fix *.{js,ts} scripts && prettier --write '**/*.{js,ts,yml,json}' --ignore-path .gitignore",
-    "docs": "pnpm run build && typedoc --plugin typedoc-plugin-missing-exports --out docs",
-    "docs:markdown": "pnpm run build && docusaurus generate-typedoc"
+    "lint:fix": "eslint --fix *.{js,ts} scripts && prettier --write '**/*.{js,ts,yml,json}' --ignore-path .gitignore"
   },
   "devDependencies": {
-    "@docusaurus/core": "catalog:",
-    "@docusaurus/preset-classic": "catalog:",
     "@nx/js": "catalog:",
-    "docusaurus-plugin-typedoc": "catalog:",
     "lint-staged": "catalog:",
     "nx": "catalog:",
     "prettier": "2.8.3",
     "react": "catalog:",
-    "typedoc": "catalog:",
-    "typedoc-plugin-markdown": "catalog:",
     "typescript": "catalog:"
   },
   "engines": {
     "node": ">=16"
   },
   "dependencies": {
-    "depcheck": "catalog:",
-    "typedoc-plugin-missing-exports": "catalog:"
-  },
-  "pnpm": {
-    "peerDependencyRules": {
-      "ignoreMissing": [
-        "react*"
-      ]
-    }
+    "depcheck": "catalog:"
   }
 }

@@ -134,8 +134,7 @@
     "mock:gateway-server": "PORT=5001 node test/helpers/gateway-server.js",
     "attw": "attw --pack .",
     "coverage": "c8 report -r html && open coverage/index.html",
-    "rc": "npm version prerelease --preid rc",
-    "docs": "npm run build && typedoc --out docs-generated"
+    "rc": "npm version prerelease --preid rc"
   },
   "dependencies": {
     "@ipld/dag-ucan": "^3.4.5",
@@ -172,7 +171,6 @@
     "multiformats": "^13.3.1",
     "npm-run-all": "catalog:",
     "playwright-test": "catalog:",
-    "typedoc": "catalog:",
     "typescript": "catalog:"
   },
   "eslintConfig": {
