@@ -265,14 +265,16 @@ catalogs:
 importers:
 
   .:
-    dependencies:
-      depcheck:
-        specifier: 'catalog:'
-        version: 1.4.7
     devDependencies:
       '@nx/js':
         specifier: 'catalog:'
         version: 20.4.0(@babel/traverse@7.26.5)(@swc/core@1.10.11(@swc/helpers@0.5.15))(@types/node@22.13.0)(nx@20.3.2(@swc/core@1.10.11(@swc/helpers@0.5.15)))(typescript@5.7.3)
+      depcheck:
+        specifier: 'catalog:'
+        version: 1.4.7
+      eslint:
+        specifier: 'catalog:'
+        version: 8.57.1
       lint-staged:
         specifier: 'catalog:'
         version: 13.3.0(enquirer@2.3.6)

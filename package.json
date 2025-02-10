@@ -13,12 +13,11 @@
     "nx": "catalog:",
     "prettier": "2.8.3",
     "react": "catalog:",
-    "typescript": "catalog:"
+    "typescript": "catalog:",
+    "depcheck": "catalog:",
+    "eslint": "catalog:"
   },
   "engines": {
     "node": ">=16"
-  },
-  "dependencies": {
-    "depcheck": "catalog:"
   }
 }
