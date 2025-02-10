@@ -1,4 +1,5 @@
 {
   "eslint.useFlatConfig": false,
-  "typescript.tsdk": "node_modules/typescript/lib"
+  "typescript.tsdk": "node_modules/typescript/lib",
+  "github-actions.workflows.pinned.workflows": [".github/workflows/ci.yml"]
 }
