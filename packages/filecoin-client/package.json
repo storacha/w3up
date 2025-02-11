@@ -47,10 +47,8 @@
     }
   },
   "files": [
-    "dist/src/**/*.js",
-    "dist/src/**/*.js.map",
-    "dist/src/**/*.d.ts",
-    "dist/src/**/*.d.ts.map"
+    "dist",
+    "!dist/**/*.js.map"
   ],
   "dependencies": {
     "@ipld/dag-ucan": "^3.4.5",

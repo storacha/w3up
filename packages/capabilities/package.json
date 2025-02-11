@@ -94,9 +94,8 @@
     }
   },
   "files": [
-    "src",
-    "dist/src/**/*.d.ts",
-    "dist/src/**/*.d.ts.map"
+    "dist",
+    "!dist/**/*.js.map"
   ],
   "dependencies": {
     "@ucanto/core": "catalog:",

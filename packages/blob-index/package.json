@@ -13,9 +13,8 @@
   "types": "dist/src/index.d.ts",
   "main": "src/index.js",
   "files": [
-    "src",
-    "test",
-    "dist"
+    "dist",
+    "!dist/**/*.js.map"
   ],
   "exports": {
     ".": "./dist/index.js",

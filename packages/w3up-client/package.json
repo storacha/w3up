@@ -4,8 +4,8 @@
   "description": "Client for the storacha.network w3up api",
   "license": "Apache-2.0 OR MIT",
   "type": "module",
-  "main": "dist/src/index.js",
-  "types": "dist/src/index.d.ts",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "typesVersions": {
     "*": {
       "*": [
@@ -114,7 +114,8 @@
     "access": "public"
   },
   "files": [
-    "dist"
+    "dist",
+    "!dist/**/*.js.map"
   ],
   "// scripts": "The `test-:*` scripts are internal only, to be run by `npm-run-all` in parallel with the mock servers.",
   "scripts": {

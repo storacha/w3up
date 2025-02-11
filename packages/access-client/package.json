@@ -11,8 +11,8 @@
   "author": "Hugo Dias <hugomrdias@gmail.com> (hugodias.me)",
   "license": "(Apache-2.0 OR MIT)",
   "type": "module",
-  "types": "dist/src/index.d.ts",
-  "main": "dist/src/index.js",
+  "types": "dist/index.d.ts",
+  "main": "dist/index.js",
   "scripts": {
     "dev": "tsc --build --watch --preserveWatchOutput",
     "clean": "rm -rf dist *.tsbuildinfo",
@@ -91,10 +91,8 @@
     }
   },
   "files": [
-    "dist/src/**/*.js",
-    "dist/src/**/*.js.map",
-    "dist/src/**/*.d.ts",
-    "dist/src/**/*.d.ts.map"
+    "dist",
+    "!dist/**/*.js.map"
   ],
   "dependencies": {
     "@ipld/car": "^5.1.1",

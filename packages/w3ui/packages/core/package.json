@@ -16,8 +16,8 @@
     "test:watch": "vitest watch"
   },
   "files": [
-    "dist/*",
-    "src"
+    "dist",
+    "!dist/**/*.js.map"
   ],
   "repository": {
     "type": "git",

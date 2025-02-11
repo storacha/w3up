@@ -11,10 +11,8 @@
     "directory": "packages/upload-api"
   },
   "files": [
-    "src",
-    "test",
-    "dist/**/*.d.ts",
-    "dist/**/*.d.ts.map"
+    "dist",
+    "!dist/**/*.js.map"
   ],
   "typesVersions": {
     "*": {

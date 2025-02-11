@@ -10,10 +10,8 @@
     "directory": "packages/filecoin-api"
   },
   "files": [
-    "src",
-    "test",
-    "dist/**/*.d.ts",
-    "dist/**/*.d.ts.map"
+    "dist",
+    "!dist/**/*.d.ts.map"
   ],
   "typesVersions": {
     "*": {

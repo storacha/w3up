@@ -13,8 +13,8 @@
     "lint:fix": "echo 'Linting in @w3ui/example-react-components is temporarily disabled while we resolve version issues.'"
   },
   "files": [
-    "dist/*",
-    "src"
+    "dist",
+    "!dist/**/*.js.map"
   ],
   "repository": {
     "type": "git",
