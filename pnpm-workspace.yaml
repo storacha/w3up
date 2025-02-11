@@ -47,7 +47,7 @@ catalog:
   crypto-random-string: ^5.0.0
   depcheck: ^1.4.3
   eslint: ^8.53.0
-  eslint-plugin-jsdoc: ^46.8.2
+  eslint-plugin-jsdoc: ^50.6.3
   eslint-plugin-react: ^7.33.2
   eslint-plugin-react-hooks: ^4.6.0
   eslint-plugin-react-refresh: ^0.4.4
