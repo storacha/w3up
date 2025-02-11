@@ -74,8 +74,8 @@ export interface BlobModel {
 }
 
 export interface DeregistrationData {
-  space: SpaceDID,
-  digest: MultihashDigest,
+  space: SpaceDID
+  digest: MultihashDigest
   cause: Link
 }
 

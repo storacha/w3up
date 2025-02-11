@@ -12,7 +12,7 @@ export const test = {
   'an account can get plan information': async (assert, context) => {
     const account = 'did:mailto:example.com:alice'
     const billingID = 'stripe:abc123'
-    const product = 'did:web:test.upload.storacha.network'
+    const product = 'did:web:test.up.storacha.network'
     await context.plansStorage.initialize(account, billingID, product)
     const connection = connect({
       id: context.id,

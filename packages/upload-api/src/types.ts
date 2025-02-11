@@ -37,7 +37,7 @@ import { ServiceContext as FilecoinServiceContext } from '@storacha/filecoin-api
 import {
   Service as LegacyService,
   StoreServiceContext as LegacyStoreServiceContext,
-  AdminServiceContext as LegacyAdminServiceContext
+  AdminServiceContext as LegacyAdminServiceContext,
 } from '@web3-storage/upload-api'
 import { DelegationsStorage as Delegations } from './types/delegations.js'
 import { ProvisionsStorage as Provisions } from './types/provisions.js'
@@ -462,7 +462,10 @@ export interface ServiceContext
     UsageServiceContext,
     LegacyStoreServiceContext {}
 
-export interface UcantoServerContext extends ServiceContext, RevocationChecker, PrincipalResolver {
+export interface UcantoServerContext
+  extends ServiceContext,
+    RevocationChecker,
+    PrincipalResolver {
   id: Signer
   codec?: InboundCodec
   errorReporter: ErrorReporter

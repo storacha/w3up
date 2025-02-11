@@ -834,7 +834,7 @@ export const testClient = {
   defaultProvider: {
     'should return the connection ID': async (assert) => {
       const alice = new Client(await AgentData.create())
-      assert.equal(alice.defaultProvider(), 'did:web:upload.storacha.network')
+      assert.equal(alice.defaultProvider(), 'did:web:up.storacha.network')
     },
   },
 
