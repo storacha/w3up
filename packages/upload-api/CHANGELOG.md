@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.3.4](https://github.com/storacha/upload-service/compare/upload-api-v1.3.3...upload-api-v1.3.4) (2025-02-11)
+
+
+### Fixes
+
+* store w3s accept invocation ([#142](https://github.com/storacha/upload-service/issues/142)) ([e0c509d](https://github.com/storacha/upload-service/commit/e0c509dec75386e3275abaca1e94c4de0ccefacd))
+* use up.storacha.network ([#144](https://github.com/storacha/upload-service/issues/144)) ([ac6b5b4](https://github.com/storacha/upload-service/commit/ac6b5b4b9881f9889e99e18b38fbfb302b4fb3b5))
+
 ## [1.3.3](https://github.com/storacha/upload-service/compare/upload-api-v1.3.2...upload-api-v1.3.3) (2025-01-29)
 
 
