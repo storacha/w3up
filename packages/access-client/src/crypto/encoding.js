@@ -91,6 +91,6 @@ export function decompressP256(comp) {
   yPadded.set(y, offset)
 
   // concat coords & prepend P-256 prefix
-  const publicKey = uint8arrays.concat([[0x04], x, yPadded])
+  const publicKey = uint8arrays.concat([new Uint8Array([0x04]), x, yPadded])
   return publicKey
 }

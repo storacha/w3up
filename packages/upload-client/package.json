@@ -83,7 +83,7 @@
     "@ipld/car": "^5.2.2",
     "@ipld/dag-cbor": "^9.0.6",
     "@ipld/dag-ucan": "^3.4.0",
-    "@ipld/unixfs": "^2.1.1",
+    "@ipld/unixfs": "^3.0.0",
     "@ucanto/client": "^9.0.1",
     "@ucanto/core": "^10.0.1",
     "@ucanto/interface": "^10.0.1",
@@ -93,8 +93,8 @@
     "@web3-storage/data-segment": "^5.1.0",
     "@web3-storage/filecoin-client": "workspace:^",
     "ipfs-utils": "^9.0.14",
-    "multiformats": "^12.1.2",
-    "p-retry": "^5.1.2",
+    "multiformats": "^13.3.2",
+    "p-retry": "^6.2.1",
     "varint": "^6.0.0"
   },
   "devDependencies": {
