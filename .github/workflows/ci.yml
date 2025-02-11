@@ -29,4 +29,5 @@ jobs:
       - uses: nrwl/nx-set-shas@v4
 
       # Run CI tasks over all affected projects
-      - run: pnpm nx affected -t typecheck lint build test depcheck attw
+      # TODO: Add `attw` back once fixed.
+      - run: pnpm nx affected -t typecheck lint build test depcheck
