@@ -1,4 +1,5 @@
 {
   "ignoreRules": ["cjs-resolves-to-esm"],
-  "excludeEntrypoints": ["browser.min.js"]
+  "excludeEntrypoints": ["browser.min.js"],
+  "profile": "node16"
 }
