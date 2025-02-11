@@ -36,7 +36,12 @@ export { Account, Space }
 import ago from 's-ago'
 
 /**
- *
+ * @import { MultihashDigest } from 'multiformats'
+ * @import { code as pieceHashCode } from '@web3-storage/data-segment/dist/src/multihash'
+ */
+
+/**
+ * Claim the access capability for the current agent.
  */
 export async function accessClaim() {
   const client = await getClient()
@@ -149,7 +154,7 @@ export async function upload(firstPath, opts) {
   }
 
   spinner.start('Storing')
-  /** @type {(o?: import('@storacha/client/src/types').UploadOptions) => Promise<import('@storacha/client/src/types').AnyLink>} */
+  /** @type {(o?: import('@storacha/client/types').UploadOptions) => Promise<import('@storacha/client/types').AnyLink>} */
   const uploadFn = opts?.car
     ? client.uploadCAR.bind(client, files[0])
     : files.length === 1 && opts?.wrap === false
@@ -176,7 +181,9 @@ export async function upload(firstPath, opts) {
         hasher.digestInto(bytes, 0, true)
         hasher.free()
 
-        return Digest.decode(bytes)
+        return /** @type {MultihashDigest<typeof pieceHashCode>} */ (
+          Digest.decode(bytes)
+        )
       },
     },
     onShardStored: ({ cid, size, piece }) => {
@@ -350,7 +357,7 @@ export async function spaceInfo(opts) {
     )
   }
 
-  /** @type {import('@storacha/access/types').SpaceInfoResult} */
+  /** @type {import('@storacha/access/dist/types').SpaceInfoResult} */
   let info
   try {
     info = await client.capability.space.info(spaceDID)
