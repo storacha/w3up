@@ -35,9 +35,9 @@
     "@ucanto/interface": "^10.0.1",
     "@ucanto/principal": "^9.0.1",
     "@ucanto/transport": "catalog:",
-    "@web3-storage/access": "^20.0.1",
-    "@web3-storage/did-mailto": "catalog:",
-    "@web3-storage/w3up-client": "17.1.2"
+    "@storacha/access": "workspace:^",
+    "@storacha/did-mailto": "workspace:^",
+    "@storacha/client": "workspace:^"
   },
   "eslintConfig": {
     "extends": [

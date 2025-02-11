@@ -7,6 +7,15 @@
     },
     {
       "path": "./tsconfig.spec.json"
+    },
+    {
+      "path": "../../../w3up-client"
+    },
+    {
+      "path": "../../../did-mailto"
+    },
+    {
+      "path": "../../../access-client"
     }
   ]
 }

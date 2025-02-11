@@ -1,5 +1,15 @@
 {
   "extends": "./tsconfig.json",
   "include": ["src"],
-  "references": []
+  "references": [
+    {
+      "path": "../../../w3up-client/tsconfig.lib.json"
+    },
+    {
+      "path": "../../../did-mailto/tsconfig.lib.json"
+    },
+    {
+      "path": "../../../access-client/tsconfig.lib.json"
+    }
+  ]
 }

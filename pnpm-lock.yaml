@@ -93,9 +93,6 @@ catalogs:
     '@web-std/blob':
       specifier: ^3.0.5
       version: 3.0.5
-    '@web3-storage/did-mailto':
-      specifier: ^2.1.0
-      version: 2.1.0
     '@web3-storage/sigv4':
       specifier: ^1.0.2
       version: 1.0.2
@@ -1294,6 +1291,15 @@ importers:
       '@ipld/dag-ucan':
         specifier: ^3.4.0
         version: 3.4.5
+      '@storacha/access':
+        specifier: workspace:^
+        version: link:../../../access-client
+      '@storacha/client':
+        specifier: workspace:^
+        version: link:../../../w3up-client
+      '@storacha/did-mailto':
+        specifier: workspace:^
+        version: link:../../../did-mailto
       '@ucanto/client':
         specifier: 'catalog:'
         version: 9.0.1
@@ -1306,15 +1312,6 @@ importers:
       '@ucanto/transport':
         specifier: 'catalog:'
         version: 9.1.1
-      '@web3-storage/access':
-        specifier: ^20.0.1
-        version: 20.1.1
-      '@web3-storage/did-mailto':
-        specifier: 'catalog:'
-        version: 2.1.0
-      '@web3-storage/w3up-client':
-        specifier: 17.1.2
-        version: 17.1.2
     devDependencies:
       bunchee:
         specifier: 'catalog:'
@@ -3433,10 +3430,6 @@ packages:
 
   '@web3-storage/w3up-client@16.5.2':
     resolution: {integrity: sha512-yJNh3r2QWZbn2jQ1ZfsnDJ1HIyhv9akEXeFWx+xFxKViT6df8IzT6BtCnxxFL2ED3Tx7rKVVG1pNatKRO3T+Uw==}
-    engines: {node: '>=18'}
-
-  '@web3-storage/w3up-client@17.1.2':
-    resolution: {integrity: sha512-vS6pvbIfr0iUorH7LBGm24GDBMQ4xdJRlFTlLWktfEAqzBiPE3v7lXDDF4suXl9DzjkLYK8+eSuSqb5+zru2eA==}
     engines: {node: '>=18'}
 
   '@yarnpkg/lockfile@1.1.0':
@@ -9754,23 +9747,6 @@ snapshots:
       '@web3-storage/access': 20.1.1
       '@web3-storage/blob-index': 1.0.5
       '@web3-storage/capabilities': 17.4.1
-      '@web3-storage/did-mailto': 2.1.0
-      '@web3-storage/filecoin-client': 3.3.5
-      '@web3-storage/upload-client': 17.1.3
-    transitivePeerDependencies:
-      - encoding
-
-  '@web3-storage/w3up-client@17.1.2':
-    dependencies:
-      '@ipld/dag-ucan': 3.4.5
-      '@ucanto/client': 9.0.1
-      '@ucanto/core': 10.2.1
-      '@ucanto/interface': 10.1.1
-      '@ucanto/principal': 9.0.2
-      '@ucanto/transport': 9.1.1
-      '@web3-storage/access': 20.1.1
-      '@web3-storage/blob-index': 1.0.5
-      '@web3-storage/capabilities': 18.0.1
       '@web3-storage/did-mailto': 2.1.0
       '@web3-storage/filecoin-client': 3.3.5
       '@web3-storage/upload-client': 17.1.3

@@ -1,4 +1,4 @@
-import type { ServiceConf, Service } from '@web3-storage/w3up-client/types'
+import type { ServiceConf, Service } from '@storacha/client/types'
 import { connect } from '@ucanto/client'
 import { CAR, HTTP } from '@ucanto/transport'
 import type { ConnectionView, Principal } from '@ucanto/interface'
