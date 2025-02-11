@@ -26,6 +26,7 @@ module.exports = {
       'warn',
       {
         publicOnly: true,
+        enableFixer: false,
       },
     ],
     'jsdoc/require-returns': 'off',
