@@ -1,5 +1,5 @@
-import { Authenticator, Provider, useW3 } from '@w3ui/react'
-import { AuthenticationEnsurer } from '@w3ui/example-react-components'
+import { Authenticator, Provider, useW3 } from '@storacha/ui-react'
+import { AuthenticationEnsurer } from '@storacha/ui-example-react-components'
 
 function Identity() {
   const [{ client, accounts }] = useW3()

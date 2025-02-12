@@ -1,7 +1,7 @@
-import type { Client, Space, Account, ServiceConfig } from '@w3ui/core'
+import type { Client, Space, Account, ServiceConfig } from '@storacha/ui-core'
 
 import { useState, useEffect, useCallback } from 'react'
-import { STORE_SAVE_EVENT, createClient } from '@w3ui/core'
+import { STORE_SAVE_EVENT, createClient } from '@storacha/ui-core'
 
 export type DatamodelProps = ServiceConfig & {
   receiptsEndpoint?: URL
@@ -44,7 +44,7 @@ export function useDatamodel({
   }, [setupClient])
 
   // set up event listeners to refresh accounts and spaces when
-  // the store:save event from @w3ui/core happens
+  // the store:save event from @storacha/ui-core happens
   useEffect(() => {
     if (client === undefined || events === undefined) return
 

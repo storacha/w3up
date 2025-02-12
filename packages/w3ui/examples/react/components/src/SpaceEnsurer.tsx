@@ -1,4 +1,4 @@
-import { useW3 } from '@w3ui/react'
+import { useW3 } from '@storacha/ui-react'
 import { useEffect, ReactNode } from 'react'
 import { Loader } from './Loader.js'
 

@@ -4,12 +4,12 @@ import {
   Uploader,
   WrapInDirectoryCheckbox,
   useUploader,
-} from '@w3ui/react'
+} from '@storacha/ui-react'
 import {
   AuthenticationEnsurer,
   SpaceEnsurer,
   UploaderForm,
-} from '@w3ui/example-react-components'
+} from '@storacha/ui-example-react-components'
 import { useState } from 'react'
 
 function Options({

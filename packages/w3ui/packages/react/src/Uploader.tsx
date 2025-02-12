@@ -6,7 +6,7 @@ import type {
   HTMLProps,
 } from 'ariakit-react-utils'
 import type { ChangeEvent, FormEventHandler } from 'react'
-import type { AnyLink, CARMetadata, ProgressStatus } from '@w3ui/core'
+import type { AnyLink, CARMetadata, ProgressStatus } from '@storacha/ui-core'
 
 import React, {
   useContext,

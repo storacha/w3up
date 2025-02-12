@@ -4,13 +4,13 @@ import {
   Uploader,
   useW3,
   UploadListSuccess,
-} from '@w3ui/react'
+} from '@storacha/ui-react'
 import {
   AuthenticationEnsurer,
   Loader,
   SpaceEnsurer,
   UploaderForm,
-} from '@w3ui/example-react-components'
+} from '@storacha/ui-example-react-components'
 import useSWR from 'swr'
 
 interface PageProps {

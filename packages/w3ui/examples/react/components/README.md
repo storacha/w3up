@@ -5,7 +5,7 @@ Reusable components for react examples
 ## Install
 
 ```sh
-npm install @w3ui/react
+npm install @storacha/ui-react
 ```
 
 ## Usage

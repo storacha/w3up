@@ -1,4 +1,8 @@
-import type { ContextState, ContextActions, ServiceConfig } from '@w3ui/core'
+import type {
+  ContextState,
+  ContextActions,
+  ServiceConfig,
+} from '@storacha/ui-core'
 
 import { createContext, useContext, ReactNode } from 'react'
 import { useDatamodel } from '../hooks.js'

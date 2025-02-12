@@ -1,9 +1,9 @@
-import { Authenticator, Provider, Uploader } from '@w3ui/react'
+import { Authenticator, Provider, Uploader } from '@storacha/ui-react'
 import {
   AuthenticationEnsurer,
   SpaceEnsurer,
   UploaderForm,
-} from '@w3ui/example-react-components'
+} from '@storacha/ui-example-react-components'
 
 function App() {
   return (

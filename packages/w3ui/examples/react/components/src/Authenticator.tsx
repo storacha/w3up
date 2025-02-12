@@ -1,5 +1,5 @@
 import { ReactNode } from 'react'
-import { Authenticator, useAuthenticator } from '@w3ui/react'
+import { Authenticator, useAuthenticator } from '@storacha/ui-react'
 import { Loader } from './Loader.js'
 
 export function AuthenticationForm(): ReactNode {

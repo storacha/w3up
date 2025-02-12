@@ -5,8 +5,8 @@ W3UI core - utilities useful in any UI framework.
 ## Install
 
 ```sh
-npm install @w3ui/core
-``` 
+npm install @storacha/ui-core
+```
 
 ## Usage
 

@@ -1,5 +1,5 @@
 {
-  "name": "@w3ui/example-react-components",
+  "name": "@storacha/ui-example-react-components",
   "version": "1.2.0",
   "description": "Components for React examples",
   "type": "module",
@@ -9,8 +9,8 @@
   "scripts": {
     "build": "bunchee",
     "clean": "rm -rf dist *.tsbuildinfo",
-    "lint": "echo 'Linting in @w3ui/example-react-components is temporarily disabled while we resolve version issues.'",
-    "lint:fix": "echo 'Linting in @w3ui/example-react-components is temporarily disabled while we resolve version issues.'"
+    "lint": "echo 'Linting in @storacha/ui-example-react-components is temporarily disabled while we resolve version issues.'",
+    "lint:fix": "echo 'Linting in @storacha/ui-example-react-components is temporarily disabled while we resolve version issues.'"
   },
   "files": [
     "dist",
@@ -24,7 +24,7 @@
   "license": "Apache-2.0 OR MIT",
   "dependencies": {
     "@heroicons/react": "catalog:",
-    "@w3ui/react": "workspace:^",
+    "@storacha/ui-react": "workspace:^",
     "react": "catalog:"
   },
   "devDependencies": {

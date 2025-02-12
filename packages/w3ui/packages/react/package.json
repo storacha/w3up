@@ -1,5 +1,5 @@
 {
-  "name": "@w3ui/react",
+  "name": "@storacha/ui-react",
   "version": "2.5.5",
   "description": "React adapter for w3ui.",
   "type": "module",
@@ -8,8 +8,8 @@
   "scripts": {
     "dev": "bunchee --watch",
     "clean": "rm -rf dist *.tsbuildinfo",
-    "lint": "echo 'Linting in @w3ui/react is temporarily disabled while we resolve version issues.'",
-    "lint:fix": "echo 'Linting in @w3ui/react is temporarily disabled while we resolve version issues.'",
+    "lint": "echo 'Linting in @storacha/ui-react is temporarily disabled while we resolve version issues.'",
+    "lint:fix": "echo 'Linting in @storacha/ui-react is temporarily disabled while we resolve version issues.'",
     "test": "vitest run",
     "test:watch": "vitest watch"
   },
@@ -30,7 +30,7 @@
   "dependencies": {
     "@ariakit/react": "catalog:",
     "@ariakit/react-core": "catalog:",
-    "@w3ui/core": "workspace:^",
+    "@storacha/ui-core": "workspace:^",
     "ariakit-react-utils": "catalog:"
   },
   "devDependencies": {
@@ -57,7 +57,7 @@
   },
   "eslintConfig": {
     "extends": [
-      "../../eslint.packages.js",
+      "@storacha/ui-eslint-config",
       "plugin:react-hooks/recommended"
     ]
   },

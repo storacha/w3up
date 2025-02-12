@@ -1016,21 +1016,12 @@ importers:
         specifier: 'catalog:'
         version: 5.7.3
 
-  packages/w3ui:
-    dependencies:
-      '@typescript-eslint/eslint-plugin':
-        specifier: ^5.62.0
-        version: 5.62.0(@typescript-eslint/parser@5.62.0(eslint@8.57.1)(typescript@4.9.5))(eslint@8.57.1)(typescript@4.9.5)
-      hd-scripts:
-        specifier: 'catalog:'
-        version: 4.1.0(enquirer@2.3.6)
-
   packages/w3ui/examples/react/components:
     dependencies:
       '@heroicons/react':
         specifier: 'catalog:'
         version: 2.2.0(react@18.3.1)
-      '@w3ui/react':
+      '@storacha/ui-react':
         specifier: workspace:^
         version: link:../../../packages/react
       react:
@@ -1055,10 +1046,10 @@ importers:
       '@heroicons/react':
         specifier: 'catalog:'
         version: 2.2.0(react@18.3.1)
-      '@w3ui/example-react-components':
+      '@storacha/ui-example-react-components':
         specifier: workspace:^
         version: link:../components
-      '@w3ui/react':
+      '@storacha/ui-react':
         specifier: workspace:^
         version: link:../../../packages/react
       react:
@@ -1107,10 +1098,10 @@ importers:
       '@heroicons/react':
         specifier: 'catalog:'
         version: 2.2.0(react@18.3.1)
-      '@w3ui/example-react-components':
+      '@storacha/ui-example-react-components':
         specifier: workspace:^
         version: link:../components
-      '@w3ui/react':
+      '@storacha/ui-react':
         specifier: workspace:^
         version: link:../../../packages/react
       react:
@@ -1159,10 +1150,10 @@ importers:
       '@heroicons/react':
         specifier: 'catalog:'
         version: 2.2.0(react@18.3.1)
-      '@w3ui/example-react-components':
+      '@storacha/ui-example-react-components':
         specifier: workspace:^
         version: link:../components
-      '@w3ui/react':
+      '@storacha/ui-react':
         specifier: workspace:^
         version: link:../../../packages/react
       react:
@@ -1211,10 +1202,10 @@ importers:
       '@heroicons/react':
         specifier: 'catalog:'
         version: 2.2.0(react@18.3.1)
-      '@w3ui/example-react-components':
+      '@storacha/ui-example-react-components':
         specifier: workspace:^
         version: link:../components
-      '@w3ui/react':
+      '@storacha/ui-react':
         specifier: workspace:^
         version: link:../../../packages/react
       react:
@@ -1263,19 +1254,19 @@ importers:
 
   packages/w3ui/examples/test/playwright:
     dependencies:
-      '@w3ui/example-react-components':
+      '@storacha/ui-example-react-components':
         specifier: workspace:^
         version: link:../../react/components
-      '@w3ui/example-react-file-upload':
+      '@storacha/ui-example-react-file-upload':
         specifier: workspace:^
         version: link:../../react/file-upload
-      '@w3ui/example-react-multi-file-upload':
+      '@storacha/ui-example-react-multi-file-upload':
         specifier: workspace:^
         version: link:../../react/multi-file-upload
-      '@w3ui/example-react-sign-up-in':
+      '@storacha/ui-example-react-sign-up-in':
         specifier: workspace:^
         version: link:../../react/sign-up-in
-      '@w3ui/example-react-uploads-list':
+      '@storacha/ui-example-react-uploads-list':
         specifier: workspace:^
         version: link:../../react/uploads-list
     devDependencies:
@@ -1313,6 +1304,9 @@ importers:
         specifier: 'catalog:'
         version: 9.1.1
     devDependencies:
+      '@storacha/ui-eslint-config':
+        specifier: workspace:^
+        version: link:../eslint-config
       bunchee:
         specifier: 'catalog:'
         version: 5.6.2(typescript@5.7.3)
@@ -1326,6 +1320,15 @@ importers:
         specifier: 'catalog:'
         version: 1.6.0(@types/node@22.13.0)(happy-dom@12.10.3)(jsdom@23.2.0)(terser@5.37.0)
 
+  packages/w3ui/packages/eslint-config:
+    dependencies:
+      '@typescript-eslint/eslint-plugin':
+        specifier: ^5.62.0
+        version: 5.62.0(@typescript-eslint/parser@5.62.0(eslint@8.57.1)(typescript@4.9.5))(eslint@8.57.1)(typescript@4.9.5)
+      hd-scripts:
+        specifier: 'catalog:'
+        version: 4.1.0(enquirer@2.3.6)
+
   packages/w3ui/packages/react:
     dependencies:
       '@ariakit/react':
@@ -1334,7 +1337,7 @@ importers:
       '@ariakit/react-core':
         specifier: 'catalog:'
         version: 0.3.14(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      '@w3ui/core':
+      '@storacha/ui-core':
         specifier: workspace:^
         version: link:../core
       ariakit-react-utils:

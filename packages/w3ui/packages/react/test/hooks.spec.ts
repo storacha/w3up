@@ -7,7 +7,7 @@ import { connect } from '@ucanto/client'
 import { CAR } from '@ucanto/transport'
 
 import { useDatamodel } from '../src/hooks.js'
-import { Service } from '@w3ui/core'
+import { Service } from '@storacha/ui-core'
 
 test('should create a new client instance if and only if servicePrincipal or connection change', async () => {
   // A channel that ignores and never completes requests

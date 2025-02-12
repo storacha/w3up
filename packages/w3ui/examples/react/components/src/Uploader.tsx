@@ -6,7 +6,7 @@ import {
   CARMetadata,
   UploadProgress,
   AnyLink,
-} from '@w3ui/react'
+} from '@storacha/ui-react'
 import { UploadLoader } from './Loader.js'
 
 function humanFileSize(bytes: number): string {

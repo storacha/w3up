@@ -1,5 +1,5 @@
 {
-  "name": "@w3ui/core",
+  "name": "@storacha/ui-core",
   "version": "2.4.3",
   "description": "w3ui core.",
   "type": "module",
@@ -10,8 +10,8 @@
     "dev": "bunchee --watch",
     "build": "bunchee",
     "clean": "rm -rf dist *.tsbuildinfo",
-    "lint": "echo 'Linting in @w3ui/core is temporarily disabled while we resolve version issues.'",
-    "lint:fix": "echo 'Linting in @w3ui/core is temporarily disabled while we resolve version issues.'",
+    "lint": "echo 'Linting in @storacha/ui-core is temporarily disabled while we resolve version issues.'",
+    "lint:fix": "echo 'Linting in @storacha/ui-core is temporarily disabled while we resolve version issues.'",
     "test": "vitest run",
     "test:watch": "vitest watch"
   },
@@ -41,7 +41,7 @@
   },
   "eslintConfig": {
     "extends": [
-      "../../eslint.packages.js"
+      "@storacha/ui-eslint-config"
     ]
   },
   "eslintIgnore": [
@@ -49,6 +49,7 @@
     "dist"
   ],
   "devDependencies": {
+    "@storacha/ui-eslint-config": "workspace:^",
     "bunchee": "catalog:",
     "fake-indexeddb": "catalog:",
     "happy-dom": "catalog:",

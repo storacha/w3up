@@ -1,5 +1,5 @@
 {
-  "name": "@w3ui/example-react-file-upload",
+  "name": "@storacha/ui-example-react-file-upload",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -13,8 +13,8 @@
   },
   "dependencies": {
     "@heroicons/react": "catalog:",
-    "@w3ui/example-react-components": "workspace:^",
-    "@w3ui/react": "workspace:^",
+    "@storacha/ui-example-react-components": "workspace:^",
+    "@storacha/ui-react": "workspace:^",
     "react": "catalog:",
     "react-dom": "catalog:"
   },

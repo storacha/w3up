@@ -1,5 +1,5 @@
 {
-  "name": "@w3ui/example-test-playwright",
+  "name": "@storacha/ui-example-test-playwright",
   "private": true,
   "version": "1.0.0",
   "type": "module",
@@ -16,10 +16,10 @@
     "serve": "catalog:"
   },
   "dependencies": {
-    "@w3ui/example-react-components": "workspace:^",
-    "@w3ui/example-react-file-upload": "workspace:^",
-    "@w3ui/example-react-multi-file-upload": "workspace:^",
-    "@w3ui/example-react-sign-up-in": "workspace:^",
-    "@w3ui/example-react-uploads-list": "workspace:^"
+    "@storacha/ui-example-react-components": "workspace:^",
+    "@storacha/ui-example-react-file-upload": "workspace:^",
+    "@storacha/ui-example-react-multi-file-upload": "workspace:^",
+    "@storacha/ui-example-react-sign-up-in": "workspace:^",
+    "@storacha/ui-example-react-uploads-list": "workspace:^"
   }
 }
