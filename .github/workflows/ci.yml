@@ -22,11 +22,14 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           cache: 'pnpm'
-      - name: Install dependencies
+      - name: Install npm package dependencies
         run: pnpm install --frozen-lockfile
 
       # Set the base and head that `nx affected` will use
       - uses: nrwl/nx-set-shas@v4
+
+      - name: Prepare environment
+        run: pnpm nx affected -t prepare-environment
 
       # Run CI tasks over all affected projects
       # TODO: Add `attw` back once fixed.

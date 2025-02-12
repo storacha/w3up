@@ -7,7 +7,7 @@
     "serve": "serve node_modules/@w3ui",
     "test": "playwright test",
     "test:debug": "playwright test --project=chromium --headed",
-    "install-playwright": "playwright install"
+    "prepare-environment": "playwright install --with-deps"
   },
   "author": "olzilla",
   "license": "Apache-2.0 OR MIT",
