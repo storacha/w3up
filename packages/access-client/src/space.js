@@ -9,18 +9,21 @@ import * as Provider from './provider.js'
 /**
  * Data model for the (owned) space.
  *
- * @typedef {object} Model
- * @property {ED25519.EdSigner} signer
- * @property {string} name
- * @property {API.Agent} [agent]
+ * @typedef {{
+ *  signer: ED25519.EdSigner;
+ *   name: string;
+ *   agent?: API.Agent<S>;
+ * }} Model
+ * @template {Record<string, any>} [S=API.Service]
  */
 
 /**
  * Generates a new space.
  *
+ * @template {Record<string, any>} [S=API.Service]
  * @param {object} options
  * @param {string} options.name
- * @param {API.Agent} [options.agent]
+ * @param {API.Agent<S>} [options.agent]
  */
 export const generate = async ({ name, agent }) => {
   const { signer } = await ED25519.generate()
@@ -62,7 +65,8 @@ export const toMnemonic = ({ signer }) => {
  * specified `account`. At the moment we only allow `did:mailto` principal
  * to be used as an `account`.
  *
- * @param {Model} space
+ * @template {Record<string, any>} [S=API.Service]
+ * @param {Model<S>} space
  * @param {API.AccountDID} account
  */
 export const createRecovery = (space, account) =>
@@ -83,7 +87,8 @@ export const SESSION_LIFETIME = 60 * 60 * 24 * 365
  * is valid for 1 year and gives access to all capabilities on the space
  * that are needed to use the space.
  *
- * @param {Model} space
+ * @template {Record<string, any>} [S=API.Service]
+ * @param {Model<S>} space
  * @param {object} options
  * @param {API.Principal} options.audience
  * @param {API.Access} [options.access]
@@ -132,10 +137,12 @@ const toCapabilities = (allow) => {
 /**
  * Represents an owned space, meaning a space for which we have a private key
  * and consequently have full authority over.
+ *
+ * @template {Record<string, any>} [S=API.Service]
  */
 export class OwnedSpace {
   /**
-   * @param {Model} model
+   * @param {Model<S>} model
    */
   constructor(model) {
     this.model = model
@@ -166,7 +173,7 @@ export class OwnedSpace {
    * Saves account in the agent store so it can be accessed across sessions.
    *
    * @param {object} input
-   * @param {API.Agent} [input.agent]
+   * @param {API.Agent<S>} [input.agent]
    * @returns {Promise<API.Result<API.Unit, Error>>}
    */
   async save({ agent = this.model.agent } = {}) {
@@ -184,7 +191,7 @@ export class OwnedSpace {
   /**
    * @param {Authorization} authorization
    * @param {object} options
-   * @param {API.Agent} [options.agent]
+   * @param {API.Agent<S>} [options.agent]
    */
   provision({ proofs }, { agent = this.model.agent } = {}) {
     if (!agent) {
@@ -264,10 +271,11 @@ export const fromDelegation = (delegation) => {
  */
 
 /**
+ * @template {Record<string, any>} [S=API.Service]
  * @param {Space} space
  * @param {object} options
  * @param {API.Delegation[]} options.proofs
- * @param {API.Agent} options.agent
+ * @param {API.Agent<S>} options.agent
  */
 export const provision = async (space, { proofs, agent }) => {
   const [capability] = proofs[0].capabilities
