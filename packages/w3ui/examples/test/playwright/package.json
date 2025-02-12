@@ -4,7 +4,7 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "serve": "serve node_modules/@w3ui",
+    "serve": "serve node_modules/@storacha",
     "test": "playwright test",
     "test-debug": "playwright test --project=chromium --headed",
     "prepare-environment": "playwright install --with-deps"
