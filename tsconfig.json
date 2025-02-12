@@ -54,6 +54,9 @@
     },
     {
       "path": "./packages/w3ui/examples/react/sign-up-in"
+    },
+    {
+      "path": "./packages/w3ui/examples/test/playwright"
     }
   ]
 }

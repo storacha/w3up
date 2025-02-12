@@ -11,3 +11,4 @@ for (const ui of ['react']) {
     await expect(page.getByText('Verify your email address!')).toBeVisible()
   })
 }
+//

@@ -1,0 +1,24 @@
+{
+  "extends": "../../../../../tsconfig.base.json",
+  "files": [],
+  "references": [
+    {
+      "path": "./tsconfig.spec.json"
+    },
+    {
+      "path": "../../react/uploads-list"
+    },
+    {
+      "path": "../../react/sign-up-in"
+    },
+    {
+      "path": "../../react/multi-file-upload"
+    },
+    {
+      "path": "../../react/file-upload"
+    },
+    {
+      "path": "../../react/components"
+    }
+  ]
+}
