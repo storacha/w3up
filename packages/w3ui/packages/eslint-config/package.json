@@ -1,0 +1,11 @@
+{
+  "name": "@storacha/ui-eslint-config",
+  "private": true,
+  "files": [
+    "eslint.packages.js"
+  ],
+  "dependencies": {
+    "@typescript-eslint/eslint-plugin": "^5.62.0",
+    "hd-scripts": "catalog:"
+  }
+}
