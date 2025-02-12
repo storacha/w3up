@@ -62,34 +62,6 @@
       "import": "./dist/stores/*.js"
     }
   },
-  "typesVersions": {
-    "*": {
-      "agent": [
-        "dist/src/agent"
-      ],
-      "space": [
-        "dist/src/space"
-      ],
-      "access": [
-        "dist/src/access"
-      ],
-      "provider": [
-        "dist/src/provider"
-      ],
-      "types": [
-        "dist/src/types"
-      ],
-      "drivers/*": [
-        "dist/src/drivers/*"
-      ],
-      "stores/*": [
-        "dist/src/stores/*"
-      ],
-      "encoding": [
-        "dist/src/encoding"
-      ]
-    }
-  },
   "files": [
     "dist",
     "!dist/**/*.js.map"

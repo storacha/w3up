@@ -42,37 +42,6 @@
     "./unixfs": "./dist/unixfs.js",
     "./types": "./dist/types.js"
   },
-  "typesVersions": {
-    "*": {
-      "blob": [
-        "dist/src/blob/index.d.ts"
-      ],
-      "car": [
-        "dist/src/car.d.ts"
-      ],
-      "fetch-with-upload-progress": [
-        "dist/src/fetch-with-upload-progress.d.ts"
-      ],
-      "index": [
-        "dist/src/index/index.d.ts"
-      ],
-      "sharding": [
-        "dist/src/sharding.d.ts"
-      ],
-      "upload": [
-        "dist/src/upload/index.d.ts"
-      ],
-      "store": [
-        "dist/src/store.d.ts"
-      ],
-      "unixfs": [
-        "dist/src/unixfs.d.ts"
-      ],
-      "types": [
-        "dist/src/types.d.ts"
-      ]
-    }
-  },
   "files": [
     "dist",
     "!dist/**/*.js.map"

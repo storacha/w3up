@@ -30,22 +30,6 @@
     "./storefront": "./dist/storefront.js",
     "./types": "./dist/types.js"
   },
-  "typesVersions": {
-    "*": {
-      "types": [
-        "dist/src/types.d.ts"
-      ],
-      "aggregator": [
-        "dist/src/aggregator.d.ts"
-      ],
-      "dealer": [
-        "dist/src/dealer.d.ts"
-      ],
-      "storefront": [
-        "dist/src/storefront.d.ts"
-      ]
-    }
-  },
   "files": [
     "dist",
     "!dist/**/*.js.map"

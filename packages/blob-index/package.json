@@ -22,13 +22,6 @@
     "./types": "./dist/api.js",
     "./util": "./dist/util.js"
   },
-  "typesVersions": {
-    "*": {
-      "types": [
-        "dist/src/types"
-      ]
-    }
-  },
   "scripts": {
     "dev": "tsc --build --watch --preserveWatchOutput",
     "clean": "rm -rf dist *.tsbuildinfo coverage",

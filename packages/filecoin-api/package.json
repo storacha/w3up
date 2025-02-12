@@ -13,64 +13,6 @@
     "dist",
     "!dist/**/*.d.ts.map"
   ],
-  "typesVersions": {
-    "*": {
-      "src/lib.js": [
-        "dist/src/lib.d.ts"
-      ],
-      "aggregator/api": [
-        "dist/src/aggregator/api.d.ts"
-      ],
-      "aggregator/service": [
-        "dist/src/aggregator/service.d.ts"
-      ],
-      "aggregator/events": [
-        "dist/src/aggregator/events.d.ts"
-      ],
-      "dealer/api": [
-        "dist/src/dealer/api.d.ts"
-      ],
-      "dealer/service": [
-        "dist/src/dealer/service.d.ts"
-      ],
-      "dealer/events": [
-        "dist/src/dealer/events.d.ts"
-      ],
-      "deal-tracker/api": [
-        "dist/src/deal-tracker/api.d.ts"
-      ],
-      "deal-tracker/service": [
-        "dist/src/deal-tracker/service.d.ts"
-      ],
-      "deal-tracker/events": [
-        "dist/src/deal-tracker/events.d.ts"
-      ],
-      "errors": [
-        "dist/src/errors.d.ts"
-      ],
-      "storefront/api": [
-        "dist/src/storefront/api.d.ts"
-      ],
-      "storefront/service": [
-        "dist/src/storefront/service.d.ts"
-      ],
-      "storefront/events": [
-        "dist/src/storefront/events.d.ts"
-      ],
-      "types": [
-        "dist/src/types.d.ts"
-      ],
-      "test": [
-        "dist/test/lib.d.ts"
-      ],
-      "test/context/service": [
-        "dist/test/context/service.d.ts"
-      ],
-      "test/types": [
-        "dist/test/types.d.ts"
-      ]
-    }
-  },
   "exports": {
     ".": {
       "types": "./dist/lib.d.ts",
