@@ -1,4 +1,4 @@
-<h1 align="center">⁂<br/>storacha.network</h1>
+<h1 align="center">🐔<br/>storacha.network</h1>
 <p align="center">The access client for <a href="https://storacha.network">https://storacha.network</a></p>
 
 ## About
@@ -52,7 +52,7 @@ async function createAgent() {
   const principal = await generate()
   const agentData = {
     meta: { name: 'my-browser-agent' },
-    principal
+    principal,
   }
   return Agent.create(agentData, { store })
 }
@@ -84,11 +84,10 @@ async function createAgent() {
   const principal = await generate()
   const agentData = {
     meta: { name: 'my-nodejs-agent' },
-    principal
+    principal,
   }
   return Agent.create(agentData, { store })
 }
-
 ```
 
 See the [`AgentCreateOptions` reference](https://web3-storage.github.io/w3up/interfaces/_web3_storage_access._internal_.AgentCreateOptions.html) if you want to configure the agent to use a non-production service connection.
@@ -106,13 +105,13 @@ The `createSpace` method returns an object describing the space:
 ```ts
 interface CreateSpaceResult {
   /** The Space's Decentralized Identity Document (DID) */
-  did: string,
+  did: string
 
-  /** 
+  /**
    * Metadata for the Space, including optional friendly `name` and an `isRegistered` flag.
    * Persisted locally in the Agent's Store.
    */
-  meta: Record<string, unknown>,
+  meta: Record<string, unknown>
 
   /**
    * Cryptographic proof of the delegation from Space to Agent.
@@ -148,9 +147,9 @@ const delegation = await agent.delegate({
   abilities: [
     {
       can: 'space/info',
-      with: agent.currentSpace()
-    }
-  ]
+      with: agent.currentSpace(),
+    },
+  ],
 })
 ```
 
@@ -169,4 +168,3 @@ Feel free to join in. All welcome. Please [open an issue](https://github.com/sto
 ## License
 
 Dual-licensed under [MIT + Apache 2.0](https://github.com/storacha/upload-service/blob/main/license.md)
-

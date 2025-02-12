@@ -1,4 +1,4 @@
-# W3UI Playwright tests
+# Storacha Playwright tests
 
 _Test our examples across all UI libraties we support, in real browsers!_
 
@@ -8,22 +8,16 @@ Install the deps and the browsers from the root of the monorepo
 
 ```bash
 # update deps
-$ pnpm i
+$ pnpm install
 
 # fetch test browsers
-$ pnpm playwright:install
-```
-
-Build the examples to their many dist folders
-
-```bash
-$ pnpm build:examples
+$ nx run @storacha/ui-example-test-playwright:prepare-environment
 ```
 
 Run the tests
 
 ```bash
-$ pnpm test:examples
+$ nx run @storacha/ui-example-test-playwright:test
 
 examples/test/playwright test$ playwright test
 [30 lines collapsed]
@@ -31,12 +25,12 @@ examples/test/playwright test$ playwright test
 │ [31/33] [webkit] › uploads-list.spec.ts:4:3 › react: uploads list
 │ [32/33] [webkit] › uploads-list.spec.ts:4:3 › solid: uploads list
 │ [33/33] [webkit] › uploads-list.spec.ts:4:3 › vue: uploads list
-│ 
+│
 │   33 passed (7s)
 │ To open last HTML report run:
-│ 
+│
 │   npx playwright show-report
-│ 
+│
 └─ Done in 7.6s
 ```
 
@@ -45,17 +39,11 @@ examples/test/playwright test$ playwright test
 You can run the test server manually to see what requests are made, and the tests will re-use your running server on http://localhost:1337 - it's powered by `serve` a static webserver running over the examples dir, configured in `examples/serve.json`
 
 ```bash
-$ pnpm serve:examples
+$ nx run @storacha/ui-example-test-playwright:serve
 ```
 
-You can also run the tests locally from this project, and have it show you the browser as the tests run to aid debugging
+You can also watch the tests run in the browser to aid debugging
 
 ```bash
-$ cd examples/test/playwright
-$ pnpm test
-
-# or to see what's going on in the browser as the test runs
-$ pnpm test:debug
+$ nx run @storacha/ui-example-test-playwright:test-debug
 ```
-
-

@@ -24,7 +24,7 @@
   "author": "Alan Shaw",
   "license": "Apache-2.0 OR MIT",
   "bugs": {
-    "url": "https://github.com/web3-storage/w3ui/issues"
+    "url": "https://github.com/storacha/upload-service/issues"
   },
   "homepage": "https://github.com/web3-storage/w3ui/tree/main/packages/react",
   "dependencies": {

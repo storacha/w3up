@@ -1,4 +1,4 @@
-<h1 align="center">⁂<br/>storacha.network</h1>
+<h1 align="center">🐔<br/>storacha.network</h1>
 <p align="center">The upload client for <a href="https://storacha.network">https://storacha.network</a></p>
 
 ## About
@@ -88,7 +88,9 @@ const car = await CAR.encode(blocks, cid)
 // Store the CAR file to the service
 const carDigest = await Blob.add(conf, car)
 // Create an index
-const index = await BlobIndexUtil.fromShardArchives(cid, [new Uint8Array(await car.arrayBuffer())])
+const index = await BlobIndexUtil.fromShardArchives(cid, [
+  new Uint8Array(await car.arrayBuffer()),
+])
 // Store the index to the service
 const indexDigest = await Blob.add(conf, (await index.archive()).ok)
 await Index.add(conf, Link.create(CAR.code, indexDigest))
@@ -120,7 +122,7 @@ await UnixFS.createFileEncoderStream(file)
   // the CID of the CAR shard.
   .pipeTo(
     new WritableStream({
-      async write (car) {
+      async write(car) {
         const carDigest = await Blob.add(conf, car)
         carCIDs.push(Link.create(CAR.code, carDigest))
 
@@ -152,7 +154,7 @@ await Upload.add(conf, rootCID, carCIDs)
 
 - [Install](#install)
 - [Usage](#usage)
-  - [Create an Agent](#create-an-agent)
+  - [Create an agent](#create-an-agent)
   - [Uploading files](#uploading-files)
   - [Advanced usage](#advanced-usage)
     - [Buffering API](#buffering-api)
@@ -550,10 +552,14 @@ const configure = async (caps) => ({
     await Delegation.delegate({
       issuer: space.signer,
       audience: agent.did(),
-      capabilities: caps.map(c => ({ can: c.can, with: space.did(), nb: c.nb })),
-      expiration: Math.floor(Date.now() / 1000) + (60 * 60) // 1h in seconds
-    })
-  ]
+      capabilities: caps.map((c) => ({
+        can: c.can,
+        with: space.did(),
+        nb: c.nb,
+      })),
+      expiration: Math.floor(Date.now() / 1000) + 60 * 60, // 1h in seconds
+    }),
+  ],
 })
 
 await uploadFile(configure, new Blob(['Hello World!']))

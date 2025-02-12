@@ -51,4 +51,4 @@ should look like the following:
 
 Then, run `nx sync`. Any needed inter-project references will be added for you.
 
-For more information, see https://nx.dev/concepts/typescript-project-linking#set-up-typescript-project-references
+For more information, see the [Nx docs](https://nx.dev/concepts/typescript-project-linking#set-up-typescript-project-references).

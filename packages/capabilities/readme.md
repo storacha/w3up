@@ -1,10 +1,10 @@
-# ⁂ `@storacha/capabilities`
+# 🐔 `@storacha/capabilities`
 
 [Capabilities](https://en.wikipedia.org/wiki/Capability-based_security) for interacting with [storacha.network](https://storacha.network)
 
 ## About
 
-The w3up platform by [storacha.network](https://storacha.network) is implemented as a set of capabilities that can be invoked using the [ucanto](https://github.com/storacha/ucanto) RPC framework.
+The [Storacha network](https://storacha.network) is implemented as a set of capabilities that can be invoked using the [ucanto](https://github.com/storacha/ucanto) RPC framework.
 
 The `@storacha/capabilities` package contains capability definitions, which are used by clients to create invocations and by services to validate and parse invocations and route requests to the correct capability handler.
 
@@ -94,7 +94,7 @@ The above would result in an object similar to the following:
 
 #### `invoke`
 
-The `invoke` method returns an [invocation](https://github.com/ucan-wg/spec/#29-invocation) of the capability, which can be executed against a ucanto service.
+The `invoke` method returns an [invocation](https://github.com/ucan-wg/spec/tree/692e8aab59b763a783fe1484131c3f40d997b69a#29-invocation) of the capability, which can be executed against a ucanto service.
 
 Like `create`, `invoke` accepts `with` and `nb` fields, and the inputs must match the constraints in the capability definition.
 

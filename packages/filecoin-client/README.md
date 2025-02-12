@@ -1,4 +1,4 @@
-<h1 align="center">⁂<br/>storacha.network</h1>
+<h1 align="center">🐔<br/>storacha.network</h1>
 <p align="center">The w3filecoin client for <a href="https://storacha.network">https://storacha.network</a></p>
 
 ## About
@@ -26,18 +26,14 @@ Otherwise the task is failed and the receipt will contain details of the reason 
 ```js
 import { Storefront } from '@storacha/filecoin-client'
 
-const res = await Storefront.filecoinOffer(
-  invocationConfig,
-  content,
-  piece
-)
+const res = await Storefront.filecoinOffer(invocationConfig, content, piece)
 ```
 
 ```typescript
 function filecoinOffer(
   conf: InvocationConfig,
   content: Link, // Content CID
-  piece: Piece, // Filecoin piece
+  piece: Piece // Filecoin piece
 ): Promise<Receipt>
 ```
 
@@ -54,18 +50,14 @@ Otherwise the task is failed and the receipt will contain details of the reason 
 ```js
 import { Storefront } from '@storacha/filecoin-client'
 
-const res = await Storefront.filecoinSubmit(
-  invocationConfig,
-  content,
-  piece
-)
+const res = await Storefront.filecoinSubmit(invocationConfig, content, piece)
 ```
 
 ```typescript
 function filecoinSubmit(
   conf: InvocationConfig,
   content: Link, // Content CID
-  piece: Piece, // Filecoin piece
+  piece: Piece // Filecoin piece
 ): Promise<Receipt>
 ```
 
@@ -82,18 +74,14 @@ Otherwise the task is failed and the receipt will contain details of the reason 
 ```js
 import { Storefront } from '@storacha/filecoin-client'
 
-const res = await Storefront.filecoinAccept(
-  invocationConfig,
-  content,
-  piece
-)
+const res = await Storefront.filecoinAccept(invocationConfig, content, piece)
 ```
 
 ```typescript
 function filecoinAccept(
   conf: InvocationConfig,
   content: Link, // Content CID
-  piece: Piece, // Filecoin piece
+  piece: Piece // Filecoin piece
 ): Promise<Receipt>
 ```
 
@@ -110,18 +98,14 @@ Otherwise the task is failed and the receipt will contain details of the reason 
 ```js
 import { Aggregator } from '@storacha/filecoin-client'
 
-const res = await Aggregator.pieceOffer(
-  invocationConfig,
-  piece,
-  group
-)
+const res = await Aggregator.pieceOffer(invocationConfig, piece, group)
 ```
 
 ```typescript
 function pieceOffer(
   conf: InvocationConfig,
   piece: Piece, // Filecoin piece
-  group: string, // Aggregate grouping with different criterium like storefront
+  group: string // Aggregate grouping with different criterium like storefront
 ): Promise<Receipt>
 ```
 
@@ -138,18 +122,14 @@ Otherwise the task is failed and the receipt will contain details of the reason 
 ```js
 import { Aggregator } from '@storacha/filecoin-client'
 
-const res = await Aggregator.pieceAccept(
-  invocationConfig,
-  piece,
-  group
-)
+const res = await Aggregator.pieceAccept(invocationConfig, piece, group)
 ```
 
 ```typescript
 function pieceAccept(
   conf: InvocationConfig,
   piece: Piece, // Filecoin piece
-  group: string, // Aggregate grouping with different criterium like storefront
+  group: string // Aggregate grouping with different criterium like storefront
 ): Promise<Receipt>
 ```
 
@@ -166,18 +146,14 @@ Otherwise the task is failed and the receipt will contain details of the reason 
 ```js
 import { Dealer } from '@storacha/filecoin-client'
 
-const res = await Dealer.aggregateOffer(
-  invocationConfig,
-  aggregate,
-  pieces
-)
+const res = await Dealer.aggregateOffer(invocationConfig, aggregate, pieces)
 ```
 
 ```typescript
 function aggregateOffer(
   conf: InvocationConfig,
   aggregate: Piece, // Filecoin piece representing aggregate
-  pieces: Piece[],  // Filecoin pieces part of the aggregate (sorted)
+  pieces: Piece[] // Filecoin pieces part of the aggregate (sorted)
 ): Promise<Receipt>
 ```
 
@@ -194,18 +170,14 @@ Otherwise the task is failed and the receipt will contain details of the reason 
 ```js
 import { Dealer } from '@storacha/filecoin-client'
 
-const res = await Dealer.aggregateAccept(
-  invocationConfig,
-  aggregate,
-  pieces
-)
+const res = await Dealer.aggregateAccept(invocationConfig, aggregate, pieces)
 ```
 
 ```typescript
 function aggregateAccept(
   conf: InvocationConfig,
   aggregate: Piece, // Filecoin piece representing aggregate
-  pieces: Piece[],  // Filecoin pieces part of the aggregate (sorted)
+  pieces: Piece[] // Filecoin pieces part of the aggregate (sorted)
 ): Promise<Receipt>
 ```
 
@@ -222,16 +194,13 @@ Otherwise the task is failed and the receipt will contain details of the reason 
 ```js
 import { DealTracker } from '@storacha/filecoin-client'
 
-const add = await DealTracker.dealInfo(
-  invocationConfig,
-  piece
-)
+const add = await DealTracker.dealInfo(invocationConfig, piece)
 ```
 
 ```typescript
 function dealInfo(
   conf: InvocationConfig,
-  piece: Piece, // Filecoin piece to check
+  piece: Piece // Filecoin piece to check
 ): Promise<Receipt>
 ```
 
@@ -255,4 +224,3 @@ Feel free to join in. All welcome. Please [open an issue](https://github.com/sto
 ## License
 
 Dual-licensed under [MIT + Apache 2.0](https://github.com/storacha/upload-service/blob/main/license.md)
-

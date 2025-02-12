@@ -131,7 +131,7 @@ export const create = async (name, options) => {
     }
   }
 
-  console.log(`⁂ Space created: ${space.did()}`)
+  console.log(`🐔 Space created: ${space.did()}`)
 
   return space
 }

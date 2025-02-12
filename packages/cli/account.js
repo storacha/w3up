@@ -32,7 +32,7 @@ export const loginWithClient = async (email, client) => {
     Result.try(await account.save())
 
     if (spinner) spinner.stop()
-    console.log(`⁂ Agent was authorized by ${account.did()}`)
+    console.log(`🐔 Agent was authorized by ${account.did()}`)
     return account
   } catch (err) {
     if (spinner) spinner.stop()
@@ -52,7 +52,7 @@ export const list = async () => {
 
   if (accounts.length === 0) {
     console.log(
-      '⁂ Agent has not been authorized yet. Try `storacha login` to authorize this agent with your account.'
+      '🐔 Agent has not been authorized yet. Try `storacha login` to authorize this agent with your account.'
     )
   }
 }

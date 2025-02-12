@@ -1,6 +1,6 @@
 # react
 
-React adapter for W3UI.
+React adapter for Storacha UI.
 
 ## Install
 
@@ -8,14 +8,10 @@ React adapter for W3UI.
 npm install @storacha/ui-react
 ```
 
-## Usage
-
-[API Reference](https://github.com/web3-storage/w3ui/blob/main/docs/react.md)
-
 ## Contributing
 
-Feel free to join in. All welcome. Please read our [contributing guidelines](https://github.com/web3-storage/w3ui/blob/main/CONTRIBUTING.md) and/or [open an issue](https://github.com/web3-storage/w3ui/issues)!
+Feel free to join in. All welcome. Please read our [contributing guidelines](https://github.com/storacha/upload-service/blob/main/CONTRIBUTING.md) and/or [open an issue](https://github.com/storacha/upload-service/issues)!
 
 ## License
 
-Dual-licensed under [MIT + Apache 2.0](https://github.com/web3-storage/w3ui/blob/main/LICENSE.md)
+Dual-licensed under [MIT + Apache 2.0](https://github.com/storacha/upload-service/blob/main/license.md)

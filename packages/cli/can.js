@@ -41,7 +41,7 @@ export async function blobAdd(blobPath) {
   })
   const cid = Link.create(raw.code, digest)
   spinner.stopAndPersist({
-    symbol: '⁂',
+    symbol: '🐔',
     text: `Stored ${base58btc.encode(digest.bytes)} (${cid})`,
   })
 }
@@ -85,7 +85,7 @@ export async function blobRemove(digestStr) {
   const client = await getClient()
   try {
     await client.capability.blob.remove(digest)
-    spinner.stopAndPersist({ symbol: '⁂', text: `Removed ${digestStr}` })
+    spinner.stopAndPersist({ symbol: '🐔', text: `Removed ${digestStr}` })
   } catch (/** @type {any} */ err) {
     spinner.fail(`Error: blob remove failed: ${err.message ?? err}`)
     console.error(err)
@@ -106,7 +106,7 @@ export async function indexAdd(cidStr) {
     process.exit(1)
   }
   await client.capability.index.add(cid)
-  spinner.stopAndPersist({ symbol: '⁂', text: `Added index ${cid}` })
+  spinner.stopAndPersist({ symbol: '🐔', text: `Added index ${cid}` })
 }
 
 /**
@@ -139,7 +139,7 @@ export async function uploadAdd(root, shard, opts) {
 
   const spinner = ora('Adding upload').start()
   await client.capability.upload.add(rootCID, shards)
-  spinner.stopAndPersist({ symbol: '⁂', text: `Upload added ${rootCID}` })
+  spinner.stopAndPersist({ symbol: '🐔', text: `Upload added ${rootCID}` })
 }
 
 /**

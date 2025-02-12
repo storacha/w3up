@@ -16,9 +16,9 @@ describe('Conf driver', () => {
   it('should store a Buffer', async () => {
     const driver = new ConfDriver({ profile: 'w3protocol-access-client-test' })
     await driver.reset()
-    await driver.save({ buf: Buffer.from('⁂', 'utf8') })
+    await driver.save({ buf: Buffer.from('🐔', 'utf8') })
     const actual = await driver.load()
     assert(actual)
-    assert.deepEqual(actual.buf, new TextEncoder().encode('⁂'))
+    assert.deepEqual(actual.buf, new TextEncoder().encode('🐔'))
   })
 })

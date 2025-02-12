@@ -7,33 +7,29 @@
 <p align="center">
   <a href="https://github.com/web3-storage/w3ui/actions/workflows/test.yaml"><img alt="GitHub Workflow Status" src="https://img.shields.io/github/actions/workflow/status/web3-storage/w3ui/test.yaml?branch=main&style=for-the-badge" /></a>
   <a href="https://discord.com/channels/806902334369824788/864892166470893588"><img src="https://img.shields.io/badge/chat-discord?style=for-the-badge&logo=discord&label=discord&logoColor=ffffff&color=7389D8" /></a>
-  <a href="https://github.com/web3-storage/w3ui/blob/main/LICENSE.md"><img alt="License: Apache-2.0 OR MIT" src="https://img.shields.io/badge/LICENSE-Apache--2.0%20OR%20MIT-yellow?style=for-the-badge" /></a>
+  <a href="https://github.com/storacha/upload-service/blob/main/license.md"><img alt="License: Apache-2.0 OR MIT" src="https://img.shields.io/badge/LICENSE-Apache--2.0%20OR%20MIT-yellow?style=for-the-badge" /></a>
 </p>
 
-This repo contains reusauble UI modules for the web3.storage w3up service in React and vanilla JavaScript, and a set of example apps to see them dance.
+This category contains reusauble UI modules for the Storacha service in React and vanilla JavaScript, and a set of example apps to see them dance.
 
 ## Documentation
 
 The documentation at [beta.ui.web3.storage](https://beta.ui.web3.storage) is currently out of date - updates coming soon!
 
-### API
-
-[API Reference](https://github.com/web3-storage/w3ui/blob/main/docs/README.md)
-
 ### Examples
 
-- **Sign up / Sign in** [React](https://github.com/web3-storage/w3ui/tree/main/examples/react/sign-up-in)
+- **Sign up / Sign in** [React](https://github.com/storacha/upload-service/tree/packages/ui/examples/react/sign-up-in)
 
   Demonstrates email authentication flow for the service, including private key creation and email validation.
 
-- **Single File Upload** [React](https://github.com/web3-storage/w3ui/tree/main/examples/react/file-upload)
+- **Single File Upload** [React](https://github.com/storacha/upload-service/tree/packages/ui/examples/react/file-upload)
 
   The simplest file upload using a file input. Includes the auth flow from "Sign up / Sign in".
 
-- **Multiple File Upload** coming soon! [React](https://github.com/web3-storage/w3ui/tree/main/examples/react/multi-file-upload)
+- **Multiple File Upload** coming soon! [React](https://github.com/storacha/upload-service/tree/packages/ui/examples/react/multi-file-upload)
 
   Slightly more complicated file and directory upload. Includes the auth flow from "Sign up / Sign in".
 
-- **Uploads List** coming soon! [React](https://github.com/web3-storage/w3ui/tree/main/examples/react/uploads-list)
+- **Uploads List** coming soon! [React](https://github.com/storacha/upload-service/tree/packages/ui/examples/react/uploads-list)
 
   A demo of the list of uploads that have been made to an account.

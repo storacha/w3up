@@ -1,0 +1,36 @@
+#!/bin/zsh
+# shellcheck disable=all
+
+# (Zsh, because Bash doesn't support coprocesses until v4, which isn't installed
+# on macOS by default.)
+
+# nx-watch-run
+#
+# Usage:
+#   nx-watch-run <task>...
+#
+# Runs `nx watch` to run the given tasks on all projects, serially, bailing on
+# the first failure. Also, kicks off a run immediately when starting, rather
+# than waiting for a file change.
+#
+# This script is most useful for burning down lots of varied failures. The last
+# output of each run will be the next problem to solve. When a file changes, the
+# run will be triggered again, and thanks to caching will quickly advance to the
+# current problem. If it passes, you'll see the next problem.
+
+# Start a coprocess to watch for the "watch process waiting..." message
+coproc {
+  while read -r line; do
+    if [[ $line == "NX   watch process waiting..." ]]; then
+      # Trigger the watch
+      # (Unfortunately, touching doesn't cut it.)
+      mv pnpm-lock.yaml pnpm-lock.yaml-
+      mv pnpm-lock.yaml- pnpm-lock.yaml
+    fi
+  done
+}
+
+# Run nx watch with --verbose and send the verbose output to the coprocess.
+pnpm nx watch --verbose --all -- \
+  unset NX_VERBOSE_LOGGING \; \
+  nx run-many -t "$@" --nxBail --parallel=false \>/dev/tty >&p

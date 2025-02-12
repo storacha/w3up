@@ -8,7 +8,9 @@ If you're opening a pull request, please see the [guidelines](#how-should-i-writ
 
 ## Setup a development environment
 
-We use `pnpm` in this project and commit the `pnpm-lock.yaml` file.
+We use [`pnpm`](https://pnpm.io/) in this project and commit the
+`pnpm-lock.yaml` file. We manage our packages and tasks within `pnpm` using
+[`nx`](https://nx.dev/).
 
 ```bash
 # install all dependencies in the mono-repo
@@ -17,29 +19,63 @@ pnpm install
 cp .env.tpl .env
 ```
 
-The individual packages may have additional setup instructions, and include specific usage information.
-You are also encouraged to set up your IDE with linting and formatting to ensure your commits can be merged.
+The individual packages may have additional setup instructions, and include specific usage information. You are also encouraged to set up your IDE with linting and formatting to ensure your commits can be merged.
 
-### Vscode config
+### VS Code config
 
-Install these extensions
+To install the recommended extensions, if you're not prompted automatically, run
+`Extensions: Show Recommended Extensions`. In particular, make sure you install
+[Workspace
+Config+](https://marketplace.visualstudio.com/items?itemName=Swellaby.workspace-config-plus),
+which merges the shared config with any local config to produce the workspace
+settings.
 
-- https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint
-- https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode
-- Optional toggle for formatting https://marketplace.visualstudio.com/items?itemName=tombonnike.vscode-status-bar-format-toggle
+To override any settings locally, but specifically in this repo, create a
+`.vscode/settings.local.json` file. For more information, see the [`.vscode`
+README](./.vscode/README.md).
 
-Add these lines to your vscode workspace settings at `.vscode/settings.json`
+## Running tasks
 
-```text
-  "javascript.format.enable": false,
-  "typescript.format.enable": false,
-  "editor.formatOnPaste": true,
-  "editor.formatOnType": true,
-  "editor.formatOnSave": true,
-  "editor.defaultFormatter": "esbenp.prettier-vscode",
+Use `nx` to run a task within a project. This ensures that dependency tasks run
+first. `nx` is installed with `pnpm`, so it typically must be run as `pnpm nx`.
+This zsh/bash function will make it work as just `nx`; in a `pnpm` repo it will
+call `pnpm nx`, and elsewhere it will attempt to call the global `nx`. Add it to
+your `.zshrc`/`.bashrc` to use it.
+
+```sh
+nx() {
+  if [[ -f pnpm-lock.yaml ]]; then
+    pnpm nx "$@"
+  else
+    command nx "$@"
+  fi
+}
+```
+
+Some examples of useful things to run:
+
+```sh
+# Build a single package
+nx build @storacha/ui-react
+# ...or, equivalently
+nx run @storacha/ui-react:build
+
+# Build all packages
+nx run-many -t build
+
+# Run tests on anything that's changed in the current branch
+nx affected -t test
+
+# Lint everything whenever files change
+nx watch --all -- nx run-many -t lint
+
+# Run a set of tasks to the first failure whenever files change
+scripts/nx-watch-run typecheck lint build test
 ```
 
 ## Release Process
+
+_🚧 Under reconstruction 🚧_
 
 [Release Please](https://github.com/googleapis/release-please) automates CHANGELOG generation, the creation of GitHub releases, and version bumps for our packages. Release Please does so by parsing your git history, looking for [Conventional Commit messages](https://www.conventionalcommits.org/),
 and creating release PRs.
@@ -65,4 +101,3 @@ The most important prefixes you should have in mind are:
 - `feat:` which represents a new feature, and correlates to a SemVer minor.
 - `feat!:`, or `fix!:`, `refactor!:`, etc., which represent a breaking change
   (indicated by the `!`) and will result in a SemVer major.
-

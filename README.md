@@ -10,7 +10,7 @@ Store your files with storacha.network and retrieve them via their unique Conten
 
 ### Website
 
-Visit https://console.storacha.network and upload right from the website. 
+Visit https://console.storacha.network and upload right from the website.
 
 Under the hood it uses the storacha.network client that we publish to npm to chunk and hash your files to calculate the root IPFS CID **in your browser** before sending them to https://up.storacha.network.
 
@@ -21,6 +21,7 @@ Once uploaded you can fetch your data from any IPFS gateway via [`https://w3s.li
 Install [`@web3-storage/w3cli`](https://github.com/storacha/w3cli#readme) globally, authorize it to act on your behalf, create a space and upload your files. It calculates the root CID for your files locally before sending them to storacha.network.
 
 **shell**
+
 ```shell
 # verify your email to sync your existing ucan delegations to this agent.
 $ w3 login alice@example.com
@@ -30,8 +31,8 @@ $ w3 space create Documents
 
 # lets go!
 $ w3 up ~/Pictures/ayy-lamo.jpg
-⁂ Stored 1 file
-⁂ https://w3s.link/ipfs/bafybeid6gpbsqkpfrsx6b6ywrt24je4xqe4eo4y2wldisl6sk7byny5uky
+🐔 Stored 1 file
+🐔 https://w3s.link/ipfs/bafybeid6gpbsqkpfrsx6b6ywrt24je4xqe4eo4y2wldisl6sk7byny5uky
 ```
 
 Run `w3 --help` or have a look at https://github.com/storacha/w3cli to find out everything it can do.
@@ -41,13 +42,14 @@ Run `w3 --help` or have a look at https://github.com/storacha/w3cli to find out 
 Add the [`@storacha/client`](https://www.npmjs.com/package/@storacha/client) module into your project with `npm i @storacha/client` and upload a single file with [`client.uploadFile`](https://github.com/storacha/upload-service/blob/main/packages/w3up-client/README.md#uploadfile) or many with [`client.uploadDirectory`](https://github.com/storacha/upload-service/blob/main/packages/w3up-client/README.md#uploaddirectory).
 
 If you've already got a space you can upload like this:
- 
+
 **node.js**
+
 ```js
 import { filesFromPaths } from 'files-from-path'
 import * as Client from '@storacha/client'
 
-const [,,yourEmail, pathToAdd] = process.argv
+const [, , yourEmail, pathToAdd] = process.argv
 
 // authorize your local agent to act on your behalf
 const client = await Client.create()
@@ -65,11 +67,12 @@ See https://docs.storacha.network/w3up-client for a guide to using the js client
 
 For an interactive command line adventure into the using w3up check out `learnyouw3up` here https://github.com/storacha/learnyouw3up
 
-### GitHub Action 
+### GitHub Action
 
 The Action [`add-to-web3`](https://github.com/marketplace/actions/add-to-web3) wraps [`w3cli`](https://github.com/storacha/w3cli) to let you add files to storacha.network from your GitHub Workflows.
 
 **github-workflow.yaml**
+
 ```yaml
 - run: npm run build # e.g output your static site to `./dist`
 
