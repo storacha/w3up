@@ -822,6 +822,389 @@ importers:
         specifier: 'catalog:'
         version: 5.7.3
 
+  packages/ui/examples/react/components:
+    dependencies:
+      '@heroicons/react':
+        specifier: 'catalog:'
+        version: 2.2.0(react@18.3.1)
+      '@storacha/ui-react':
+        specifier: workspace:^
+        version: link:../../../packages/react
+      react:
+        specifier: 'catalog:'
+        version: 18.3.1
+    devDependencies:
+      '@types/react':
+        specifier: 'catalog:'
+        version: 18.3.18
+      bunchee:
+        specifier: 'catalog:'
+        version: 5.6.2(typescript@5.7.3)
+      eslint-plugin-react-hooks:
+        specifier: 'catalog:'
+        version: 4.6.2(eslint@8.57.1)
+      typescript:
+        specifier: 'catalog:'
+        version: 5.7.3
+
+  packages/ui/examples/react/file-upload:
+    dependencies:
+      '@heroicons/react':
+        specifier: 'catalog:'
+        version: 2.2.0(react@18.3.1)
+      '@storacha/ui-example-react-components':
+        specifier: workspace:^
+        version: link:../components
+      '@storacha/ui-react':
+        specifier: workspace:^
+        version: link:../../../packages/react
+      react:
+        specifier: 'catalog:'
+        version: 18.3.1
+      react-dom:
+        specifier: 'catalog:'
+        version: 18.3.1(react@18.3.1)
+    devDependencies:
+      '@types/react':
+        specifier: 'catalog:'
+        version: 18.3.18
+      '@types/react-dom':
+        specifier: 'catalog:'
+        version: 18.3.5(@types/react@18.3.18)
+      '@vitejs/plugin-react':
+        specifier: 'catalog:'
+        version: 4.3.4(vite@5.4.14(@types/node@22.13.1)(terser@5.37.0))
+      autoprefixer:
+        specifier: 'catalog:'
+        version: 10.4.20(postcss@8.5.1)
+      eslint:
+        specifier: 'catalog:'
+        version: 8.57.1
+      eslint-plugin-react:
+        specifier: 'catalog:'
+        version: 7.37.4(eslint@8.57.1)
+      eslint-plugin-react-hooks:
+        specifier: 'catalog:'
+        version: 4.6.2(eslint@8.57.1)
+      eslint-plugin-react-refresh:
+        specifier: 'catalog:'
+        version: 0.4.18(eslint@8.57.1)
+      postcss:
+        specifier: 'catalog:'
+        version: 8.5.1
+      tailwindcss:
+        specifier: 'catalog:'
+        version: 3.4.17(ts-node@10.9.1(@swc/core@1.10.11(@swc/helpers@0.5.15))(@types/node@22.13.1)(typescript@5.7.3))
+      vite:
+        specifier: 'catalog:'
+        version: 5.4.14(@types/node@22.13.1)(terser@5.37.0)
+
+  packages/ui/examples/react/multi-file-upload:
+    dependencies:
+      '@heroicons/react':
+        specifier: 'catalog:'
+        version: 2.2.0(react@18.3.1)
+      '@storacha/ui-example-react-components':
+        specifier: workspace:^
+        version: link:../components
+      '@storacha/ui-react':
+        specifier: workspace:^
+        version: link:../../../packages/react
+      react:
+        specifier: 'catalog:'
+        version: 18.3.1
+      react-dom:
+        specifier: 'catalog:'
+        version: 18.3.1(react@18.3.1)
+    devDependencies:
+      '@types/react':
+        specifier: 'catalog:'
+        version: 18.3.18
+      '@types/react-dom':
+        specifier: 'catalog:'
+        version: 18.3.5(@types/react@18.3.18)
+      '@vitejs/plugin-react':
+        specifier: 'catalog:'
+        version: 4.3.4(vite@5.4.14(@types/node@22.13.1)(terser@5.37.0))
+      autoprefixer:
+        specifier: 'catalog:'
+        version: 10.4.20(postcss@8.5.1)
+      eslint:
+        specifier: 'catalog:'
+        version: 8.57.1
+      eslint-plugin-react:
+        specifier: 'catalog:'
+        version: 7.37.4(eslint@8.57.1)
+      eslint-plugin-react-hooks:
+        specifier: 'catalog:'
+        version: 4.6.2(eslint@8.57.1)
+      eslint-plugin-react-refresh:
+        specifier: 'catalog:'
+        version: 0.4.18(eslint@8.57.1)
+      postcss:
+        specifier: 'catalog:'
+        version: 8.5.1
+      tailwindcss:
+        specifier: 'catalog:'
+        version: 3.4.17(ts-node@10.9.1(@swc/core@1.10.11(@swc/helpers@0.5.15))(@types/node@22.13.1)(typescript@5.7.3))
+      vite:
+        specifier: 'catalog:'
+        version: 5.4.14(@types/node@22.13.1)(terser@5.37.0)
+
+  packages/ui/examples/react/sign-up-in:
+    dependencies:
+      '@heroicons/react':
+        specifier: 'catalog:'
+        version: 2.2.0(react@18.3.1)
+      '@storacha/ui-example-react-components':
+        specifier: workspace:^
+        version: link:../components
+      '@storacha/ui-react':
+        specifier: workspace:^
+        version: link:../../../packages/react
+      react:
+        specifier: 'catalog:'
+        version: 18.3.1
+      react-dom:
+        specifier: 'catalog:'
+        version: 18.3.1(react@18.3.1)
+    devDependencies:
+      '@types/react':
+        specifier: 'catalog:'
+        version: 18.3.18
+      '@types/react-dom':
+        specifier: 'catalog:'
+        version: 18.3.5(@types/react@18.3.18)
+      '@vitejs/plugin-react':
+        specifier: 'catalog:'
+        version: 4.3.4(vite@5.4.14(@types/node@22.13.1)(terser@5.37.0))
+      autoprefixer:
+        specifier: 'catalog:'
+        version: 10.4.20(postcss@8.5.1)
+      eslint:
+        specifier: 'catalog:'
+        version: 8.57.1
+      eslint-plugin-react:
+        specifier: 'catalog:'
+        version: 7.37.4(eslint@8.57.1)
+      eslint-plugin-react-hooks:
+        specifier: 'catalog:'
+        version: 4.6.2(eslint@8.57.1)
+      eslint-plugin-react-refresh:
+        specifier: 'catalog:'
+        version: 0.4.18(eslint@8.57.1)
+      postcss:
+        specifier: 'catalog:'
+        version: 8.5.1
+      tailwindcss:
+        specifier: 'catalog:'
+        version: 3.4.17(ts-node@10.9.1(@swc/core@1.10.11(@swc/helpers@0.5.15))(@types/node@22.13.1)(typescript@5.7.3))
+      vite:
+        specifier: 'catalog:'
+        version: 5.4.14(@types/node@22.13.1)(terser@5.37.0)
+
+  packages/ui/examples/react/uploads-list:
+    dependencies:
+      '@heroicons/react':
+        specifier: 'catalog:'
+        version: 2.2.0(react@18.3.1)
+      '@storacha/ui-example-react-components':
+        specifier: workspace:^
+        version: link:../components
+      '@storacha/ui-react':
+        specifier: workspace:^
+        version: link:../../../packages/react
+      react:
+        specifier: 'catalog:'
+        version: 18.3.1
+      react-dom:
+        specifier: 'catalog:'
+        version: 18.3.1(react@18.3.1)
+      swr:
+        specifier: 'catalog:'
+        version: 2.3.0(react@18.3.1)
+    devDependencies:
+      '@types/react':
+        specifier: 'catalog:'
+        version: 18.3.18
+      '@types/react-dom':
+        specifier: 'catalog:'
+        version: 18.3.5(@types/react@18.3.18)
+      '@vitejs/plugin-react':
+        specifier: 'catalog:'
+        version: 4.3.4(vite@5.4.14(@types/node@22.13.1)(terser@5.37.0))
+      autoprefixer:
+        specifier: 'catalog:'
+        version: 10.4.20(postcss@8.5.1)
+      eslint:
+        specifier: 'catalog:'
+        version: 8.57.1
+      eslint-plugin-react:
+        specifier: 'catalog:'
+        version: 7.37.4(eslint@8.57.1)
+      eslint-plugin-react-hooks:
+        specifier: 'catalog:'
+        version: 4.6.2(eslint@8.57.1)
+      eslint-plugin-react-refresh:
+        specifier: 'catalog:'
+        version: 0.4.18(eslint@8.57.1)
+      postcss:
+        specifier: 'catalog:'
+        version: 8.5.1
+      tailwindcss:
+        specifier: 'catalog:'
+        version: 3.4.17(ts-node@10.9.1(@swc/core@1.10.11(@swc/helpers@0.5.15))(@types/node@22.13.1)(typescript@5.7.3))
+      vite:
+        specifier: 'catalog:'
+        version: 5.4.14(@types/node@22.13.1)(terser@5.37.0)
+
+  packages/ui/examples/test/playwright:
+    dependencies:
+      '@storacha/ui-example-react-components':
+        specifier: workspace:^
+        version: link:../../react/components
+      '@storacha/ui-example-react-file-upload':
+        specifier: workspace:^
+        version: link:../../react/file-upload
+      '@storacha/ui-example-react-multi-file-upload':
+        specifier: workspace:^
+        version: link:../../react/multi-file-upload
+      '@storacha/ui-example-react-sign-up-in':
+        specifier: workspace:^
+        version: link:../../react/sign-up-in
+      '@storacha/ui-example-react-uploads-list':
+        specifier: workspace:^
+        version: link:../../react/uploads-list
+    devDependencies:
+      '@playwright/test':
+        specifier: 'catalog:'
+        version: 1.50.0
+      '@types/node':
+        specifier: ^22.13.1
+        version: 22.13.1
+      serve:
+        specifier: 'catalog:'
+        version: 14.2.4
+
+  packages/ui/packages/core:
+    dependencies:
+      '@ipld/dag-ucan':
+        specifier: ^3.4.0
+        version: 3.4.5
+      '@storacha/access':
+        specifier: workspace:^
+        version: link:../../../access-client
+      '@storacha/client':
+        specifier: workspace:^
+        version: link:../../../w3up-client
+      '@storacha/did-mailto':
+        specifier: workspace:^
+        version: link:../../../did-mailto
+      '@ucanto/client':
+        specifier: 'catalog:'
+        version: 9.0.1
+      '@ucanto/interface':
+        specifier: ^10.0.1
+        version: 10.1.1
+      '@ucanto/principal':
+        specifier: ^9.0.1
+        version: 9.0.2
+      '@ucanto/transport':
+        specifier: 'catalog:'
+        version: 9.1.1
+    devDependencies:
+      '@storacha/ui-eslint-config':
+        specifier: workspace:^
+        version: link:../eslint-config
+      bunchee:
+        specifier: 'catalog:'
+        version: 5.6.2(typescript@5.7.3)
+      fake-indexeddb:
+        specifier: 'catalog:'
+        version: 5.0.2
+      happy-dom:
+        specifier: 'catalog:'
+        version: 12.10.3
+      vitest:
+        specifier: 'catalog:'
+        version: 1.6.0(@types/node@22.13.1)(happy-dom@12.10.3)(jsdom@23.2.0)(terser@5.37.0)
+
+  packages/ui/packages/eslint-config:
+    dependencies:
+      '@typescript-eslint/eslint-plugin':
+        specifier: ^5.62.0
+        version: 5.62.0(@typescript-eslint/parser@5.62.0(eslint@8.57.1)(typescript@4.9.5))(eslint@8.57.1)(typescript@4.9.5)
+      hd-scripts:
+        specifier: 'catalog:'
+        version: 4.1.0(enquirer@2.3.6)
+
+  packages/ui/packages/react:
+    dependencies:
+      '@ariakit/react':
+        specifier: 'catalog:'
+        version: 0.3.14(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@ariakit/react-core':
+        specifier: 'catalog:'
+        version: 0.3.14(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@storacha/ui-core':
+        specifier: workspace:^
+        version: link:../core
+      ariakit-react-utils:
+        specifier: 'catalog:'
+        version: 0.17.0-next.27(@types/react@18.3.18)(react@18.3.1)
+    devDependencies:
+      '@ipld/dag-ucan':
+        specifier: ^3.2.0
+        version: 3.4.5
+      '@testing-library/react':
+        specifier: 'catalog:'
+        version: 14.3.1(@types/react@18.3.18)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@testing-library/user-event':
+        specifier: 'catalog:'
+        version: 14.6.1(@testing-library/dom@9.3.4)
+      '@types/react':
+        specifier: 'catalog:'
+        version: 18.3.18
+      '@ucanto/client':
+        specifier: 'catalog:'
+        version: 9.0.1
+      '@ucanto/interface':
+        specifier: ^10.0.1
+        version: 10.1.1
+      '@ucanto/principal':
+        specifier: ^9.0.1
+        version: 9.0.2
+      '@ucanto/transport':
+        specifier: 'catalog:'
+        version: 9.1.1
+      bunchee:
+        specifier: 'catalog:'
+        version: 5.6.2(typescript@5.7.3)
+      eslint-plugin-react-hooks:
+        specifier: 'catalog:'
+        version: 4.6.2(eslint@8.57.1)
+      fake-indexeddb:
+        specifier: 'catalog:'
+        version: 5.0.2
+      happy-dom:
+        specifier: 'catalog:'
+        version: 12.10.3
+      jsdom:
+        specifier: 'catalog:'
+        version: 23.2.0
+      multiformats:
+        specifier: ^13.1.0
+        version: 13.3.1
+      react:
+        specifier: 'catalog:'
+        version: 18.3.1
+      typescript:
+        specifier: 'catalog:'
+        version: 5.7.3
+      vitest:
+        specifier: 'catalog:'
+        version: 1.6.0(@types/node@22.13.1)(happy-dom@12.10.3)(jsdom@23.2.0)(terser@5.37.0)
+
   packages/upload-api:
     dependencies:
       '@storacha/access':
@@ -1016,389 +1399,6 @@ importers:
         specifier: 'catalog:'
         version: 5.7.3
 
-  packages/w3ui/examples/react/components:
-    dependencies:
-      '@heroicons/react':
-        specifier: 'catalog:'
-        version: 2.2.0(react@18.3.1)
-      '@storacha/ui-react':
-        specifier: workspace:^
-        version: link:../../../packages/react
-      react:
-        specifier: 'catalog:'
-        version: 18.3.1
-    devDependencies:
-      '@types/react':
-        specifier: 'catalog:'
-        version: 18.3.18
-      bunchee:
-        specifier: 'catalog:'
-        version: 5.6.2(typescript@5.7.3)
-      eslint-plugin-react-hooks:
-        specifier: 'catalog:'
-        version: 4.6.2(eslint@8.57.1)
-      typescript:
-        specifier: 'catalog:'
-        version: 5.7.3
-
-  packages/w3ui/examples/react/file-upload:
-    dependencies:
-      '@heroicons/react':
-        specifier: 'catalog:'
-        version: 2.2.0(react@18.3.1)
-      '@storacha/ui-example-react-components':
-        specifier: workspace:^
-        version: link:../components
-      '@storacha/ui-react':
-        specifier: workspace:^
-        version: link:../../../packages/react
-      react:
-        specifier: 'catalog:'
-        version: 18.3.1
-      react-dom:
-        specifier: 'catalog:'
-        version: 18.3.1(react@18.3.1)
-    devDependencies:
-      '@types/react':
-        specifier: 'catalog:'
-        version: 18.3.18
-      '@types/react-dom':
-        specifier: 'catalog:'
-        version: 18.3.5(@types/react@18.3.18)
-      '@vitejs/plugin-react':
-        specifier: 'catalog:'
-        version: 4.3.4(vite@5.4.14(@types/node@22.13.1)(terser@5.37.0))
-      autoprefixer:
-        specifier: 'catalog:'
-        version: 10.4.20(postcss@8.5.1)
-      eslint:
-        specifier: 'catalog:'
-        version: 8.57.1
-      eslint-plugin-react:
-        specifier: 'catalog:'
-        version: 7.37.4(eslint@8.57.1)
-      eslint-plugin-react-hooks:
-        specifier: 'catalog:'
-        version: 4.6.2(eslint@8.57.1)
-      eslint-plugin-react-refresh:
-        specifier: 'catalog:'
-        version: 0.4.18(eslint@8.57.1)
-      postcss:
-        specifier: 'catalog:'
-        version: 8.5.1
-      tailwindcss:
-        specifier: 'catalog:'
-        version: 3.4.17(ts-node@10.9.1(@swc/core@1.10.11(@swc/helpers@0.5.15))(@types/node@22.13.1)(typescript@5.7.3))
-      vite:
-        specifier: 'catalog:'
-        version: 5.4.14(@types/node@22.13.1)(terser@5.37.0)
-
-  packages/w3ui/examples/react/multi-file-upload:
-    dependencies:
-      '@heroicons/react':
-        specifier: 'catalog:'
-        version: 2.2.0(react@18.3.1)
-      '@storacha/ui-example-react-components':
-        specifier: workspace:^
-        version: link:../components
-      '@storacha/ui-react':
-        specifier: workspace:^
-        version: link:../../../packages/react
-      react:
-        specifier: 'catalog:'
-        version: 18.3.1
-      react-dom:
-        specifier: 'catalog:'
-        version: 18.3.1(react@18.3.1)
-    devDependencies:
-      '@types/react':
-        specifier: 'catalog:'
-        version: 18.3.18
-      '@types/react-dom':
-        specifier: 'catalog:'
-        version: 18.3.5(@types/react@18.3.18)
-      '@vitejs/plugin-react':
-        specifier: 'catalog:'
-        version: 4.3.4(vite@5.4.14(@types/node@22.13.1)(terser@5.37.0))
-      autoprefixer:
-        specifier: 'catalog:'
-        version: 10.4.20(postcss@8.5.1)
-      eslint:
-        specifier: 'catalog:'
-        version: 8.57.1
-      eslint-plugin-react:
-        specifier: 'catalog:'
-        version: 7.37.4(eslint@8.57.1)
-      eslint-plugin-react-hooks:
-        specifier: 'catalog:'
-        version: 4.6.2(eslint@8.57.1)
-      eslint-plugin-react-refresh:
-        specifier: 'catalog:'
-        version: 0.4.18(eslint@8.57.1)
-      postcss:
-        specifier: 'catalog:'
-        version: 8.5.1
-      tailwindcss:
-        specifier: 'catalog:'
-        version: 3.4.17(ts-node@10.9.1(@swc/core@1.10.11(@swc/helpers@0.5.15))(@types/node@22.13.1)(typescript@5.7.3))
-      vite:
-        specifier: 'catalog:'
-        version: 5.4.14(@types/node@22.13.1)(terser@5.37.0)
-
-  packages/w3ui/examples/react/sign-up-in:
-    dependencies:
-      '@heroicons/react':
-        specifier: 'catalog:'
-        version: 2.2.0(react@18.3.1)
-      '@storacha/ui-example-react-components':
-        specifier: workspace:^
-        version: link:../components
-      '@storacha/ui-react':
-        specifier: workspace:^
-        version: link:../../../packages/react
-      react:
-        specifier: 'catalog:'
-        version: 18.3.1
-      react-dom:
-        specifier: 'catalog:'
-        version: 18.3.1(react@18.3.1)
-    devDependencies:
-      '@types/react':
-        specifier: 'catalog:'
-        version: 18.3.18
-      '@types/react-dom':
-        specifier: 'catalog:'
-        version: 18.3.5(@types/react@18.3.18)
-      '@vitejs/plugin-react':
-        specifier: 'catalog:'
-        version: 4.3.4(vite@5.4.14(@types/node@22.13.1)(terser@5.37.0))
-      autoprefixer:
-        specifier: 'catalog:'
-        version: 10.4.20(postcss@8.5.1)
-      eslint:
-        specifier: 'catalog:'
-        version: 8.57.1
-      eslint-plugin-react:
-        specifier: 'catalog:'
-        version: 7.37.4(eslint@8.57.1)
-      eslint-plugin-react-hooks:
-        specifier: 'catalog:'
-        version: 4.6.2(eslint@8.57.1)
-      eslint-plugin-react-refresh:
-        specifier: 'catalog:'
-        version: 0.4.18(eslint@8.57.1)
-      postcss:
-        specifier: 'catalog:'
-        version: 8.5.1
-      tailwindcss:
-        specifier: 'catalog:'
-        version: 3.4.17(ts-node@10.9.1(@swc/core@1.10.11(@swc/helpers@0.5.15))(@types/node@22.13.1)(typescript@5.7.3))
-      vite:
-        specifier: 'catalog:'
-        version: 5.4.14(@types/node@22.13.1)(terser@5.37.0)
-
-  packages/w3ui/examples/react/uploads-list:
-    dependencies:
-      '@heroicons/react':
-        specifier: 'catalog:'
-        version: 2.2.0(react@18.3.1)
-      '@storacha/ui-example-react-components':
-        specifier: workspace:^
-        version: link:../components
-      '@storacha/ui-react':
-        specifier: workspace:^
-        version: link:../../../packages/react
-      react:
-        specifier: 'catalog:'
-        version: 18.3.1
-      react-dom:
-        specifier: 'catalog:'
-        version: 18.3.1(react@18.3.1)
-      swr:
-        specifier: 'catalog:'
-        version: 2.3.0(react@18.3.1)
-    devDependencies:
-      '@types/react':
-        specifier: 'catalog:'
-        version: 18.3.18
-      '@types/react-dom':
-        specifier: 'catalog:'
-        version: 18.3.5(@types/react@18.3.18)
-      '@vitejs/plugin-react':
-        specifier: 'catalog:'
-        version: 4.3.4(vite@5.4.14(@types/node@22.13.1)(terser@5.37.0))
-      autoprefixer:
-        specifier: 'catalog:'
-        version: 10.4.20(postcss@8.5.1)
-      eslint:
-        specifier: 'catalog:'
-        version: 8.57.1
-      eslint-plugin-react:
-        specifier: 'catalog:'
-        version: 7.37.4(eslint@8.57.1)
-      eslint-plugin-react-hooks:
-        specifier: 'catalog:'
-        version: 4.6.2(eslint@8.57.1)
-      eslint-plugin-react-refresh:
-        specifier: 'catalog:'
-        version: 0.4.18(eslint@8.57.1)
-      postcss:
-        specifier: 'catalog:'
-        version: 8.5.1
-      tailwindcss:
-        specifier: 'catalog:'
-        version: 3.4.17(ts-node@10.9.1(@swc/core@1.10.11(@swc/helpers@0.5.15))(@types/node@22.13.1)(typescript@5.7.3))
-      vite:
-        specifier: 'catalog:'
-        version: 5.4.14(@types/node@22.13.1)(terser@5.37.0)
-
-  packages/w3ui/examples/test/playwright:
-    dependencies:
-      '@storacha/ui-example-react-components':
-        specifier: workspace:^
-        version: link:../../react/components
-      '@storacha/ui-example-react-file-upload':
-        specifier: workspace:^
-        version: link:../../react/file-upload
-      '@storacha/ui-example-react-multi-file-upload':
-        specifier: workspace:^
-        version: link:../../react/multi-file-upload
-      '@storacha/ui-example-react-sign-up-in':
-        specifier: workspace:^
-        version: link:../../react/sign-up-in
-      '@storacha/ui-example-react-uploads-list':
-        specifier: workspace:^
-        version: link:../../react/uploads-list
-    devDependencies:
-      '@playwright/test':
-        specifier: 'catalog:'
-        version: 1.50.0
-      '@types/node':
-        specifier: ^22.13.1
-        version: 22.13.1
-      serve:
-        specifier: 'catalog:'
-        version: 14.2.4
-
-  packages/w3ui/packages/core:
-    dependencies:
-      '@ipld/dag-ucan':
-        specifier: ^3.4.0
-        version: 3.4.5
-      '@storacha/access':
-        specifier: workspace:^
-        version: link:../../../access-client
-      '@storacha/client':
-        specifier: workspace:^
-        version: link:../../../w3up-client
-      '@storacha/did-mailto':
-        specifier: workspace:^
-        version: link:../../../did-mailto
-      '@ucanto/client':
-        specifier: 'catalog:'
-        version: 9.0.1
-      '@ucanto/interface':
-        specifier: ^10.0.1
-        version: 10.1.1
-      '@ucanto/principal':
-        specifier: ^9.0.1
-        version: 9.0.2
-      '@ucanto/transport':
-        specifier: 'catalog:'
-        version: 9.1.1
-    devDependencies:
-      '@storacha/ui-eslint-config':
-        specifier: workspace:^
-        version: link:../eslint-config
-      bunchee:
-        specifier: 'catalog:'
-        version: 5.6.2(typescript@5.7.3)
-      fake-indexeddb:
-        specifier: 'catalog:'
-        version: 5.0.2
-      happy-dom:
-        specifier: 'catalog:'
-        version: 12.10.3
-      vitest:
-        specifier: 'catalog:'
-        version: 1.6.0(@types/node@22.13.1)(happy-dom@12.10.3)(jsdom@23.2.0)(terser@5.37.0)
-
-  packages/w3ui/packages/eslint-config:
-    dependencies:
-      '@typescript-eslint/eslint-plugin':
-        specifier: ^5.62.0
-        version: 5.62.0(@typescript-eslint/parser@5.62.0(eslint@8.57.1)(typescript@4.9.5))(eslint@8.57.1)(typescript@4.9.5)
-      hd-scripts:
-        specifier: 'catalog:'
-        version: 4.1.0(enquirer@2.3.6)
-
-  packages/w3ui/packages/react:
-    dependencies:
-      '@ariakit/react':
-        specifier: 'catalog:'
-        version: 0.3.14(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      '@ariakit/react-core':
-        specifier: 'catalog:'
-        version: 0.3.14(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      '@storacha/ui-core':
-        specifier: workspace:^
-        version: link:../core
-      ariakit-react-utils:
-        specifier: 'catalog:'
-        version: 0.17.0-next.27(@types/react@18.3.18)(react@18.3.1)
-    devDependencies:
-      '@ipld/dag-ucan':
-        specifier: ^3.2.0
-        version: 3.4.5
-      '@testing-library/react':
-        specifier: 'catalog:'
-        version: 14.3.1(@types/react@18.3.18)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      '@testing-library/user-event':
-        specifier: 'catalog:'
-        version: 14.6.1(@testing-library/dom@9.3.4)
-      '@types/react':
-        specifier: 'catalog:'
-        version: 18.3.18
-      '@ucanto/client':
-        specifier: 'catalog:'
-        version: 9.0.1
-      '@ucanto/interface':
-        specifier: ^10.0.1
-        version: 10.1.1
-      '@ucanto/principal':
-        specifier: ^9.0.1
-        version: 9.0.2
-      '@ucanto/transport':
-        specifier: 'catalog:'
-        version: 9.1.1
-      bunchee:
-        specifier: 'catalog:'
-        version: 5.6.2(typescript@5.7.3)
-      eslint-plugin-react-hooks:
-        specifier: 'catalog:'
-        version: 4.6.2(eslint@8.57.1)
-      fake-indexeddb:
-        specifier: 'catalog:'
-        version: 5.0.2
-      happy-dom:
-        specifier: 'catalog:'
-        version: 12.10.3
-      jsdom:
-        specifier: 'catalog:'
-        version: 23.2.0
-      multiformats:
-        specifier: ^13.1.0
-        version: 13.3.1
-      react:
-        specifier: 'catalog:'
-        version: 18.3.1
-      typescript:
-        specifier: 'catalog:'
-        version: 5.7.3
-      vitest:
-        specifier: 'catalog:'
-        version: 1.6.0(@types/node@22.13.1)(happy-dom@12.10.3)(jsdom@23.2.0)(terser@5.37.0)
-
   packages/w3up-client:
     dependencies:
       '@ipld/dag-ucan':
@@ -1479,7 +1479,7 @@ importers:
         version: 5.3.0
       '@web3-storage/w3up-client':
         specifier: ^16.5.1
-        version: 16.5.2
+        version: 16.5.2(encoding@0.1.13)
       assert:
         specifier: 'catalog:'
         version: 2.1.0
@@ -9240,7 +9240,7 @@ snapshots:
 
   '@types/mute-stream@0.0.4':
     dependencies:
-      '@types/node': 20.17.14
+      '@types/node': 22.13.1
 
   '@types/node@20.17.14':
     dependencies:
@@ -9283,7 +9283,7 @@ snapshots:
 
   '@types/through@0.0.33':
     dependencies:
-      '@types/node': 20.17.14
+      '@types/node': 22.13.1
 
   '@types/update-notifier@6.0.8':
     dependencies:
@@ -9728,7 +9728,7 @@ snapshots:
       multiformats: 12.1.3
       uint8arrays: 5.1.0
 
-  '@web3-storage/upload-client@17.1.3':
+  '@web3-storage/upload-client@17.1.3(encoding@0.1.13)':
     dependencies:
       '@ipld/car': 5.4.0
       '@ipld/dag-cbor': 9.2.2
@@ -9749,7 +9749,7 @@ snapshots:
     transitivePeerDependencies:
       - encoding
 
-  '@web3-storage/w3up-client@16.5.2':
+  '@web3-storage/w3up-client@16.5.2(encoding@0.1.13)':
     dependencies:
       '@ipld/dag-ucan': 3.4.5
       '@ucanto/client': 9.0.1
@@ -9762,7 +9762,7 @@ snapshots:
       '@web3-storage/capabilities': 17.4.1
       '@web3-storage/did-mailto': 2.1.0
       '@web3-storage/filecoin-client': 3.3.5
-      '@web3-storage/upload-client': 17.1.3
+      '@web3-storage/upload-client': 17.1.3(encoding@0.1.13)
     transitivePeerDependencies:
       - encoding
 
@@ -11840,7 +11840,7 @@ snapshots:
       it-to-stream: 1.0.0
       merge-options: 3.0.4
       nanoid: 3.3.8
-      native-fetch: 3.0.0(node-fetch@2.7.0)
+      native-fetch: 3.0.0(node-fetch@2.7.0(encoding@0.1.13))
       node-fetch: 2.7.0(encoding@0.1.13)
       react-native-fetch-api: 3.0.0
       stream-to-it: 0.2.4
@@ -12504,7 +12504,7 @@ snapshots:
 
   nanoid@5.0.9: {}
 
-  native-fetch@3.0.0(node-fetch@2.7.0):
+  native-fetch@3.0.0(node-fetch@2.7.0(encoding@0.1.13)):
     dependencies:
       node-fetch: 2.7.0(encoding@0.1.13)
 
@@ -13129,7 +13129,7 @@ snapshots:
       '@protobufjs/path': 1.1.2
       '@protobufjs/pool': 1.1.0
       '@protobufjs/utf8': 1.1.0
-      '@types/node': 20.17.14
+      '@types/node': 22.13.1
       long: 5.2.4
 
   proxy-from-env@1.1.0: {}

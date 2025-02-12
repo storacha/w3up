@@ -35,28 +35,28 @@
       "path": "./packages/upload-api"
     },
     {
-      "path": "./packages/w3ui/packages/react"
+      "path": "./packages/ui/examples/react/multi-file-upload"
     },
     {
-      "path": "./packages/w3ui/packages/core"
+      "path": "./packages/ui/examples/react/uploads-list"
     },
     {
-      "path": "./packages/w3ui/examples/react/multi-file-upload"
+      "path": "./packages/ui/examples/react/file-upload"
     },
     {
-      "path": "./packages/w3ui/examples/react/uploads-list"
+      "path": "./packages/ui/examples/react/components"
     },
     {
-      "path": "./packages/w3ui/examples/react/file-upload"
+      "path": "./packages/ui/examples/react/sign-up-in"
     },
     {
-      "path": "./packages/w3ui/examples/react/components"
+      "path": "./packages/ui/examples/test/playwright"
     },
     {
-      "path": "./packages/w3ui/examples/react/sign-up-in"
+      "path": "./packages/ui/packages/react"
     },
     {
-      "path": "./packages/w3ui/examples/test/playwright"
+      "path": "./packages/ui/packages/core"
     }
   ]
 }
