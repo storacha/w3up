@@ -1,0 +1,20 @@
+{
+  // We aren't using the new ESLint flat config yet.
+  "eslint.useFlatConfig": false,
+
+  // Use the installed version of TypeScript in VS Code.
+  "typescript.tsdk": "node_modules/typescript/lib",
+
+  // Use Pretter for formatting.
+  "javascript.format.enable": false,
+  "typescript.format.enable": false,
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+
+  // Format early, format often.
+  "editor.formatOnPaste": true,
+  "editor.formatOnType": true,
+  "editor.formatOnSave": true,
+
+  // The extension doesn't support partial ToCs, so we disable it.
+  "markdown.extension.toc.updateOnSave": false
+}

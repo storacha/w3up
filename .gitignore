@@ -10,6 +10,12 @@ coverage
 .nyc_output
 .wrangler
 
+# VS Code
+.vscode/*
+!.vscode/README.md
+!.vscode/extensions.json
+!.vscode/*.shared.json
+
 # misc
 .DS_Store
 dist

@@ -1,0 +1,11 @@
+{
+  "recommendations": [
+    "dbaeumer.vscode-eslint",
+    "esbenp.prettier-vscode",
+    "nrwl.angular-console",
+    "tombonnike.vscode-status-bar-format-toggle",
+    "swellaby.workspace-config-plus",
+    "yzhang.markdown-all-in-one",
+    "davidanson.vscode-markdownlint"
+  ]
+}
