@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.0.3](https://github.com/storacha/upload-service/compare/access-v1.0.2...access-v1.0.3) (2025-02-11)
+
+
+### Fixes
+
+* dedupe proofs ([#143](https://github.com/storacha/upload-service/issues/143)) ([de2ac67](https://github.com/storacha/upload-service/commit/de2ac67c1af1f968cdb359f96e4be5fbd8254b7d))
+* use up.storacha.network ([#144](https://github.com/storacha/upload-service/issues/144)) ([ac6b5b4](https://github.com/storacha/upload-service/commit/ac6b5b4b9881f9889e99e18b38fbfb302b4fb3b5))
+
 ## [1.0.2](https://github.com/storacha/upload-service/compare/access-v1.0.1...access-v1.0.2) (2025-01-22)
 
 

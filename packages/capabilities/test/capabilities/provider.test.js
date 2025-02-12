@@ -18,7 +18,7 @@ describe('provider/add', function () {
       audience: service,
       with: account,
       nb: {
-        provider: 'did:web:test.upload.storacha.network',
+        provider: 'did:web:test.up.storacha.network',
         consumer: space.did(),
       },
       proofs: await createAuthorization({ agent, service, account }),
@@ -36,7 +36,7 @@ describe('provider/add', function () {
       assert.deepEqual(result.ok.audience.did(), service.did())
       assert.equal(result.ok.capability.can, 'provider/add')
       assert.deepEqual(result.ok.capability.nb, {
-        provider: 'did:web:test.upload.storacha.network',
+        provider: 'did:web:test.up.storacha.network',
         consumer: space.did(),
       })
     }
@@ -51,7 +51,7 @@ describe('provider/add', function () {
       audience: service,
       with: account,
       nb: {
-        provider: 'did:web:test.upload.storacha.network',
+        provider: 'did:web:test.up.storacha.network',
         consumer: space.did(),
       },
     })
@@ -80,7 +80,7 @@ describe('provider/add', function () {
       audience: service,
       with: account,
       nb: {
-        provider: 'did:web:test.upload.storacha.network',
+        provider: 'did:web:test.up.storacha.network',
         consumer: space.did(),
       },
       proofs: [delegation],
@@ -110,7 +110,7 @@ describe('provider/add', function () {
       audience: service,
       with: account,
       nb: {
-        provider: 'did:web:test.upload.storacha.network',
+        provider: 'did:web:test.up.storacha.network',
         consumer: space.did(),
       },
       proofs: [attestation],
@@ -135,7 +135,7 @@ describe('provider/add', function () {
         with: bobAccount.did(),
         // @ts-ignore
         nb: {
-          provider: 'did:web:test.upload.storacha.network',
+          provider: 'did:web:test.up.storacha.network',
         },
       })
     }, /Error: Invalid 'nb' - Object contains invalid field "consumer"/)
@@ -149,7 +149,7 @@ describe('provider/add', function () {
         audience: service,
         with: bobAccount.did(),
         nb: {
-          provider: 'did:web:test.upload.storacha.network',
+          provider: 'did:web:test.up.storacha.network',
           // @ts-expect-error
           consumer: 'did:mailto:storacha.network:user',
         },
@@ -166,7 +166,7 @@ describe('provider/add', function () {
         with: bobAccount.did(),
         // @ts-expect-error - missing provider
         nb: {
-          // provider: 'did:web:test.upload.storacha.network',
+          // provider: 'did:web:test.up.storacha.network',
           consumer: bob.did(),
         },
       })
@@ -197,7 +197,7 @@ describe('provider/add', function () {
       audience: service,
       with: account,
       nb: {
-        provider: 'did:web:test.upload.storacha.network',
+        provider: 'did:web:test.up.storacha.network',
         consumer: space.did(),
       },
       proofs: [
@@ -206,7 +206,7 @@ describe('provider/add', function () {
           audience: bob,
           with: account,
           nb: {
-            provider: 'did:web:test.upload.storacha.network',
+            provider: 'did:web:test.up.storacha.network',
             consumer: space.did(),
           },
           proofs: await createAuthorization({ agent, service, account }),
@@ -233,7 +233,7 @@ describe('provider/add', function () {
       audience: service,
       with: account,
       nb: {
-        provider: 'did:web:test.upload.storacha.network',
+        provider: 'did:web:test.up.storacha.network',
         consumer: space.did(),
       },
       proofs: [
@@ -242,7 +242,7 @@ describe('provider/add', function () {
           audience: bob,
           with: account,
           nb: {
-            provider: 'did:web:test.upload.storacha.network',
+            provider: 'did:web:test.up.storacha.network',
           },
           proofs: await createAuthorization({ agent, service, account }),
         }),
@@ -268,7 +268,7 @@ describe('provider/add', function () {
       audience: service,
       with: account,
       nb: {
-        provider: 'did:web:test.upload.storacha.network',
+        provider: 'did:web:test.up.storacha.network',
         consumer: space.did(),
       },
       proofs: [
@@ -303,7 +303,7 @@ describe('provider/add', function () {
       audience: service,
       with: account,
       nb: {
-        provider: 'did:web:test.upload.storacha.network',
+        provider: 'did:web:test.up.storacha.network',
         consumer: bob.did(),
       },
       proofs: [
@@ -338,7 +338,7 @@ describe('provider/add', function () {
       audience: service,
       with: account,
       nb: {
-        provider: 'did:web:test.upload.storacha.network',
+        provider: 'did:web:test.up.storacha.network',
         consumer: bob.did(),
       },
       proofs: [
@@ -379,7 +379,7 @@ describe('provider/add', function () {
       audience: service,
       with: 'did:mailto:mallory.com:bob',
       nb: {
-        provider: 'did:web:test.upload.storacha.network',
+        provider: 'did:web:test.up.storacha.network',
         consumer: bob.did(),
       },
       proofs: [
@@ -428,7 +428,7 @@ describe('provider/add', function () {
           with: account.did(),
           nb: {
             consumer: space.did(),
-            provider: 'did:web:test.upload.storacha.network',
+            provider: 'did:web:test.up.storacha.network',
           },
           // NOTE: no proofs!
         })

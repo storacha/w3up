@@ -60,10 +60,7 @@ export interface Registry {
     options?: ListOptions
   ) => Promise<Result<ListResponse<Entry>, Failure>>
   /** Removes an item from the registry if it exists. */
-  deregister: (
-    space: SpaceDID,
-    digest: MultihashDigest
-  ) => Promise<Result<Unit, EntryNotFound>>
+  deregister: (item: DeregistrationData) => Promise<Result<Unit, EntryNotFound>>
 }
 
 export interface ListOptions {
@@ -74,6 +71,12 @@ export interface ListOptions {
 export interface BlobModel {
   digest: Multihash
   size: number
+}
+
+export interface DeregistrationData {
+  space: SpaceDID
+  digest: MultihashDigest
+  cause: Link
 }
 
 export interface RegistrationData {

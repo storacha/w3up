@@ -12,7 +12,7 @@ import { base64 } from 'multiformats/bases/base64'
 import * as DID from '@ipld/dag-ucan/did'
 
 const indexingServiceDID = 'did:web:staging.indexer.storacha.network'
-const uploadServiceDID = 'did:web:staging.upload.storacha.network'
+const uploadServiceDID = 'did:web:staging.up.storacha.network'
 const storageProviderDID = 'did:key:...'
 
 if (!process.argv[2]) {

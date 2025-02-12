@@ -16,7 +16,7 @@ export class ProvisionsStorage {
    *
    * @param {Array<Types.ServiceDID | string>} providers
    */
-  constructor(providers = ['did:web:test.upload.storacha.network']) {
+  constructor(providers = ['did:web:test.up.storacha.network']) {
     /**
      * @type {Record<string, Types.Provision>}
      */

@@ -69,7 +69,8 @@ export function blobAddProvider(context) {
         provider: allocation.ok.provider,
         blob,
         space,
-        delivery: delivery,
+        cause: invocation.link(),
+        delivery,
       })
       if (acceptance.error) {
         return acceptance
@@ -79,7 +80,7 @@ export function blobAddProvider(context) {
         context,
         blob,
         space,
-        delivery: delivery,
+        delivery,
         acceptance: acceptance.ok,
       })
 
@@ -248,7 +249,7 @@ async function allocateW3s({ context, blob, space, cause, receipt }) {
  * @param {object} put
  * @param {API.BlobModel} put.blob
  * @param {object} put.allocation
- * @param {API.Receipt<API.BlobAllocateSuccess, API.BlobAcceptFailure>} put.allocation.receipt
+ * @param {API.Receipt<API.BlobAllocateSuccess, API.BlobAllocateFailure>} put.allocation.receipt
  */
 async function put({ blob, allocation: { receipt: allocationReceipt } }) {
   // Derive the principal that will provide the blob from the blob digest.
@@ -327,6 +328,7 @@ async function put({ blob, allocation: { receipt: allocationReceipt } }) {
  * @param {API.Principal} input.provider
  * @param {API.BlobModel} input.blob
  * @param {API.DIDKey} input.space
+ * @param {API.Link} input.cause Original `space/blob/add` invocation.
  * @param {object} input.delivery
  * @param {API.Invocation<API.HTTPPut>} input.delivery.task
  * @param {API.Receipt|null} input.delivery.receipt
@@ -336,6 +338,7 @@ async function accept({
   provider,
   blob,
   space,
+  cause,
   delivery: { task: deliveryTask, receipt: deliveryReceipt },
 }) {
   // 1. Create blob/accept invocation and task
@@ -376,6 +379,32 @@ async function accept({
   // If put has already succeeded, we can execute `blob/accept` right away.
   else if (deliveryReceipt?.out.ok) {
     receipt = await configure.ok.invocation.execute(configure.ok.connection)
+
+    // record the invocation and the receipt
+    const message = await Message.build({
+      invocations: [configure.ok.invocation],
+      receipts: [receipt],
+    })
+    const messageWrite = await context.agentStore.messages.write({
+      source: await Transport.outbound.encode(message),
+      data: message,
+      index: [...AgentMessage.index(message)],
+    })
+    if (messageWrite.error) {
+      return messageWrite
+    }
+
+    const register = await context.registry.register({
+      space,
+      cause,
+      blob: { digest: Digest.decode(blob.digest), size: blob.size },
+    })
+    if (register.error) {
+      // it's ok if there's already a registration of this blob in this space
+      if (register.error.name !== 'EntryExists') {
+        return register
+      }
+    }
   }
 
   return Server.ok({
@@ -419,6 +448,7 @@ async function acceptW3s({
       space,
       _put: { 'ucan/await': ['.out.ok', deliveryTask.link()] },
     },
+    expiration: Infinity,
   })
   const w3sAcceptTask = await w3sAccept.delegate()
 
@@ -444,6 +474,7 @@ async function acceptW3s({
       issuer: context.id,
       ran: w3sAcceptTask,
       result: acceptanceReceipt.out,
+      fx: acceptanceReceipt.fx,
     })
   }
 

@@ -197,7 +197,7 @@ describe('authorizeWaitAndClaim', async function () {
 describe('getAccountPlan', async function () {
   const accountWithAPlan = 'did:mailto:example.com:i-have-a-plan'
   const accountWithoutAPlan = 'did:mailto:example.com:i-have-no-plan'
-  const product = 'did:web:test.upload.storacha.network'
+  const product = 'did:web:test.up.storacha.network'
   /** @type {Record<Ucanto.DID, {product: Ucanto.DID, updatedAt: string}>} */
   const plans = {
     [accountWithAPlan]: {

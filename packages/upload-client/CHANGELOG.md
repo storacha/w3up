@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.0.5](https://github.com/storacha/upload-service/compare/upload-client-v1.0.4...upload-client-v1.0.5) (2025-02-11)
+
+
+### Fixes
+
+* use correct object in cause ([#140](https://github.com/storacha/upload-service/issues/140)) ([372f839](https://github.com/storacha/upload-service/commit/372f8391e3385cc7f810d31e6de852d6d1100688))
+* use up.storacha.network ([#144](https://github.com/storacha/upload-service/issues/144)) ([ac6b5b4](https://github.com/storacha/upload-service/commit/ac6b5b4b9881f9889e99e18b38fbfb302b4fb3b5))
+
 ## [1.0.4](https://github.com/storacha/upload-service/compare/upload-client-v1.0.3...upload-client-v1.0.4) (2025-01-22)
 
 

@@ -607,7 +607,7 @@ export const testSpace = {
     })
 
     /** @type {import('@storacha/client/types').DID<'web'>} */
-    const providerDID = 'did:web:test.upload.storacha.network'
+    const providerDID = 'did:web:test.up.storacha.network'
 
     const infoWithoutProvider = await storacha
       .args(['space', 'info'])

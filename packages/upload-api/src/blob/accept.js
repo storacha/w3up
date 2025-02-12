@@ -99,6 +99,7 @@ export const poll = async (context, receipt) => {
       space: /** @type {API.DIDKey} */ (DID.decode(allocate.nb.space).did()),
       _put: { 'ucan/await': ['.out.ok', receipt.ran.link()] },
     },
+    expiration: Infinity,
   })
   const w3sAcceptTask = await w3sAccept.delegate()
   const w3sAcceptReceipt = await Receipt.issue({
@@ -110,7 +111,7 @@ export const poll = async (context, receipt) => {
 
   // record the invocation and the receipt
   const message = await Message.build({
-    invocations: [configure.ok.invocation],
+    invocations: [configure.ok.invocation, w3sAcceptTask],
     receipts: [acceptReceipt, w3sAcceptReceipt],
   })
   const messageWrite = await context.agentStore.messages.write({
