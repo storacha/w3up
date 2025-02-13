@@ -71,6 +71,10 @@ nx watch --all -- nx run-many -t lint
 
 # Run a set of tasks to the first failure whenever files change
 scripts/nx-watch-run typecheck lint build test
+
+# Reset the cache and kill the nx daemon.
+# Ideally never necessary, but a good first step if anything looks wrong.
+nx reset
 ```
 
 ## Release Process
