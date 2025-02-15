@@ -8,7 +8,7 @@
     "url": "https://github.com/storacha/upload-service.git",
     "directory": "packages/did-mailto"
   },
-  "license": "(Apache-2.0 OR MIT)",
+  "license": "Apache-2.0 OR MIT",
   "type": "module",
   "types": "dist/src/index.d.ts",
   "main": "src/index.js",

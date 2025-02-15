@@ -70,11 +70,11 @@ importers:
         specifier: ^9.0.1
         version: 9.0.1
       '@ucanto/core':
-        specifier: ^10.2.1
-        version: 10.2.1
+        specifier: ^10.3.0
+        version: 10.3.0
       '@ucanto/interface':
-        specifier: ^10.1.1
-        version: 10.1.1
+        specifier: ^10.2.0
+        version: 10.2.0
       '@ucanto/principal':
         specifier: ^9.0.2
         version: 9.0.2
@@ -82,8 +82,8 @@ importers:
         specifier: ^9.1.1
         version: 9.1.1
       '@ucanto/validator':
-        specifier: ^9.0.3
-        version: 9.0.3
+        specifier: ^9.1.0
+        version: 9.1.0
       bigint-mod-arith:
         specifier: ^3.1.2
         version: 3.3.1
@@ -161,11 +161,11 @@ importers:
         specifier: ^1.0.1
         version: 1.0.1
       '@ucanto/core':
-        specifier: ^10.2.1
-        version: 10.2.1
+        specifier: ^10.3.0
+        version: 10.3.0
       '@ucanto/interface':
-        specifier: ^10.1.1
-        version: 10.1.1
+        specifier: ^10.2.0
+        version: 10.2.0
       carstream:
         specifier: ^2.1.0
         version: 2.3.0
@@ -195,11 +195,11 @@ importers:
   packages/capabilities:
     dependencies:
       '@ucanto/core':
-        specifier: ^10.2.1
-        version: 10.2.1
+        specifier: ^10.3.0
+        version: 10.3.0
       '@ucanto/interface':
-        specifier: ^10.1.1
-        version: 10.1.1
+        specifier: ^10.2.0
+        version: 10.2.0
       '@ucanto/principal':
         specifier: ^9.0.2
         version: 9.0.2
@@ -207,8 +207,8 @@ importers:
         specifier: ^9.1.1
         version: 9.1.1
       '@ucanto/validator':
-        specifier: ^9.0.3
-        version: 9.0.3
+        specifier: ^9.1.0
+        version: 9.1.0
       '@web3-storage/data-segment':
         specifier: ^5.2.0
         version: 5.3.0
@@ -280,8 +280,8 @@ importers:
         specifier: ^9.0.1
         version: 9.0.1
       '@ucanto/core':
-        specifier: ^10.2.1
-        version: 10.2.1
+        specifier: ^10.3.0
+        version: 10.3.0
       '@ucanto/transport':
         specifier: ^9.1.1
         version: 9.1.1
@@ -338,8 +338,8 @@ importers:
         specifier: ^6.0.5
         version: 6.0.8
       '@ucanto/interface':
-        specifier: ^10.1.1
-        version: 10.1.1
+        specifier: ^10.2.0
+        version: 10.2.0
       '@ucanto/principal':
         specifier: ^9.0.2
         version: 9.0.2
@@ -413,14 +413,14 @@ importers:
         specifier: ^9.0.1
         version: 9.0.1
       '@ucanto/core':
-        specifier: ^10.2.1
-        version: 10.2.1
+        specifier: ^10.3.0
+        version: 10.3.0
       '@ucanto/interface':
-        specifier: ^10.1.1
-        version: 10.1.1
+        specifier: ^10.2.0
+        version: 10.2.0
       '@ucanto/server':
-        specifier: ^10.1.0
-        version: 10.1.0
+        specifier: ^10.2.0
+        version: 10.2.0
       '@ucanto/transport':
         specifier: ^9.1.1
         version: 9.1.1
@@ -486,11 +486,11 @@ importers:
         specifier: ^9.0.1
         version: 9.0.1
       '@ucanto/core':
-        specifier: ^10.2.1
-        version: 10.2.1
+        specifier: ^10.3.0
+        version: 10.3.0
       '@ucanto/interface':
-        specifier: ^10.1.1
-        version: 10.1.1
+        specifier: ^10.2.0
+        version: 10.2.0
       '@ucanto/transport':
         specifier: ^9.1.1
         version: 9.1.1
@@ -511,8 +511,8 @@ importers:
         specifier: ^9.0.2
         version: 9.0.2
       '@ucanto/server':
-        specifier: ^10.1.0
-        version: 10.1.0
+        specifier: ^10.2.0
+        version: 10.2.0
       '@web3-storage/data-segment':
         specifier: ^5.3.0
         version: 5.3.0
@@ -562,20 +562,20 @@ importers:
         specifier: ^9.0.1
         version: 9.0.1
       '@ucanto/interface':
-        specifier: ^10.1.1
-        version: 10.1.1
+        specifier: ^10.2.0
+        version: 10.2.0
       '@ucanto/principal':
         specifier: ^9.0.2
         version: 9.0.2
       '@ucanto/server':
-        specifier: ^10.0.0
-        version: 10.1.0
+        specifier: ^10.2.0
+        version: 10.2.0
       '@ucanto/transport':
         specifier: ^9.1.1
         version: 9.1.1
       '@ucanto/validator':
-        specifier: ^9.0.3
-        version: 9.0.3
+        specifier: ^9.1.0
+        version: 9.1.0
       '@web3-storage/content-claims':
         specifier: ^5.1.3
         version: 5.1.3
@@ -647,11 +647,11 @@ importers:
         specifier: ^9.0.1
         version: 9.0.1
       '@ucanto/core':
-        specifier: ^10.2.1
-        version: 10.2.1
+        specifier: ^10.3.0
+        version: 10.3.0
       '@ucanto/interface':
-        specifier: ^10.1.1
-        version: 10.1.1
+        specifier: ^10.2.0
+        version: 10.2.0
       '@ucanto/transport':
         specifier: ^9.1.1
         version: 9.1.1
@@ -687,8 +687,8 @@ importers:
         specifier: ^9.0.2
         version: 9.0.2
       '@ucanto/server':
-        specifier: ^10.1.0
-        version: 10.1.0
+        specifier: ^10.2.0
+        version: 10.2.0
       '@web3-storage/content-claims':
         specifier: ^5.1.3
         version: 5.1.3
@@ -747,11 +747,11 @@ importers:
         specifier: ^9.0.1
         version: 9.0.1
       '@ucanto/core':
-        specifier: ^10.2.1
-        version: 10.2.1
+        specifier: ^10.3.0
+        version: 10.3.0
       '@ucanto/interface':
-        specifier: ^10.1.1
-        version: 10.1.1
+        specifier: ^10.2.0
+        version: 10.2.0
       '@ucanto/principal':
         specifier: ^9.0.2
         version: 9.0.2
@@ -781,8 +781,8 @@ importers:
         specifier: ^20.8.4
         version: 20.17.14
       '@ucanto/server':
-        specifier: ^10.1.0
-        version: 10.1.0
+        specifier: ^10.2.0
+        version: 10.2.0
       '@web3-storage/access':
         specifier: ^20.1.0
         version: 20.1.1
@@ -2859,8 +2859,11 @@ packages:
   '@ucanto/core@10.2.1':
     resolution: {integrity: sha512-tPLrQUQEbo4d+vFB7hZdbMYaFqqJwczGz3LiGZMW7uWC9g1imFryJcedeLBqiKNYdQmBY70Yuj9QFDEope6mfQ==}
 
-  '@ucanto/interface@10.1.1':
-    resolution: {integrity: sha512-FHSA7eAN1pbJyzcMRFs9ioHlPQUpE3CfHxLGkCF9AU4HMl7G2YdgzeeOdiD3Li7Ur7EFUwEhZDoVMNKGH+7h1g==}
+  '@ucanto/core@10.3.0':
+    resolution: {integrity: sha512-hPJDuGKSzQdfe0ZrRzNRGz+AeEeVd3ed+St8LUn6/mJMncsqOGzqUbHNVc6sOMGAI4incSGKAO7AXOKd6DRObw==}
+
+  '@ucanto/interface@10.2.0':
+    resolution: {integrity: sha512-k49byxjAKJEW+ru1RBJ8VNCBCxWSMY7P25DqOocCGECUfod38uqj4Z5dmvlM8ax3HRd7U5MTp+B9Q/gzWXnjfQ==}
 
   '@ucanto/principal@9.0.2':
     resolution: {integrity: sha512-RE3Rj0oz4wh4C9p2JJZB9+QLd7Fi3lCixrbHgAvEoSyTNpvz6ky8DGNtttmD5j3O94z13qdVdIoSRY6DQZXfAg==}
@@ -2868,11 +2871,14 @@ packages:
   '@ucanto/server@10.1.0':
     resolution: {integrity: sha512-R3m4QXtspVfPhEo07hnDgZVaebmMcgGcwAdn/rWVp2KGT0AGNyc5hMeTqzDwtJ2s4eqC2Zth3tkt/F71hNQLGg==}
 
+  '@ucanto/server@10.2.0':
+    resolution: {integrity: sha512-RKoh7m86V97Kk8LZRaKmF1f2HdT3iQNyAGYShx9gasEV3qUuTaq2k6gXBTBRiEaYjX27C3C/KSaTrmVCEPwp1g==}
+
   '@ucanto/transport@9.1.1':
     resolution: {integrity: sha512-3CR17nEemOVaTuMZa6waWgVL4sLxSPcxYvpaNeJ6NZo1rfsqdyRXOtbVV/RcI2BtUL0Cao6JM6P9+gdghfc5ng==}
 
-  '@ucanto/validator@9.0.3':
-    resolution: {integrity: sha512-S3NJ2fDhdnPuepAW7OVN/ngZ9DGqhibdwnFbs7lRyCNMgVrU90eqrQLa+8FmIhjlsWeQQvc77SUVygso2eqY4A==}
+  '@ucanto/validator@9.1.0':
+    resolution: {integrity: sha512-2JnEEZYc8kTZz+qbyL7LbI/TSpBRWLOchNhaRB5DTyj38FxMFQUXIB7gQ5lZHv49uYJGx/FXKPw0268WgJdEvg==}
 
   '@ungap/structured-clone@1.2.1':
     resolution: {integrity: sha512-fEzPV3hSkSMltkw152tJKNARhOupqbH96MZWyRjNaYZOMIzbrTeQDG+MTc6Mr2pgzFQzFxAfmhGDNP5QK++2ZA==}
@@ -11022,18 +11028,26 @@ snapshots:
 
   '@ucanto/client@9.0.1':
     dependencies:
-      '@ucanto/core': 10.2.1
-      '@ucanto/interface': 10.1.1
+      '@ucanto/core': 10.3.0
+      '@ucanto/interface': 10.2.0
 
   '@ucanto/core@10.2.1':
     dependencies:
       '@ipld/car': 5.4.0
       '@ipld/dag-cbor': 9.2.2
       '@ipld/dag-ucan': 3.4.5
-      '@ucanto/interface': 10.1.1
+      '@ucanto/interface': 10.2.0
       multiformats: 13.3.1
 
-  '@ucanto/interface@10.1.1':
+  '@ucanto/core@10.3.0':
+    dependencies:
+      '@ipld/car': 5.4.0
+      '@ipld/dag-cbor': 9.2.2
+      '@ipld/dag-ucan': 3.4.5
+      '@ucanto/interface': 10.2.0
+      multiformats: 13.3.1
+
+  '@ucanto/interface@10.2.0':
     dependencies:
       '@ipld/dag-ucan': 3.4.5
       multiformats: 13.3.1
@@ -11044,28 +11058,35 @@ snapshots:
       '@noble/curves': 1.8.1
       '@noble/ed25519': 1.7.3
       '@noble/hashes': 1.7.1
-      '@ucanto/interface': 10.1.1
+      '@ucanto/interface': 10.2.0
       multiformats: 13.3.1
       one-webcrypto: 1.0.3
 
   '@ucanto/server@10.1.0':
     dependencies:
-      '@ucanto/core': 10.2.1
-      '@ucanto/interface': 10.1.1
+      '@ucanto/core': 10.3.0
+      '@ucanto/interface': 10.2.0
       '@ucanto/principal': 9.0.2
-      '@ucanto/validator': 9.0.3
+      '@ucanto/validator': 9.1.0
+
+  '@ucanto/server@10.2.0':
+    dependencies:
+      '@ucanto/core': 10.3.0
+      '@ucanto/interface': 10.2.0
+      '@ucanto/principal': 9.0.2
+      '@ucanto/validator': 9.1.0
 
   '@ucanto/transport@9.1.1':
     dependencies:
-      '@ucanto/core': 10.2.1
-      '@ucanto/interface': 10.1.1
+      '@ucanto/core': 10.3.0
+      '@ucanto/interface': 10.2.0
 
-  '@ucanto/validator@9.0.3':
+  '@ucanto/validator@9.1.0':
     dependencies:
       '@ipld/car': 5.4.0
       '@ipld/dag-cbor': 9.2.2
-      '@ucanto/core': 10.2.1
-      '@ucanto/interface': 10.1.1
+      '@ucanto/core': 10.3.0
+      '@ucanto/interface': 10.2.0
       multiformats: 13.3.1
 
   '@ungap/structured-clone@1.2.1': {}
@@ -11118,11 +11139,11 @@ snapshots:
       '@scure/bip39': 1.5.4
       '@storacha/one-webcrypto': 1.0.1
       '@ucanto/client': 9.0.1
-      '@ucanto/core': 10.2.1
-      '@ucanto/interface': 10.1.1
+      '@ucanto/core': 10.3.0
+      '@ucanto/interface': 10.2.0
       '@ucanto/principal': 9.0.2
       '@ucanto/transport': 9.1.1
-      '@ucanto/validator': 9.0.3
+      '@ucanto/validator': 9.1.0
       '@web3-storage/capabilities': 18.0.1
       '@web3-storage/did-mailto': 2.1.0
       bigint-mod-arith: 3.3.1
@@ -11136,8 +11157,8 @@ snapshots:
     dependencies:
       '@ipld/dag-cbor': 9.2.2
       '@storacha/one-webcrypto': 1.0.1
-      '@ucanto/core': 10.2.1
-      '@ucanto/interface': 10.1.1
+      '@ucanto/core': 10.3.0
+      '@ucanto/interface': 10.2.0
       '@web3-storage/capabilities': 18.0.1
       carstream: 2.3.0
       multiformats: 13.3.1
@@ -11145,29 +11166,29 @@ snapshots:
 
   '@web3-storage/capabilities@17.4.1':
     dependencies:
-      '@ucanto/core': 10.2.1
-      '@ucanto/interface': 10.1.1
+      '@ucanto/core': 10.3.0
+      '@ucanto/interface': 10.2.0
       '@ucanto/principal': 9.0.2
       '@ucanto/transport': 9.1.1
-      '@ucanto/validator': 9.0.3
+      '@ucanto/validator': 9.1.0
       '@web3-storage/data-segment': 5.3.0
       uint8arrays: 5.1.0
 
   '@web3-storage/capabilities@18.0.1':
     dependencies:
-      '@ucanto/core': 10.2.1
-      '@ucanto/interface': 10.1.1
+      '@ucanto/core': 10.3.0
+      '@ucanto/interface': 10.2.0
       '@ucanto/principal': 9.0.2
       '@ucanto/transport': 9.1.1
-      '@ucanto/validator': 9.0.3
+      '@ucanto/validator': 9.1.0
       '@web3-storage/data-segment': 5.3.0
       uint8arrays: 5.1.0
 
   '@web3-storage/content-claims@4.0.5':
     dependencies:
       '@ucanto/client': 9.0.1
-      '@ucanto/interface': 10.1.1
-      '@ucanto/server': 10.1.0
+      '@ucanto/interface': 10.2.0
+      '@ucanto/server': 10.2.0
       '@ucanto/transport': 9.1.1
       carstream: 1.1.1
       multiformats: 12.1.3
@@ -11175,8 +11196,8 @@ snapshots:
   '@web3-storage/content-claims@5.1.3':
     dependencies:
       '@ucanto/client': 9.0.1
-      '@ucanto/interface': 10.1.1
-      '@ucanto/server': 10.1.0
+      '@ucanto/interface': 10.2.0
+      '@ucanto/server': 10.2.0
       '@ucanto/transport': 9.1.1
       carstream: 2.3.0
       multiformats: 13.3.1
@@ -11193,9 +11214,9 @@ snapshots:
     dependencies:
       '@ipld/dag-ucan': 3.4.5
       '@ucanto/client': 9.0.1
-      '@ucanto/core': 10.2.1
-      '@ucanto/interface': 10.1.1
-      '@ucanto/server': 10.1.0
+      '@ucanto/core': 10.3.0
+      '@ucanto/interface': 10.2.0
+      '@ucanto/server': 10.2.0
       '@ucanto/transport': 9.1.1
       '@web3-storage/capabilities': 18.0.1
       '@web3-storage/content-claims': 5.1.3
@@ -11207,8 +11228,8 @@ snapshots:
     dependencies:
       '@ipld/dag-ucan': 3.4.5
       '@ucanto/client': 9.0.1
-      '@ucanto/core': 10.2.1
-      '@ucanto/interface': 10.1.1
+      '@ucanto/core': 10.3.0
+      '@ucanto/interface': 10.2.0
       '@ucanto/transport': 9.1.1
       '@web3-storage/capabilities': 18.0.1
 
@@ -11219,11 +11240,11 @@ snapshots:
   '@web3-storage/upload-api@19.0.0':
     dependencies:
       '@ucanto/client': 9.0.1
-      '@ucanto/interface': 10.1.1
+      '@ucanto/interface': 10.2.0
       '@ucanto/principal': 9.0.2
-      '@ucanto/server': 10.1.0
+      '@ucanto/server': 10.2.0
       '@ucanto/transport': 9.1.1
-      '@ucanto/validator': 9.0.3
+      '@ucanto/validator': 9.1.0
       '@web3-storage/access': 20.1.1
       '@web3-storage/blob-index': 1.0.5
       '@web3-storage/capabilities': 18.0.1
@@ -11240,8 +11261,8 @@ snapshots:
       '@ipld/dag-ucan': 3.4.5
       '@ipld/unixfs': 2.2.0
       '@ucanto/client': 9.0.1
-      '@ucanto/core': 10.2.1
-      '@ucanto/interface': 10.1.1
+      '@ucanto/core': 10.3.0
+      '@ucanto/interface': 10.2.0
       '@ucanto/transport': 9.1.1
       '@web3-storage/blob-index': 1.0.5
       '@web3-storage/capabilities': 18.0.1
@@ -11258,8 +11279,8 @@ snapshots:
     dependencies:
       '@ipld/dag-ucan': 3.4.5
       '@ucanto/client': 9.0.1
-      '@ucanto/core': 10.2.1
-      '@ucanto/interface': 10.1.1
+      '@ucanto/core': 10.3.0
+      '@ucanto/interface': 10.2.0
       '@ucanto/principal': 9.0.2
       '@ucanto/transport': 9.1.1
       '@web3-storage/access': 20.1.1
@@ -13746,7 +13767,7 @@ snapshots:
       it-to-stream: 1.0.0
       merge-options: 3.0.4
       nanoid: 3.3.8
-      native-fetch: 3.0.0(node-fetch@2.7.0)
+      native-fetch: 3.0.0(node-fetch@2.7.0(encoding@0.1.13))
       node-fetch: 2.7.0(encoding@0.1.13)
       react-native-fetch-api: 3.0.0
       stream-to-it: 0.2.4
@@ -14948,7 +14969,7 @@ snapshots:
 
   nanoid@5.0.9: {}
 
-  native-fetch@3.0.0(node-fetch@2.7.0):
+  native-fetch@3.0.0(node-fetch@2.7.0(encoding@0.1.13)):
     dependencies:
       node-fetch: 2.7.0(encoding@0.1.13)
 

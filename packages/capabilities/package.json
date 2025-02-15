@@ -100,11 +100,11 @@
     "dist/src/**/*.d.ts.map"
   ],
   "dependencies": {
-    "@ucanto/core": "^10.2.1",
-    "@ucanto/interface": "^10.1.1",
+    "@ucanto/core": "^10.3.0",
+    "@ucanto/interface": "^10.2.0",
     "@ucanto/principal": "^9.0.2",
     "@ucanto/transport": "^9.1.1",
-    "@ucanto/validator": "^9.0.3",
+    "@ucanto/validator": "^9.1.0",
     "@web3-storage/data-segment": "^5.2.0",
     "uint8arrays": "^5.0.3"
   },

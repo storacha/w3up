@@ -57,8 +57,8 @@
     "@ipld/dag-ucan": "^3.4.5",
     "@storacha/capabilities": "workspace:^",
     "@ucanto/client": "^9.0.1",
-    "@ucanto/core": "^10.2.1",
-    "@ucanto/interface": "^10.1.1",
+    "@ucanto/core": "^10.3.0",
+    "@ucanto/interface": "^10.2.0",
     "@ucanto/transport": "^9.1.1"
   },
   "devDependencies": {
@@ -67,7 +67,7 @@
     "@types/assert": "^1.5.6",
     "@types/mocha": "^10.0.1",
     "@ucanto/principal": "^9.0.2",
-    "@ucanto/server": "^10.1.0",
+    "@ucanto/server": "^10.2.0",
     "@web3-storage/data-segment": "^5.3.0",
     "assert": "^2.0.0",
     "c8": "^7.13.0",
