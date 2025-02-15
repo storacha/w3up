@@ -1,6 +1,6 @@
 {
   "name": "@web3-storage/access",
-  "version": "20.1.1",
+  "version": "20.1.2",
   "description": "w3access client",
   "homepage": "https://web3.storage",
   "repository": {
@@ -112,10 +112,10 @@
     "@web3-storage/did-mailto": "workspace:^",
     "bigint-mod-arith": "^3.1.2",
     "conf": "11.0.2",
-    "multiformats": "^12.1.2",
+    "multiformats": "^13.3.2",
     "p-defer": "^4.0.0",
     "type-fest": "^4.9.0",
-    "uint8arrays": "^4.0.6"
+    "uint8arrays": "^5.1.0"
   },
   "devDependencies": {
     "@types/assert": "^1.5.6",

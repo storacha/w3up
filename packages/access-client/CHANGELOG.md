@@ -1,5 +1,12 @@
 # Changelog
 
+## [20.1.2](https://github.com/storacha/w3up/compare/access-v20.1.1...access-v20.1.2) (2025-02-14)
+
+
+### Other Changes
+
+* upgrade dependencies for better de-duplication ([#1620](https://github.com/storacha/w3up/issues/1620)) ([fa90a01](https://github.com/storacha/w3up/commit/fa90a01ceb0877cfe606d6a5a86b7a11f6b0a018))
+
 ## [20.1.1](https://github.com/storacha/w3up/compare/access-v20.1.0...access-v20.1.1) (2024-12-09)
 
 
