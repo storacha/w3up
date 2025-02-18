@@ -30,14 +30,14 @@ should look like the following:
 // tsconfig.lib.json or tsconfig.app.json
 {
   "extends": "./tsconfig.json",
-  "include": ["src"],
+  "include": ["src/**/*"],
   "references": []
 }
 
 // tsconfig.spec.json
 {
   "extends": "./tsconfig.json",
-  "include": ["test"],
+  "include": ["test/**/*"],
   "compilerOptions": {
     "rootDir": "."
   },

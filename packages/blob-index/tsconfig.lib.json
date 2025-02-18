@@ -1,6 +1,6 @@
 {
   "extends": "./tsconfig.json",
-  "include": ["src", "src/api.js"],
+  "include": ["src/**/*"],
   "references": [
     {
       "path": "../capabilities/tsconfig.lib.json"
