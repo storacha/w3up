@@ -1,5 +1,22 @@
-import { Readable } from 'node:stream'
-import { ReadableStream } from 'node:stream/web'
+/**
+ *
+ * @param {AsyncIterable<Uint8Array<ArrayBufferLike>>} iterable
+ * @returns {ReadableStream}
+ */
+function iterableToStream(iterable) {
+  return new ReadableStream({
+    async pull(controller) {
+      const iterator = iterable[Symbol.asyncIterator]()
+      const { value, done } = await iterator.next()
+      if (value) {
+        controller.enqueue(value)
+      }
+      if (done) {
+        controller.close()
+      }
+    },
+  })
+}
 
 /**
  * Takes body from fetch response as body and `onUploadProgress` handler
@@ -11,9 +28,7 @@ import { ReadableStream } from 'node:stream/web'
  * @returns {AsyncIterable<Uint8Array>}
  */
 const iterateBodyWithProgress = async function* (body, onUploadProgress) {
-  if (body == null) {
-    onUploadProgress({ total: 0, loaded: 0, lengthComputable: true })
-  } else if (body instanceof ReadableStream) {
+  if (body instanceof ReadableStream) {
     const reader = body.getReader()
     const total = 0 // If the total size is unknown
     const lengthComputable = false
@@ -43,18 +58,14 @@ const iterateBodyWithProgress = async function* (body, onUploadProgress) {
  */
 const withUploadProgress = (options) => {
   const { onUploadProgress, body } = options
-  if (onUploadProgress && body) {
-    const rsp = new Response(body)
-    // @ts-expect-error web streams from node and web have different types
-    const source = iterateBodyWithProgress(rsp.body, onUploadProgress)
-    const stream = Readable.from(source)
-    return {
-      ...options,
-      // @ts-expect-error web streams from node and web have different types
-      body: Readable.toWeb(stream),
-    }
-  } else {
-    return options
+
+  const rsp = new Response(body)
+  // @ts-expect-error web streams from node and web have different types
+  const source = iterateBodyWithProgress(rsp.body, onUploadProgress)
+  const stream = iterableToStream(source)
+  return {
+    ...options,
+    body: stream,
   }
 }
 

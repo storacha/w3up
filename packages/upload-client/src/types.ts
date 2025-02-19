@@ -167,9 +167,6 @@ export interface ProgressFn {
   (status: ProgressStatus): void
 }
 
-
-
-
 export interface Service extends StorefrontService {
   ucan: {
     conclude: ServiceMethod<
