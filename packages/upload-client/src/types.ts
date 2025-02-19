@@ -1,7 +1,3 @@
-import type {
-  FetchOptions as IpfsUtilsFetchOptions,
-  ProgressStatus as XHRProgressStatus,
-} from 'ipfs-utils/src/types.js'
 import { Link, UnknownLink, Version, MultihashHasher } from 'multiformats'
 import { Block, EncoderSettings } from '@ipld/unixfs'
 import {
@@ -87,10 +83,18 @@ import {
 type Override<T, R> = Omit<T, keyof R> & R
 
 type FetchOptions = Override<
-  IpfsUtilsFetchOptions,
+  RequestInit,
   {
-    // `fetch` is a browser API and browsers don't have `Readable`
-    body: Exclude<IpfsUtilsFetchOptions['body'], import('node:stream').Readable>
+    /**
+     * Amount of time until request should timeout in ms.
+     */
+    timeout?: number
+    /**
+     * Can be passed to track upload progress.
+     * Note that if this option in passed underlying request will be performed using `XMLHttpRequest` and response will not be streamed.
+     */
+    onUploadProgress?: ProgressFn
+    overrideMimeType?: string
   }
 >
 
@@ -152,11 +156,19 @@ export type {
   Position,
 }
 
-export interface ProgressStatus extends XHRProgressStatus {
+export interface ProgressStatus {
+  total: number
+  loaded: number
+  lengthComputable: boolean
   url?: string
 }
 
-export type ProgressFn = (status: ProgressStatus) => void
+export interface ProgressFn {
+  (status: ProgressStatus): void
+}
+
+
+
 
 export interface Service extends StorefrontService {
   ucan: {
