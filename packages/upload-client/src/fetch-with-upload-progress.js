@@ -72,6 +72,8 @@ const withUploadProgress = (options) => {
 }
 
 // HTTP/1.1 and browsers
+
+/* c8 ignore start */
 /**
  *
  * @param {string} url
@@ -127,13 +129,14 @@ const fetchXhr = (url, { onUploadProgress, ...init }) => {
   }
 }
 
+/* c8 ignore stop */
+
+// Deno supports H1 streaming
 const isNode =
   typeof process !== 'undefined' &&
   process.versions.node &&
   !process.versions.bun &&
   !process.versions.deno
-// const isDeno = typeof process !== 'undefined' && process.versions.deno
-// const isBun = typeof process !== 'undefined' && process.versions.bun
 const isBrowser = typeof globalThis.XMLHttpRequest !== 'undefined'
 
 /**
@@ -149,6 +152,8 @@ export const fetchWithUploadProgress = (url, init = {}) => {
     performance.getEntriesByType('resource')[0]?.nextHopProtocol
   const preH2 = protocol !== 'h2' && protocol !== 'h2c' && protocol !== 'h3'
 
+
+  /* c8 ignore next 3 */
   if ((isBrowser || preH2) && !isNode) {
     return fetchXhr(url, init)
   }
