@@ -1,6 +1,6 @@
 /**
  *
- * @param {AsyncIterable<Uint8Array<ArrayBufferLike>>} iterable
+ * @param {AsyncIterable<Uint8Array>} iterable
  * @returns {ReadableStream}
  */
 function iterableToStream(iterable) {
@@ -23,7 +23,7 @@ function iterableToStream(iterable) {
  * and returns async iterable that emits body chunks and emits
  * `onUploadProgress`.
  *
- * @param {ReadableStream | null} body
+ * @param {ReadableStream} body
  * @param {import('./types.js').ProgressFn} onUploadProgress
  * @returns {AsyncIterable<Uint8Array>}
  */
