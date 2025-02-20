@@ -152,22 +152,27 @@ async function uploadBlockStream(
         new TransformStream({
           async transform(car, controller) {
             const bytes = new Uint8Array(await car.arrayBuffer())
-            const digest = await sha256.digest(bytes)
-            const conf = await configure([
-              {
-                can: BlobAdd.ability,
-                nb: BlobAdd.input(digest, bytes.length),
-              },
+            
+            const [{digest, cid, conf}, piece] = await Promise.all([
+              // Invoke blob/add and write bytes to write target
+              (async () => {
+                const digest = await sha256.digest(bytes)
+                const cid = Link.create(CAR.code, digest)
+                const conf = await configure([
+                {
+                  can: BlobAdd.ability,
+                  nb: BlobAdd.input(digest, bytes.length),
+                }
+                ])
+                await Blob.add(conf, digest, bytes, options)
+                return {digest, cid, conf}
+              })(),
+              // at the same time as running a piece hashing function (parallelize network ops and compute)
+              (async () => pieceHasher && Link.create(raw.code, await pieceHasher.digest(bytes)))()
             ])
-            // Invoke blob/add and write bytes to write target
-            await Blob.add(conf, digest, bytes, options)
-            const cid = Link.create(CAR.code, digest)
 
-            let piece
-            if (pieceHasher) {
-              const multihashDigest = await pieceHasher.digest(bytes)
-              /** @type {import('@storacha/capabilities/types').PieceLink} */
-              piece = Link.create(raw.code, multihashDigest)
+
+            if (piece) {
               const content = Link.create(raw.code, digest)
 
               // Invoke filecoin/offer for data
