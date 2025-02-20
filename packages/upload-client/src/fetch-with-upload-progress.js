@@ -1,3 +1,5 @@
+// HTTP/2 or Node.js/undici
+
 /**
  *
  * @param {AsyncIterable<Uint8Array>} iterable
@@ -69,9 +71,88 @@ const withUploadProgress = (options) => {
   }
 }
 
+// HTTP/1.1 and browsers
+/**
+ *
+ * @param {string} url
+ * @param {import('./types.js').FetchOptions} init
+ */
+const fetchXhr = (url, { onUploadProgress, ...init }) => {
+  if (onUploadProgress) {
+    return /** @type {Promise<Response>} */ (
+      new Promise((resolve, reject) => {
+        const xhr = new XMLHttpRequest()
+        xhr.open(init.method || 'GET', url, true)
+        xhr.upload.addEventListener('progress', (e) =>
+          onUploadProgress({
+            total: e.total,
+            loaded: e.loaded,
+            lengthComputable: e.lengthComputable,
+            url,
+          })
+        )
+        xhr.upload.addEventListener('loadend', (e) =>
+          onUploadProgress({
+            total: e.total,
+            loaded: e.loaded,
+            lengthComputable: e.lengthComputable,
+            url,
+          })
+        )
+        xhr.onreadystatechange = () => {
+          if (xhr.readyState === 4) {
+            // @ts-expect-error - fetchWithUploadProgress only is used for status and ok
+            resolve({
+              status: xhr.status,
+              statusText: xhr.statusText,
+              body: xhr.response,
+              ok: ((xhr.status / 100) | 0) == 2,
+            })
+          }
+        }
+        xhr.onerror = (err) => reject(err)
+        Object.entries(init.headers || {}).forEach(([key, value]) =>
+          xhr.setRequestHeader(key, value)
+        )
+        xhr.send(init.body)
+        // @ts-expect-error - fetchWithUploadProgress only is used for status and ok
+        resolve({
+          status: xhr.status,
+          statusText: xhr.statusText,
+          body: xhr.response,
+          ok: ((xhr.status / 100) | 0) == 2,
+        })
+      })
+    )
+  } else {
+    return fetch(url, init)
+  }
+}
+
+const isNode =
+  typeof process !== 'undefined' &&
+  process.versions.node &&
+  !process.versions.bun &&
+  !process.versions.deno
+// const isDeno = typeof process !== 'undefined' && process.versions.deno
+// const isBun = typeof process !== 'undefined' && process.versions.bun
+const isBrowser = typeof globalThis.XMLHttpRequest !== 'undefined'
+
 /**
  * @type {import('./types.js').FetchWithUploadProgress}
  */
 export const fetchWithUploadProgress = (url, init = {}) => {
+  // https://developer.mozilla.org/en-US/docs/Web/API/PerformanceResourceTiming/nextHopProtocol
+  /**
+   * @type {string}
+   */
+  // @ts-expect-error nextHopProtocol is missing from types but is widely available
+  const protocol = performance.getEntriesByType('resource')[0].nextHopProtocol
+
+  const preH2 = protocol.startsWith('http')
+
+  if ((isBrowser || preH2) && !isNode) {
+    return fetchXhr(url, init)
+  }
   return fetch(url, withUploadProgress(init))
 }

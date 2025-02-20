@@ -93,7 +93,6 @@ describe('Blob.add', () => {
         receiptsEndpoint,
       }
     )
-
     assert(site)
     assert.equal(site.capabilities[0].can, Assert.location.can)
     // we're not verifying this as it's a mocked value
