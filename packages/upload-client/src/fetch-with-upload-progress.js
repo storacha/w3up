@@ -142,12 +142,11 @@ const isBrowser = typeof globalThis.XMLHttpRequest !== 'undefined'
 export const fetchWithUploadProgress = (url, init = {}) => {
   // https://developer.mozilla.org/en-US/docs/Web/API/PerformanceResourceTiming/nextHopProtocol
   /**
-   * @type {string}
+   * @type {string | undefined}
    */
   // @ts-expect-error nextHopProtocol is missing from types but is widely available
-  const protocol = performance.getEntriesByType('resource')[0].nextHopProtocol
-
-  const preH2 = protocol.startsWith('http')
+  const protocol = !!performance.getEntriesByType('resource')[0]?.nextHopProtocol
+  const preH2 = protocol !== 'h2' && protocol !== 'h2c' && protocol !== 'h3'
 
   if ((isBrowser || preH2) && !isNode) {
     return fetchXhr(url, init)
