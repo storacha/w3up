@@ -152,7 +152,6 @@ export const fetchWithUploadProgress = (url, init = {}) => {
     performance.getEntriesByType('resource')[0]?.nextHopProtocol
   const preH2 = protocol !== 'h2' && protocol !== 'h2c' && protocol !== 'h3'
 
-
   /* c8 ignore next 3 */
   if ((isBrowser || preH2) && !isNode) {
     return fetchXhr(url, init)
