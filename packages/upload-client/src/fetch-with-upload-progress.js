@@ -145,7 +145,8 @@ export const fetchWithUploadProgress = (url, init = {}) => {
    * @type {string | undefined}
    */
   // @ts-expect-error nextHopProtocol is missing from types but is widely available
-  const protocol = !!performance.getEntriesByType('resource')[0]?.nextHopProtocol
+  const protocol =
+    !!performance.getEntriesByType('resource')[0]?.nextHopProtocol
   const preH2 = protocol !== 'h2' && protocol !== 'h2c' && protocol !== 'h3'
 
   if ((isBrowser || preH2) && !isNode) {
