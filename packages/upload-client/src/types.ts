@@ -86,15 +86,10 @@ type FetchOptions = Override<
   RequestInit,
   {
     /**
-     * Amount of time until request should timeout in ms.
-     */
-    timeout?: number
-    /**
      * Can be passed to track upload progress.
      * Note that if this option in passed underlying request will be performed using `XMLHttpRequest` and response will not be streamed.
      */
     onUploadProgress?: ProgressFn
-    overrideMimeType?: string
   }
 >
 

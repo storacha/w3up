@@ -101,7 +101,7 @@ const fetchXhr = (url, { onUploadProgress, ...init }) => {
         )
         xhr.onreadystatechange = () => {
           if (xhr.readyState === 4) {
-            // @ts-expect-error - fetchWithUploadProgress only is used for status and ok
+            // @ts-expect-error doesn't have to match Response 100%
             resolve({
               status: xhr.status,
               statusText: xhr.statusText,
@@ -114,14 +114,12 @@ const fetchXhr = (url, { onUploadProgress, ...init }) => {
         Object.entries(init.headers || {}).forEach(([key, value]) =>
           xhr.setRequestHeader(key, value)
         )
-        xhr.send(init.body)
-        // @ts-expect-error - fetchWithUploadProgress only is used for status and ok
-        resolve({
-          status: xhr.status,
-          statusText: xhr.statusText,
-          body: xhr.response,
-          ok: ((xhr.status / 100) | 0) == 2,
-        })
+        /**
+         * @type {XMLHttpRequestBodyInit}
+         */
+        // @ts-expect-error ReadableStream as body is not supported by XHR
+        const body = init.body
+        xhr.send(body)
       })
     )
   } else {
