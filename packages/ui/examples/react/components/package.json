@@ -1,5 +1,6 @@
 {
   "name": "@storacha/ui-example-react-components",
+  "private": true,
   "version": "1.2.0",
   "description": "Components for React examples",
   "type": "module",
