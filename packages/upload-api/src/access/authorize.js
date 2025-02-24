@@ -74,7 +74,8 @@ export const authorize = async ({ capability, invocation }, ctx) => {
       nb: {
         // we copy request details and set the `aud` field to the agent DID
         // that requested the authorization.
-        ...capability.nb,
+        iss: accountMailtoDID,
+        att: capability.nb.att,
         aud: capability.with,
         // Link to the invocation that requested the authorization.
         cause: invocation.cid,
