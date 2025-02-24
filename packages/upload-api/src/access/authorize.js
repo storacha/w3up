@@ -21,6 +21,10 @@ export const provide = (ctx) =>
  * @returns {Promise<API.Transaction<API.AccessAuthorizeSuccess, API.AccessAuthorizeFailure>>}
  */
 export const authorize = async ({ capability, invocation }, ctx) => {
+  if (!capability.nb.iss) {
+    return Server.error(new Error('Issuer is required in invoked authorization request.'))
+  }
+
   const accountMailtoDID =
     /** @type {import('@web3-storage/did-mailto/types').DidMailto} */ (
       capability.nb.iss

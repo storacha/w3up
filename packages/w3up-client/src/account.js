@@ -5,6 +5,7 @@ import * as Subscription from './capability/subscription.js'
 import { Delegation, importAuthorization } from '@web3-storage/access/agent'
 import { add as provision, AccountDID } from '@web3-storage/access/provider'
 import { fromEmail, toEmail } from '@web3-storage/did-mailto'
+import * as UCAN from '@web3-storage/capabilities/ucan'
 
 export { fromEmail }
 
@@ -121,6 +122,70 @@ export const login = async ({ agent }, email, options = {}) => {
     }
   }
 }
+
+/**
+ * Attempts to obtain account access for an out of band authentication process.
+ * e.g. OAuth.
+ * 
+ * Authentication is typically performed out of band by an OAuth provider. In
+ * the OAuth callback, a delegation for the requested capabilities is issued
+ * _from_ the email reported by the OAuth provider _to_ the agent. The service
+ * also issues an attestation for this delegation.
+ *
+ * These capabilities are then claimed (using `access/claim`) and the account
+ * email is derived from the delegation to the agent.
+ *
+ * @param {{agent: API.Agent}} client
+ * @param {object} input
+ * @param {API.Link} input.request Link to the `access/authorize` invocation.
+ * @param {API.UTCUnixTimestamp} input.expiration Seconds in UTC.
+ * @param {AbortSignal} [input.signal]
+ * @param {string} [input.receiptsEndpoint]
+ * @returns {Promise<API.Result<Account, Error>>}
+ */
+export const externalLogin = async ({ agent }, { request, expiration, ...options }) => {
+  const access = Access.createPendingAccessRequest({ agent }, { request, expiration })
+
+  const { ok, error } = await access.claim({ signal: options.signal })
+  /* c8 ignore next 2 - don't know how to test this */
+  if (error) {
+    return { error }
+  }
+
+  let attestedProof
+  for (const p of ok.proofs) {
+    if (isUCANAttest(p)) {
+      attestedProof = p.capabilities[0].nb.proof
+      break
+    }
+  }
+  if (!attestedProof) {
+    return { error: new Error('missing attestation') }
+  }
+
+  let account
+  for (const p of ok.proofs) {
+    if (p.cid.toString() === attestedProof.toString()) {
+      try {
+        account = Access.DIDMailto.fromString(p.issuer.did())
+      } catch (err) {
+        return { error: new Error('invalid account DID', { cause: err }) }
+      }
+      break
+    }
+  }
+  if (!account) {
+    return { error: new Error('missing attested delegation') }
+  }
+
+  return { ok: new Account({ id: account, proofs: ok.proofs, agent }) }
+}
+
+/**
+ * @param {API.Delegation} d
+ * @returns {d is API.Delegation<[API.UCANAttest]>}
+ */
+const isUCANAttest = d => d.capabilities[0].can === UCAN.attest.can
 
 /**
  * @typedef {object} Model
