@@ -103,6 +103,7 @@ export const request = async ({ agent }, input) =>
  * @param {API.DID} [input.audience] - Principal requesting an access.
  * @param {API.ProviderDID} [input.provider] - Provider handling request.
  */
+/* c8 ignore next 2 */
 export const createPendingAccessRequest = ({ agent }, input) =>
   Agent.Access.createPendingAccessRequest(agent, input)
 

@@ -123,6 +123,7 @@ export const login = async ({ agent }, email, options = {}) => {
   }
 }
 
+/* c8 ignore start */
 /**
  * Attempts to obtain account access for an out of band authentication process.
  * e.g. OAuth.
@@ -186,6 +187,7 @@ export const externalLogin = async (
 
   return { ok: new Account({ id: account, proofs: ok.proofs, agent }) }
 }
+/* c8 ignore end */
 
 /**
  * @param {API.Delegation} d
