@@ -22,7 +22,9 @@ export const provide = (ctx) =>
  */
 export const authorize = async ({ capability, invocation }, ctx) => {
   if (!capability.nb.iss) {
-    return Server.error(new Error('Issuer is required in invoked authorization request.'))
+    return Server.error(
+      new Error('Issuer is required in invoked authorization request.')
+    )
   }
 
   const accountMailtoDID =

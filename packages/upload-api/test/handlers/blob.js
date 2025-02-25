@@ -117,7 +117,7 @@ export const test = {
       proofs: [proof],
       // Note: we have to set an expiration, or the default expiration value
       // will be set when the invocation is executed and the UCAN issued.
-      expiration: (Math.floor(Date.now() / 1000)) + 10
+      expiration: Math.floor(Date.now() / 1000) + 10,
     })
     // Invoke `blob/add` for the first time
     const firstBlobAdd = await invocation.execute(connection)
@@ -152,7 +152,9 @@ export const test = {
     const firstAllocateTaskLink = firstNext.allocate.task.link()
     const secondAllocateTaskLink = secondNext.allocate.task.link()
 
-    if (firstAllocateTaskLink.toString() !== secondAllocateTaskLink.toString()) {
+    if (
+      firstAllocateTaskLink.toString() !== secondAllocateTaskLink.toString()
+    ) {
       console.error('allocate receipts not equal:')
       console.error(firstNext.allocate.receipt)
       console.error(secondNext.allocate.receipt)
@@ -464,7 +466,11 @@ export const test = {
         body: data,
         headers: address.headers,
       })
-      assert.equal(httpPut.status, 200, `PUT ${address.url} failed (${httpPut.status}): ${await httpPut.text()}`)
+      assert.equal(
+        httpPut.status,
+        200,
+        `PUT ${address.url} failed (${httpPut.status}): ${await httpPut.text()}`
+      )
     }
 
     const keys =
@@ -487,7 +493,7 @@ export const test = {
     // ensure a location claim exists for the content root
     const claims = Result.unwrap(await context.claimsService.read(digest))
     assert.ok(
-      claims.some(c => c.type === 'assert/location'),
+      claims.some((c) => c.type === 'assert/location'),
       'did not find location claim'
     )
   },

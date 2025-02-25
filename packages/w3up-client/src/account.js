@@ -126,7 +126,7 @@ export const login = async ({ agent }, email, options = {}) => {
 /**
  * Attempts to obtain account access for an out of band authentication process.
  * e.g. OAuth.
- * 
+ *
  * Authentication is typically performed out of band by an OAuth provider. In
  * the OAuth callback, a delegation for the requested capabilities is issued
  * _from_ the email reported by the OAuth provider _to_ the agent. The service
@@ -143,8 +143,14 @@ export const login = async ({ agent }, email, options = {}) => {
  * @param {string} [input.receiptsEndpoint]
  * @returns {Promise<API.Result<Account, Error>>}
  */
-export const externalLogin = async ({ agent }, { request, expiration, ...options }) => {
-  const access = Access.createPendingAccessRequest({ agent }, { request, expiration })
+export const externalLogin = async (
+  { agent },
+  { request, expiration, ...options }
+) => {
+  const access = Access.createPendingAccessRequest(
+    { agent },
+    { request, expiration }
+  )
 
   const { ok, error } = await access.claim({ signal: options.signal })
   /* c8 ignore next 2 - don't know how to test this */
@@ -185,7 +191,7 @@ export const externalLogin = async ({ agent }, { request, expiration, ...options
  * @param {API.Delegation} d
  * @returns {d is API.Delegation<[API.UCANAttest]>}
  */
-const isUCANAttest = d => d.capabilities[0].can === UCAN.attest.can
+const isUCANAttest = (d) => d.capabilities[0].can === UCAN.attest.can
 
 /**
  * @typedef {object} Model
