@@ -1,5 +1,12 @@
 # Changelog
 
+## [20.2.0](https://github.com/storacha/w3up/compare/access-v20.1.2...access-v20.2.0) (2025-02-25)
+
+
+### Features
+
+* external login ([#1629](https://github.com/storacha/w3up/issues/1629)) ([150b5d7](https://github.com/storacha/w3up/commit/150b5d7c55ca92becbabab969285497fbba86268))
+
 ## [20.1.2](https://github.com/storacha/w3up/compare/access-v20.1.1...access-v20.1.2) (2025-02-14)
 
 
