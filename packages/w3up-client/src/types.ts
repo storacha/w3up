@@ -122,6 +122,7 @@ export type {
   FilecoinInfo,
   FilecoinInfoSuccess,
   FilecoinInfoFailure,
+  UCANAttest,
 } from '@web3-storage/capabilities/types'
 
 export type {
@@ -178,3 +179,5 @@ export type {
   BlobLike,
   ProgressStatus,
 } from '@web3-storage/upload-client/types'
+
+export type { UTCUnixTimestamp } from '@ipld/dag-ucan'

@@ -208,13 +208,17 @@ export function aggregatePieces(bufferedPieces, config) {
     builder.offset * BigInt(NODE_SIZE) +
     BigInt(builder.limit) * BigInt(Index.EntrySize)
 
-  console.log(`Used ${totalUsedSpace} bytes in ${addedBufferedPieces.length} pieces (min ${config.minAggregateSize} bytes)`)
+  console.log(
+    `Used ${totalUsedSpace} bytes in ${addedBufferedPieces.length} pieces (min ${config.minAggregateSize} bytes)`
+  )
 
   // If not enough space return undefined
   if (totalUsedSpace < BigInt(config.minAggregateSize)) {
     // ...but only if not exceeded max aggregate pieces
     if (addedBufferedPieces.length === config.maxAggregatePieces) {
-      console.warn(`Building aggregate: max allowed pieces reached (${config.maxAggregatePieces})`)
+      console.warn(
+        `Building aggregate: max allowed pieces reached (${config.maxAggregatePieces})`
+      )
     } else {
       return console.log('Not enough data for aggregate.')
     }

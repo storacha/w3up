@@ -127,6 +127,28 @@ export const claim = async (
 }
 
 /**
+ * Creates a new `PendingAccessRequest` object that can be used to poll for the
+ * requested delegation through `access/claim` capability.
+ *
+ * @param {API.Agent} agent
+ * @param {object} input
+ * @param {API.Link} input.request - Link to the `access/authorize` invocation.
+ * @param {API.UTCUnixTimestamp} input.expiration - Seconds in UTC.
+ * @param {API.DID} [input.audience] - Principal requesting an access.
+ * @param {API.ProviderDID} [input.provider] - Provider handling request.
+ */
+export const createPendingAccessRequest = (
+  agent,
+  {
+    request,
+    expiration,
+    provider = /** @type {API.ProviderDID} */ (agent.connection.id.did()),
+    audience: audience = agent.did(),
+  }
+) =>
+  new PendingAccessRequest({ agent, request, expiration, provider, audience })
+
+/**
  * Represents a pending access request. It can be used to poll for the requested
  * delegation.
  */
