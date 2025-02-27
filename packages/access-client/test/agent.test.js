@@ -571,6 +571,25 @@ describe('Agent', function () {
       'invocation for serviceBWeb does not have sessionProof from serviceAWeb'
     )
   })
+
+  it('should dedupe proofs', async function () {
+    const agent = await Agent.create()
+    const space = await agent.createSpace('test-add')
+    const authorization = await space.createAuthorization(agent, {
+      access: { '*': {} },
+      expiration: Infinity,
+    })
+
+    await agent.importSpaceFromDelegation(authorization)
+    const proofs = agent.proofs([
+      { can: 'space/blob/add', with: space.did() },
+      { can: 'space/index/add', with: space.did() },
+    ])
+
+    // the same proof proves both capabilities
+    assert.equal(proofs.length, 1)
+    assert.equal(proofs[0].cid.toString(), authorization.cid.toString())
+  })
 })
 
 /**
