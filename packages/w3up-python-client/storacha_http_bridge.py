@@ -146,8 +146,8 @@ if __name__ == "__main__":
         exit(1)
 
     # Upload file using upload_add_https
-    response = storacha.upload_add_https(space_did, file_path, os.path.dirname(file_path))
-    if response:
-        print("✅ Upload successful:", response)
+    result = storacha.upload_add_https(space_did, file_path, os.path.dirname(file_path))
+    if result:
+        print(f"✅ Successfully uploaded file to space. Details: {result}")
     else:
-        print("❌ Upload failed.")
+        print("❌ Failed to upload file to space")
