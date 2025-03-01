@@ -1,4 +1,4 @@
-import os
+"""import os
 import subprocess
 import requests
 import tempfile
@@ -151,3 +151,4 @@ if __name__ == "__main__":
         print(f"✅ Successfully uploaded file to space. Details: {result}")
     else:
         print("❌ Failed to upload file to space")
+"""

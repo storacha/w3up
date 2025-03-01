@@ -1,5 +1,4 @@
 .env
 *.car
-/dag_to_car.egg-info
+/storacha_uploader.egg-info
 /myenv
-curl.py
