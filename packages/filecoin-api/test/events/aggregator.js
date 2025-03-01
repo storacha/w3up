@@ -586,7 +586,10 @@ export const test = {
         }))
       )
       assert.ok(handledMessageRes.ok)
-      assert.equal(handledMessageRes.ok?.aggregatedPieces, config.maxAggregatePieces)
+      assert.equal(
+        handledMessageRes.ok?.aggregatedPieces,
+        config.maxAggregatePieces
+      )
 
       await pWaitFor(
         () =>

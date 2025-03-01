@@ -265,25 +265,26 @@ export class Agent {
    * @param {API.DID} [options.sessionProofIssuer] - only include session proofs for this issuer
    */
   proofs(caps, options) {
-    const authorizations = []
+    /** @type {Map<string, API.Delegation<API.Capabilities>>} */
+    const authorizations = new Map()
     for (const { delegation } of this.#delegations(caps)) {
       if (delegation.audience.did() === this.issuer.did()) {
-        authorizations.push(delegation)
+        authorizations.set(delegation.cid.toString(), delegation)
       }
     }
 
     // now let's add any session proofs that refer to those authorizations
     const sessions = getSessionProofs(this.#data)
-    for (const proof of authorizations) {
+    for (const proof of [...authorizations.values()]) {
       const proofsByIssuer = sessions[proof.asCID.toString()] ?? {}
       const sessionProofs = options?.sessionProofIssuer
         ? proofsByIssuer[options.sessionProofIssuer] ?? []
         : Object.values(proofsByIssuer).flat()
-      if (sessionProofs.length) {
-        authorizations.push(...sessionProofs)
+      for (const sessionProof of sessionProofs) {
+        authorizations.set(sessionProof.cid.toString(), sessionProof)
       }
     }
-    return authorizations
+    return [...authorizations.values()]
   }
 
   /**
