@@ -1,0 +1,4 @@
+.env
+*.car
+/storacha_uploader.egg-info
+/myenv
