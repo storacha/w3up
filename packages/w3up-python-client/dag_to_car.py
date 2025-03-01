@@ -2,7 +2,6 @@ import subprocess
 import sys
 import os
 
-
 def run_command(command):
     try:
         result = subprocess.run(command, shell=True, check=True, text=True, capture_output=True)

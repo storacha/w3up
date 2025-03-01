@@ -2,3 +2,4 @@
 *.car
 /dag_to_car.egg-info
 /myenv
+curl.py
