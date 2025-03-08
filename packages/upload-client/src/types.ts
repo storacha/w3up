@@ -80,18 +80,13 @@ import {
   Position,
 } from '@web3-storage/blob-index/types'
 
-type Override<T, R> = Omit<T, keyof R> & R
-
-type FetchOptions = Override<
-  RequestInit,
-  {
-    /**
-     * Can be passed to track upload progress.
-     * Note that if this option in passed underlying request will be performed using `XMLHttpRequest` and response will not be streamed.
-     */
-    onUploadProgress?: ProgressFn
-  }
->
+type FetchOptions = RequestInit & {
+  /**
+   * Can be passed to track upload progress.
+   * Note that if this option in passed underlying request will be performed using `XMLHttpRequest` and response will not be streamed.
+   */
+  onUploadProgress?: ProgressFn
+}
 
 export type {
   FetchOptions,
@@ -155,7 +150,7 @@ export interface ProgressStatus {
   total: number
   loaded: number
   lengthComputable: boolean
-  url?: string
+  url?: string | URL
 }
 
 export interface ProgressFn {
@@ -312,7 +307,7 @@ export interface Connectable {
 }
 
 export type FetchWithUploadProgress = (
-  url: string,
+  url: string | URL,
   init?: FetchOptions
 ) => Promise<Response>
 

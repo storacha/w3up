@@ -85,7 +85,7 @@ const withUploadProgress = (options) => {
 /* c8 ignore start */
 /**
  *
- * @param {string} url
+ * @param {string | URL} url
  * @param {import('./types.js').FetchOptions} init
  */
 const fetchXhr = (url, { onUploadProgress, ...init }) => {
@@ -157,7 +157,9 @@ export const fetchWithUploadProgress = (url, init = {}) => {
 
   /* c8 ignore next 3 */
   if (
-    typeof globalThis.XMLHttpRequest !== 'undefined' && preH2 && Boolean(init.onUploadProgress)
+    typeof globalThis.XMLHttpRequest !== 'undefined' &&
+    preH2 &&
+    Boolean(init.onUploadProgress)
   ) {
     return fetchXhr(url, init)
   }
