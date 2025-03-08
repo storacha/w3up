@@ -45,9 +45,14 @@ const iterateBodyWithProgress = async function* (body, onUploadProgress) {
         yield value // Yield the chunk
         onUploadProgress({ total, loaded, lengthComputable })
       }
+    // eslint-disable-next-line no-useless-catch
+    } catch (e) {
+      throw e
     } finally {
       reader.releaseLock() // Ensure the reader lock is released
     }
+  } else {
+    throw new Error('Body is not a ReadableStream')
   }
 }
 
