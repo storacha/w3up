@@ -31,6 +31,9 @@ jobs:
       - name: Prepare environment
         run: pnpm nx affected -t prepare-environment
 
+      - name: Check format
+        run: pnpm nx format:check
+
       # Run CI tasks over all affected projects
       # TODO: Add `attw` back once fixed.
       - run: pnpm nx affected -t typecheck lint build test depcheck
