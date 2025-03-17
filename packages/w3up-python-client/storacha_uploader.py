@@ -21,20 +21,20 @@ def create_dag_and_car(file_path):
         sys.exit(1)
 
     print(f"📂 Adding '{file_path}' to IPFS DAG...")
-    
     car_file = f"{file_path}.car"
-    
+
     if platform.system() == "Windows":
         ipfs_car_cmd = f"npx ipfs-car pack {file_path} --output {car_file}"
     else:
         ipfs_car_cmd = f"ipfs-car pack {file_path} --output {car_file}"
-    
+
     try:
         ipfs_car_cmd_results = subprocess.run(
             ipfs_car_cmd, shell=True, check=True,
             stderr=subprocess.PIPE, stdout=subprocess.PIPE
         )
         ipfs_car_cmd_output = ipfs_car_cmd_results.stdout.decode("utf-8").strip()
+        # Assume the last line is the CID
         cid = ipfs_car_cmd_output.split('\n')[-1]
         print(f"✅ CAR file created: {car_file}")
         print(f"✅ CID: {cid}")
@@ -43,26 +43,32 @@ def create_dag_and_car(file_path):
         print(f"❌ ipfs-car failed: {e.stderr.decode('utf-8')}")
         sys.exit(1)
 
-def create_upload_json(cid, space_did):
-    """Create the JSON payload for the upload/add operation."""
+def create_all_instructions_json(cid, space_did):
+    
+    #Placeholders (e.g., <delegate_address>, <allocation_details>) are used for parameters
+    #  that require additional values.
+    
     if not space_did.startswith("did:"):
         space_did = f"did:key:{space_did}"
     
-    data = {
+    payload = {
         "tasks": [
-            [
-                "upload/add",
-                space_did,
-                {
-                    "root": {"/": cid},
-                    "shards": []
-                }
-            ]
+            ["access/delegate", space_did, {"delegate": "<delegate_address>"}],
+            ["space/info", space_did],
+            ["space/allocate", space_did, {"allocation": "<allocation_details>"}],
+            ["store/add", space_did, {"root": {"/": cid}, "shards": []}],
+            ["store/get", space_did, {"root": {"/": cid}}],
+            ["store/remove", space_did, {"root": {"/": cid}}],
+            ["store/list", space_did],
+            ["upload/add", space_did, {"root": {"/": cid}, "shards": []}],
+            ["upload/list", space_did, {"root": {"/": cid}, "shards": []}],
+            ["upload/remove", space_did, {"root": {"/": cid}}],
+            ["usage/report", space_did]
         ]
     }
     
     with tempfile.NamedTemporaryFile(mode='w', suffix='.json', delete=False) as temp:
-        json.dump(data, temp, indent=2)
+        json.dump(payload, temp, indent=2)
         temp_json_path = temp.name
     
     return temp_json_path
@@ -81,7 +87,7 @@ def upload_to_storacha(json_file):
         raise ValueError("Authorization is required in .env file as AUTHORIZATION-HEADER")
     
     headers = {
-        "X-Auth-Secret": auth_secret,
+        "X-AUTH-SECRET": auth_secret,
         "Authorization": authorization,
         "Content-Type": "application/json"
     }
@@ -104,6 +110,8 @@ def upload_to_storacha(json_file):
         return None
 
 def main():
+    load_dotenv()
+    
     if len(sys.argv) < 2:
         print("❌ Error: Please provide a file path to upload.")
         print("Usage: python storacha_uploader.py <file_path>")
@@ -111,10 +119,7 @@ def main():
     
     file_path = sys.argv[1]
     
-    load_dotenv()
-    
     space_did = os.getenv("SPACE_DID")
-    
     if not space_did:
         print("❌ Error: SPACE_DID not found in .env file.")
         print("Please add SPACE_DID=your_space_did to your .env file.")
@@ -124,7 +129,7 @@ def main():
     
     cid, car_file = create_dag_and_car(file_path)
     
-    json_file = create_upload_json(cid, space_did)
+    json_file = create_all_instructions_json(cid, space_did)
     
     result = upload_to_storacha(json_file)
     
