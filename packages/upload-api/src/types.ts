@@ -203,7 +203,10 @@ import { StorageGetError } from './types/storage.js'
 import { AllocationsStorage, BlobsStorage, BlobAddInput } from './types/blob.js'
 export type { AllocationsStorage, BlobsStorage, BlobAddInput }
 import { IPNIService, IndexServiceContext } from './types/index.js'
-import { ClaimsClientConfig, ClaimsClientContext } from './types/content-claims.js'
+import {
+  ClaimsClientConfig,
+  ClaimsClientContext,
+} from './types/content-claims.js'
 import { Claim } from '@web3-storage/content-claims/client/api'
 export type {
   IndexServiceContext,
@@ -366,26 +369,28 @@ export interface W3sService {
   }
 }
 
-export type BlobServiceContext = SpaceServiceContext & ClaimsClientContext & {
-  /**
-   * Service signer
-   */
-  id: Signer
-  maxUploadSize: number
-  allocationsStorage: AllocationsStorage
-  blobsStorage: BlobsStorage
-  agentStore: AgentStore
-  getServiceConnection: () => ConnectionView<Service>
-}
+export type BlobServiceContext = SpaceServiceContext &
+  ClaimsClientContext & {
+    /**
+     * Service signer
+     */
+    id: Signer
+    maxUploadSize: number
+    allocationsStorage: AllocationsStorage
+    blobsStorage: BlobsStorage
+    agentStore: AgentStore
+    getServiceConnection: () => ConnectionView<Service>
+  }
 
-export type W3ServiceContext = SpaceServiceContext & ClaimsClientContext & {
-  /**
-   * Service signer
-   */
-  id: Signer
-  allocationsStorage: AllocationsStorage
-  blobsStorage: BlobsStorage
-}
+export type W3ServiceContext = SpaceServiceContext &
+  ClaimsClientContext & {
+    /**
+     * Service signer
+     */
+    id: Signer
+    allocationsStorage: AllocationsStorage
+    blobsStorage: BlobsStorage
+  }
 
 export type StoreServiceContext = SpaceServiceContext & {
   maxUploadSize: number

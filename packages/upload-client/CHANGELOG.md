@@ -1,5 +1,12 @@
 # Changelog
 
+## [17.1.4](https://github.com/storacha/w3up/compare/upload-client-v17.1.3...upload-client-v17.1.4) (2025-02-25)
+
+
+### Other Changes
+
+* upgrade dependencies for better de-duplication ([#1620](https://github.com/storacha/w3up/issues/1620)) ([fa90a01](https://github.com/storacha/w3up/commit/fa90a01ceb0877cfe606d6a5a86b7a11f6b0a018))
+
 ## [17.1.3](https://github.com/storacha/w3up/compare/upload-client-v17.1.2...upload-client-v17.1.3) (2024-12-18)
 
 

@@ -1,6 +1,6 @@
 {
   "name": "@web3-storage/capabilities",
-  "version": "18.0.1",
+  "version": "18.1.0",
   "description": "UCAN Capabilities provided by web3.storage",
   "homepage": "https://web3.storage",
   "repository": {

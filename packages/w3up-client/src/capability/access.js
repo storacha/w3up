@@ -93,6 +93,21 @@ export const request = async ({ agent }, input) =>
   Agent.Access.request(agent, input)
 
 /**
+ * Creates a new `PendingAccessRequest` object that can be used to poll for the
+ * requested delegation through `access/claim` capability.
+ *
+ * @param {{agent: API.Agent}} agent
+ * @param {object} input
+ * @param {API.Link} input.request - Link to the `access/authorize` invocation.
+ * @param {API.UTCUnixTimestamp} input.expiration - Seconds in UTC.
+ * @param {API.DID} [input.audience] - Principal requesting an access.
+ * @param {API.ProviderDID} [input.provider] - Provider handling request.
+ */
+/* c8 ignore next 2 */
+export const createPendingAccessRequest = ({ agent }, input) =>
+  Agent.Access.createPendingAccessRequest(agent, input)
+
+/**
  *
  * @param {{agent: API.Agent}} agent
  * @param {object} input

@@ -233,7 +233,7 @@ export const handleAggregateInsertToPieceAcceptQueue = async (
      * @param piece
      * @returns {Promise<import('@ucanto/interface').Result<import('@ucanto/interface').Unit, RangeError|import('../types.js').QueueAddError>>}
      */
-    async piece => {
+    async (piece) => {
       const inclusionProof = aggregateBuilder.resolveProof(piece.link)
       if (inclusionProof.error) return inclusionProof
 
