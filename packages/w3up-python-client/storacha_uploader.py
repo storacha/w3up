@@ -43,37 +43,17 @@ def create_dag_and_car(file_path):
         print(f"❌ ipfs-car failed: {e.stderr.decode('utf-8')}")
         sys.exit(1)
 
-def create_all_instructions_json(cid, space_did):
+def read_list_json():
+    list_json_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "list.json")
+    if not os.path.exists(list_json_path):
+        print("❌ Error: list.json file not found in the current directory.")
+        sys.exit(1)
     
-    #Placeholders (e.g., <delegate_address>, <allocation_details>) are used for parameters
-    #  that require additional values.
-    
-    if not space_did.startswith("did:"):
-        space_did = f"did:key:{space_did}"
-    
-    payload = {
-        "tasks": [
-            ["access/delegate", space_did, {"delegate": "<delegate_address>"}],
-            ["space/info", space_did],
-            ["space/allocate", space_did, {"allocation": "<allocation_details>"}],
-            ["store/add", space_did, {"root": {"/": cid}, "shards": []}],
-            ["store/get", space_did, {"root": {"/": cid}}],
-            ["store/remove", space_did, {"root": {"/": cid}}],
-            ["store/list", space_did],
-            ["upload/add", space_did, {"root": {"/": cid}, "shards": []}],
-            ["upload/list", space_did, {"root": {"/": cid}, "shards": []}],
-            ["upload/remove", space_did, {"root": {"/": cid}}],
-            ["usage/report", space_did]
-        ]
-    }
-    
-    with tempfile.NamedTemporaryFile(mode='w', suffix='.json', delete=False) as temp:
-        json.dump(payload, temp, indent=2)
-        temp_json_path = temp.name
-    
-    return temp_json_path
+    with open(list_json_path, 'r') as f:
+        payload = f.read()
+    return payload
 
-def upload_to_storacha(json_file):
+def upload_to_storacha(json_payload):
     """Upload to Storacha using the HTTP Bridge."""
     load_dotenv()
     
@@ -92,22 +72,21 @@ def upload_to_storacha(json_file):
         "Content-Type": "application/json"
     }
     
-    with open(json_file, 'r') as f:
-        data = f.read()
     
     print(f"📤 Uploading to Storacha HTTP Bridge...")
     response = requests.post(
         endpoint,
         headers=headers,
-        data=data
+        data=json_payload
     )
     
     if response.status_code == 200:
-        print("✅ Upload successful!")
-        return response.json()
+     print("✅ Upload successful!")
+     return response.json()
     else:
-        print(f"❌ Upload failed with status code {response.status_code}: {response.text}")
-        return None
+     error_message = f"❌ Upload failed with status code {response.status_code}: {response.text}"
+     print(error_message)
+     raise requests.HTTPError(error_message)
 
 def main():
     load_dotenv()
@@ -129,12 +108,10 @@ def main():
     
     cid, car_file = create_dag_and_car(file_path)
     
-    json_file = create_all_instructions_json(cid, space_did)
+    json_payload = read_list_json()
     
-    result = upload_to_storacha(json_file)
-    
-    os.unlink(json_file)
-    
+    result = upload_to_storacha(json_payload)
+        
     if result:
         print(f"✅ File uploaded successfully to Storacha network.")
         print(f"✅ Access your file at: https://{cid}.ipfs.w3s.link")

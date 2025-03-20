@@ -34,12 +34,12 @@ def check_w3cli():
         print("❌ w3cli not found.")
         print("📦 Installing w3cli globally...")
         try:
-            subprocess.run("npm install -g @web3-storage/w3", shell=True, check=True)
+            subprocess.run("npm install -g @web3-storage/w3cli", shell=True, check=True)
             print("✅ w3cli installed successfully.")
             return True
         except subprocess.CalledProcessError as e:
             print(f"❌ Failed to install w3cli: {e}")
-            print("Please install it manually with: npm install -g @web3-storage/w3")
+            print("Please install it manually with: npm install -g @web3-storage/w3cli")
             return False
 
 ipfs_car_installed = check_ipfs_car()
@@ -49,7 +49,7 @@ if not ipfs_car_installed or not w3cli_installed:
     print("\n⚠️ Some dependencies could not be installed automatically.")
     print("Please install them manually before using the package.")
     print("- ipfs-car: npm install -g ipfs-car")
-    print("- w3cli: npm install -g @web3-storage/w3")
+    print("- w3cli: npm install -g @web3-storage/w3cli")
     print("\nContinuing with Python package installation...\n")
 
 with open('requirements.txt') as f:
