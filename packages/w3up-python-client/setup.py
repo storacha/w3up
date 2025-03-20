@@ -3,27 +3,6 @@ import sys
 import platform
 from setuptools import setup, find_packages
 
-def check_ipfs_car():
-    print("🔍 Checking for ipfs-car...")
-    try:
-        if platform.system() == "Windows":
-            result = subprocess.run("npx ipfs-car --version", shell=True, check=True, capture_output=True)
-        else:
-            result = subprocess.run("ipfs-car --version", shell=True, check=True, capture_output=True)
-        print(f"✅ ipfs-car is already installed: {result.stdout.decode('utf-8').strip()}")
-        return True
-    except subprocess.CalledProcessError:
-        print("❌ ipfs-car is not installed.")
-        print("📦 Installing ipfs-car globally...")
-        try:
-            subprocess.run("npm install -g ipfs-car", shell=True, check=True)
-            print("✅ ipfs-car installed successfully.")
-            return True
-        except subprocess.CalledProcessError as e:
-            print(f"❌ Failed to install ipfs-car: {e}")
-            print("Please install it manually with: npm install -g ipfs-car")
-            return False
-
 def check_w3cli():
     print("🔍 Checking for w3cli...")
     try:
@@ -42,15 +21,7 @@ def check_w3cli():
             print("Please install it manually with: npm install -g @web3-storage/w3cli")
             return False
 
-ipfs_car_installed = check_ipfs_car()
 w3cli_installed = check_w3cli()
-
-if not ipfs_car_installed or not w3cli_installed:
-    print("\n⚠️ Some dependencies could not be installed automatically.")
-    print("Please install them manually before using the package.")
-    print("- ipfs-car: npm install -g ipfs-car")
-    print("- w3cli: npm install -g @web3-storage/w3cli")
-    print("\nContinuing with Python package installation...\n")
 
 with open('requirements.txt') as f:
     requirements = f.read().splitlines()
