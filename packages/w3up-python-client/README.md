@@ -13,8 +13,8 @@ pip install .
 
 Create a `.env` file with your credentials:
 ```
-X-AUTH-SECRET-HEADER=your_auth_secret
-AUTHORIZATION-HEADER=your_authorization
+X_AUTH_SECRET_HEADER=your_auth_secret
+AUTHORIZATION_HEADER=your_authorization
 SPACE_DID=your_space_did
 ```
 

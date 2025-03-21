@@ -72,9 +72,9 @@ def upload_to_storacha(json_payload, auth_secret, authorization, endpoint):
 def main():
     load_dotenv()
     
-    auth_secret = os.getenv("X-AUTH-SECRET-HEADER")
-    authorization = os.getenv("AUTHORIZATION-HEADER")
-    endpoint = os.getenv("HTTPS-ENDPOINT", "https://up.storacha.network/bridge")
+    auth_secret = os.getenv("X_AUTH_SECRET_HEADER")
+    authorization = os.getenv("AUTHORIZATION_HEADER")
+    endpoint = os.getenv("HTTPS_ENDPOINT", "https://up.storacha.network/bridge")
     
     if len(sys.argv) < 2:
         print("❌ Error: Please provide a file path to upload.")
