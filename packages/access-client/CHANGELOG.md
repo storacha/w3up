@@ -1,5 +1,12 @@
 # Changelog
 
+## [20.2.1](https://github.com/storacha/w3up/compare/access-v20.2.0...access-v20.2.1) (2025-03-24)
+
+
+### Fixes
+
+* dedupe proofs ([#1635](https://github.com/storacha/w3up/issues/1635)) ([2ddb404](https://github.com/storacha/w3up/commit/2ddb4042fee59e6b667057f6e82c711fa9e318ee))
+
 ## [20.2.0](https://github.com/storacha/w3up/compare/access-v20.1.2...access-v20.2.0) (2025-02-25)
 
 
