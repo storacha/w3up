@@ -29,7 +29,7 @@ This converts the file to CAR format, uploads it to Storacha, and provides an ac
 
 ## Instructions to be used over the http bridge
 
-Below instructions can be used over the http bridge by adidng them to the list.json file.
+Below instructions can be used over the http bridge by adding them to the list.json file.
 
 ```bash
 {

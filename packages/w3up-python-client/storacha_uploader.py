@@ -45,7 +45,7 @@ def read_list_json():
         payload = f.read()
     return payload
 
-def upload_to_storacha(json_payload, auth_secret, authorization, endpoint):
+def send_request_to_the_bridge(json_payload, auth_secret, authorization, endpoint):
     """Upload to Storacha using the HTTP Bridge."""
     if not auth_secret:
         raise ValueError("X-Auth-Secret is required.")
@@ -94,7 +94,7 @@ def main():
     try:
      cid, car_file = create_dag_and_car(file_path)
      json_payload = read_list_json()
-     result = upload_to_storacha(json_payload, auth_secret, authorization, endpoint)
+     result = send_request_to_the_bridge(json_payload, auth_secret, authorization, endpoint)
      print(f"✅ File uploaded successfully to Storacha network.")
      print(f"✅ Access your file at: https://{cid}.ipfs.w3s.link")
      print(f"✅ Response details: {json.dumps(result, indent=2)}")
