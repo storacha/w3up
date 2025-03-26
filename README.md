@@ -1,3 +1,9 @@
+# ⚠️ DEPRECATED
+
+This repo moved to [github.com/storacha/upload-service](https://github.com/storacha/upload-service). Please only use this repo to backport changes to `@web3-storage/*` modules.
+
+---
+
 # `w3up`
 
 This repo implements the web3.storage UCAN protocol [specifications](https://github.com/storacha/specs).
