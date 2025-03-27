@@ -1,8 +1,0 @@
-{
-  "name": "storacha-uploader",
-  "version": "1.0.0",
-  "description": "Tool for uploading files to Storacha network",
-  "dependencies": {
-    "ipfs-car": "^0.9.1"
-  }
-} 

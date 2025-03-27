@@ -2,3 +2,5 @@
 *.car
 /storacha_uploader.egg-info
 /myenv
+node_modules
+
