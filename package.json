@@ -41,7 +41,9 @@
   },
   "dependencies": {
     "depcheck": "^1.4.3",
-    "typedoc-plugin-missing-exports": "^2.1.0"
+    "typedoc-plugin-missing-exports": "^2.1.0",
+    "@web3-storage/w3cli": "^3.0.1",
+    "ipfs-car": "^0.9.1"
   },
   "pnpm": {
     "peerDependencyRules": {
