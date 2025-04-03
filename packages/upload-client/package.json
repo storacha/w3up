@@ -92,7 +92,6 @@
     "@web3-storage/capabilities": "workspace:^",
     "@web3-storage/data-segment": "^5.1.0",
     "@web3-storage/filecoin-client": "workspace:^",
-    "ipfs-utils": "^9.0.14",
     "multiformats": "^13.3.2",
     "p-retry": "^6.2.1",
     "varint": "^6.0.0"

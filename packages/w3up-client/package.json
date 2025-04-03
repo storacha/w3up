@@ -127,12 +127,12 @@
   "scripts": {
     "attw": "attw --pack .",
     "lint": "tsc --build && eslint '**/*.{js,ts}' && prettier --check '**/*.{js,ts,yml,json}' --ignore-path ../../.gitignore",
-    "build": "npm run build:tsc && npm run build:bundle:browser",
+    "build": "pnpm build:tsc && pnpm build:bundle:browser",
     "build:tsc": "tsc --build",
     "build:bundle:browser": "esbuild src/index.js --bundle --minify --target=chrome130 --format=iife --global-name=w3up --outfile=browser.min.js",
     "dev": "tsc --build --watch",
     "check": "tsc --build",
-    "prepare": "npm run build",
+    "prepare": "pnpm build",
     "test": "npm-run-all -p -r mock:* test:all",
     "test:all": "run-s test:node test:browser",
     "test:node": "hundreds -r html -r text mocha 'test/**/!(*.browser).test.js' -n experimental-vm-modules -n no-warnings -n stack-trace-limit=1000 -t 10000",
@@ -143,7 +143,7 @@
     "mock:gateway-server": "PORT=5001 node test/helpers/gateway-server.js",
     "coverage": "c8 report -r html && open coverage/index.html",
     "rc": "npm version prerelease --preid rc",
-    "docs": "npm run build && typedoc --out docs-generated"
+    "docs": "pnpm build && typedoc --out docs-generated"
   },
   "dependencies": {
     "@ipld/dag-ucan": "^3.4.0",
