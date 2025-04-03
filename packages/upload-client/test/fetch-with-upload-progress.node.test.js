@@ -1,5 +1,8 @@
 import { createServer } from 'node:http'
-import { fetchWithUploadProgress, iterateBodyWithProgress } from '../src/fetch-with-upload-progress.js'
+import {
+  fetchWithUploadProgress,
+  iterateBodyWithProgress,
+} from '../src/fetch-with-upload-progress.js'
 import assert from 'node:assert'
 
 const encoder = new TextEncoder()
@@ -85,9 +88,11 @@ describe('iterateBodyWithProgress', () => {
     )
   })
   it('should re-throw an error if it happens during read', async () => {
-    const body = new ReadableStream({ start: async () => {
-      throw new Error('oops')
-    } })
+    const body = new ReadableStream({
+      start: async () => {
+        throw new Error('oops')
+      },
+    })
 
     await assert.rejects(
       async () => {

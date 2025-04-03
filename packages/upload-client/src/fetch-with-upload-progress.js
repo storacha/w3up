@@ -29,7 +29,10 @@ function iterableToStream(iterable) {
  * @param {import('./types.js').ProgressFn} onUploadProgress
  * @returns {AsyncIterable<Uint8Array>}
  */
-export const iterateBodyWithProgress = async function* (body, onUploadProgress) {
+export const iterateBodyWithProgress = async function* (
+  body,
+  onUploadProgress
+) {
   if (body instanceof ReadableStream) {
     const reader = body.getReader()
     const total = 0 // If the total size is unknown
