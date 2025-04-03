@@ -6,9 +6,9 @@
  * @returns {ReadableStream}
  */
 function iterableToStream(iterable) {
+  const iterator = iterable[Symbol.asyncIterator]()
   return new ReadableStream({
     async pull(controller) {
-      const iterator = iterable[Symbol.asyncIterator]()
       const { value, done } = await iterator.next()
       if (value) {
         controller.enqueue(value)
@@ -45,9 +45,14 @@ const iterateBodyWithProgress = async function* (body, onUploadProgress) {
         yield value // Yield the chunk
         onUploadProgress({ total, loaded, lengthComputable })
       }
+      // eslint-disable-next-line no-useless-catch
+    } catch (e) {
+      throw e
     } finally {
       reader.releaseLock() // Ensure the reader lock is released
     }
+  } else {
+    throw new Error('Body is not a ReadableStream')
   }
 }
 
@@ -60,6 +65,10 @@ const iterateBodyWithProgress = async function* (body, onUploadProgress) {
  */
 const withUploadProgress = (options) => {
   const { onUploadProgress, body } = options
+
+  if (!onUploadProgress) {
+    return options
+  }
 
   const rsp = new Response(body)
   // @ts-expect-error web streams from node and web have different types
@@ -76,84 +85,82 @@ const withUploadProgress = (options) => {
 /* c8 ignore start */
 /**
  *
- * @param {string} url
+ * @param {string | URL} url
  * @param {import('./types.js').FetchOptions} init
  */
 const fetchXhr = (url, { onUploadProgress, ...init }) => {
-  if (onUploadProgress) {
-    return /** @type {Promise<Response>} */ (
-      new Promise((resolve, reject) => {
-        const xhr = new XMLHttpRequest()
-        xhr.open(init.method || 'GET', url, true)
-        xhr.upload.addEventListener('progress', (e) =>
-          onUploadProgress({
-            total: e.total,
-            loaded: e.loaded,
-            lengthComputable: e.lengthComputable,
-            url,
-          })
-        )
-        xhr.upload.addEventListener('loadend', (e) =>
-          onUploadProgress({
-            total: e.total,
-            loaded: e.loaded,
-            lengthComputable: e.lengthComputable,
-            url,
-          })
-        )
-        xhr.onreadystatechange = () => {
-          if (xhr.readyState === 4) {
-            // @ts-expect-error doesn't have to match Response 100%
-            resolve({
-              status: xhr.status,
-              statusText: xhr.statusText,
-              body: xhr.response,
-              ok: ((xhr.status / 100) | 0) == 2,
-            })
-          }
-        }
-        xhr.onerror = (err) => reject(err)
-        Object.entries(init.headers || {}).forEach(([key, value]) =>
-          xhr.setRequestHeader(key, value)
-        )
-        /**
-         * @type {XMLHttpRequestBodyInit}
-         */
-        // @ts-expect-error ReadableStream as body is not supported by XHR
-        const body = init.body
-        xhr.send(body)
-      })
-    )
-  } else {
+  if (!onUploadProgress) {
     return fetch(url, init)
   }
+  return /** @type {Promise<Response>} */ (
+    new Promise((resolve, reject) => {
+      const xhr = new XMLHttpRequest()
+      xhr.open(init.method || 'GET', url, true)
+      xhr.upload.addEventListener('progress', (e) =>
+        onUploadProgress({
+          total: e.total,
+          loaded: e.loaded,
+          lengthComputable: e.lengthComputable,
+          url,
+        })
+      )
+      xhr.upload.addEventListener('loadend', (e) =>
+        onUploadProgress({
+          total: e.total,
+          loaded: e.loaded,
+          lengthComputable: e.lengthComputable,
+          url,
+        })
+      )
+      xhr.onreadystatechange = () => {
+        if (xhr.readyState === 4) {
+          // @ts-expect-error doesn't have to match Response 100%
+          resolve({
+            status: xhr.status,
+            statusText: xhr.statusText,
+            body: xhr.response,
+            ok: ((xhr.status / 100) | 0) == 2,
+          })
+        }
+      }
+      xhr.onerror = (err) => reject(err)
+      Object.entries(init.headers || {}).forEach(([key, value]) =>
+        xhr.setRequestHeader(key, value)
+      )
+      /**
+       * @type {XMLHttpRequestBodyInit}
+       */
+      // @ts-expect-error ReadableStream as body is not supported by XHR
+      const body = init.body
+      xhr.send(body)
+    })
+  )
 }
 
 /* c8 ignore stop */
-
-// Deno supports H1 streaming
-const isNode =
-  typeof process !== 'undefined' &&
-  process.versions.node &&
-  !process.versions.bun &&
-  !process.versions.deno
-const isBrowser = typeof globalThis.XMLHttpRequest !== 'undefined'
 
 /**
  * @type {import('./types.js').FetchWithUploadProgress}
  */
 export const fetchWithUploadProgress = (url, init = {}) => {
-  // https://developer.mozilla.org/en-US/docs/Web/API/PerformanceResourceTiming/nextHopProtocol
   /**
-   * @type {string | undefined}
+   * @type {"http/0.9"| "http/1.0" | "http/1.1" | "http/2" | "h2" | "h2c" | "h3" | undefined}
+   * @see https://developer.mozilla.org/en-US/docs/Web/API/PerformanceResourceTiming/nextHopProtocol
    */
   const protocol =
     // @ts-expect-error nextHopProtocol is missing from types but is widely available
     performance.getEntriesByType('resource')[0]?.nextHopProtocol
-  const preH2 = protocol !== 'h2' && protocol !== 'h2c' && protocol !== 'h3'
+  const preH2 =
+    protocol === 'http/0.9' ||
+    protocol === 'http/1.0' ||
+    protocol === 'http/1.1'
 
   /* c8 ignore next 3 */
-  if ((isBrowser || preH2) && !isNode) {
+  if (
+    typeof globalThis.XMLHttpRequest !== 'undefined' &&
+    preH2 &&
+    Boolean(init.onUploadProgress)
+  ) {
     return fetchXhr(url, init)
   }
   return fetch(url, withUploadProgress(init))
