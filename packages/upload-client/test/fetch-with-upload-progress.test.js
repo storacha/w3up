@@ -35,7 +35,8 @@ describe('fetchWithUploadProgress', () => {
       .then((text) => {
         assert.equal(text, 'Hello from 1.1')
         assert.equal(total, body.byteLength)
-      }).finally(() => {
+      })
+      .finally(() => {
         server.close()
       })
   })
