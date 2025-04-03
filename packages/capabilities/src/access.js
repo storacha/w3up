@@ -41,7 +41,7 @@ export const AuthorizationRequest = Schema.struct({
   /**
    * DID of the Account authorization is requested from.
    */
-  iss: Account,
+  iss: Account.optional(),
   /**
    * Capabilities agent wishes to be granted.
    */

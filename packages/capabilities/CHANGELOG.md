@@ -1,5 +1,12 @@
 # Changelog
 
+## [18.1.0](https://github.com/storacha/w3up/compare/capabilities-v18.0.1...capabilities-v18.1.0) (2025-02-25)
+
+
+### Features
+
+* external login ([#1629](https://github.com/storacha/w3up/issues/1629)) ([150b5d7](https://github.com/storacha/w3up/commit/150b5d7c55ca92becbabab969285497fbba86268))
+
 ## [18.0.1](https://github.com/storacha/w3up/compare/capabilities-v18.0.0...capabilities-v18.0.1) (2024-12-19)
 
 

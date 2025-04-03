@@ -21,6 +21,12 @@ export const provide = (ctx) =>
  * @returns {Promise<API.Transaction<API.AccessAuthorizeSuccess, API.AccessAuthorizeFailure>>}
  */
 export const authorize = async ({ capability, invocation }, ctx) => {
+  if (!capability.nb.iss) {
+    return Server.error(
+      new Error('Issuer is required in invoked authorization request.')
+    )
+  }
+
   const accountMailtoDID =
     /** @type {import('@web3-storage/did-mailto/types').DidMailto} */ (
       capability.nb.iss
@@ -70,7 +76,8 @@ export const authorize = async ({ capability, invocation }, ctx) => {
       nb: {
         // we copy request details and set the `aud` field to the agent DID
         // that requested the authorization.
-        ...capability.nb,
+        iss: accountMailtoDID,
+        att: capability.nb.att,
         aud: capability.with,
         // Link to the invocation that requested the authorization.
         cause: invocation.cid,
