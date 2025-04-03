@@ -29,7 +29,7 @@ function iterableToStream(iterable) {
  * @param {import('./types.js').ProgressFn} onUploadProgress
  * @returns {AsyncIterable<Uint8Array>}
  */
-const iterateBodyWithProgress = async function* (body, onUploadProgress) {
+export const iterateBodyWithProgress = async function* (body, onUploadProgress) {
   if (body instanceof ReadableStream) {
     const reader = body.getReader()
     const total = 0 // If the total size is unknown
@@ -155,7 +155,7 @@ export const fetchWithUploadProgress = (url, init = {}) => {
     protocol === 'http/1.0' ||
     protocol === 'http/1.1'
 
-  /* c8 ignore next 3 */
+  /* c8 ignore next 7 */
   if (
     typeof globalThis.XMLHttpRequest !== 'undefined' &&
     preH2 &&
