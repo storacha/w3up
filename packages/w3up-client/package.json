@@ -115,6 +115,10 @@
       "types": "./dist/src/stores/memory.d.ts",
       "import": "./dist/src/stores/memory.js"
     },
+    "./service": {
+      "types": "./dist/src/service.d.ts",
+      "import": "./dist/src/service.js"
+    },
     "./types": "./dist/src/types.js"
   },
   "publishConfig": {
@@ -148,16 +152,17 @@
   "dependencies": {
     "@ipld/dag-ucan": "^3.4.0",
     "@ucanto/client": "^9.0.1",
-    "@ucanto/core": "^10.0.1",
-    "@ucanto/interface": "^10.0.1",
-    "@ucanto/principal": "^9.0.1",
-    "@ucanto/transport": "^9.1.1",
+    "@ucanto/core": "^10.3.1",
+    "@ucanto/interface": "^10.2.0",
+    "@ucanto/principal": "^9.0.2",
+    "@ucanto/transport": "^9.2.0",
     "@web3-storage/access": "workspace:^",
     "@web3-storage/blob-index": "workspace:^",
     "@web3-storage/capabilities": "workspace:^",
     "@web3-storage/did-mailto": "workspace:^",
     "@web3-storage/filecoin-client": "workspace:^",
-    "@web3-storage/upload-client": "workspace:^"
+    "@web3-storage/upload-client": "workspace:^",
+    "environment": "^1.1.0"
   },
   "devDependencies": {
     "@ipld/car": "^5.1.1",

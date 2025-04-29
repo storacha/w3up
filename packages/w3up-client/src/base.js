@@ -21,7 +21,7 @@ export class Base {
    * @param {URL} [options.receiptsEndpoint]
    */
   constructor(agentData, options = {}) {
-    this._serviceConf = options.serviceConf ?? serviceConf
+    this._serviceConf = options.serviceConf ?? serviceConf()
     this._agent = new Agent(agentData, {
       servicePrincipal: this._serviceConf.access.id,
       // @ts-expect-error I know but it will be HTTP for the forseeable.
