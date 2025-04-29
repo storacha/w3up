@@ -7,6 +7,12 @@ import { concat } from 'uint8arrays'
 import * as API from '../types.js'
 
 /**
+ * The size of the batch to process when checking shard allocations.
+ * This is a heuristic to avoid memory issues when processing large indexes.
+ */
+const ALLOCATION_BATCH_SIZE = 10_000
+
+/**
  * @param {API.IndexServiceContext} context
  * @returns {API.ServiceMethod<API.IndexAdd, API.IndexAddSuccess, API.IndexAddFailure>}
  */
@@ -55,23 +61,43 @@ const add = async ({ capability }, context) => {
 
   const idxRes = ShardedDAGIndex.extract(concat(chunks))
   if (!idxRes.ok) return idxRes
+  return await batchProcessIndexChunks(idxRes.ok, space, context, idxLink)
+}
 
-  // ensure indexed shards are allocated in the agent's space
-  const shardDigests = [...idxRes.ok.shards.keys()]
-  const shardAllocRes = await Promise.all(
-    shardDigests.map((s) => assertAllocated(context, space, s, 'ShardNotFound'))
-  )
-  for (const res of shardAllocRes) {
-    if (res.error) return res
+/**
+ * Batch process all chunks of the index.
+ *
+ * @param {import('@web3-storage/blob-index/types').ShardedDAGIndexView} index
+ * @param {API.SpaceDID} space
+ * @param {API.IndexServiceContext} context
+ * @param {API.CARLink} idxLink
+ */
+async function batchProcessIndexChunks(index, space, context, idxLink) {
+  const shardDigests = [...index.shards.keys()]
+
+  // Process shard allocations in batches
+  for (let i = 0; i < shardDigests.length; i += ALLOCATION_BATCH_SIZE) {
+    const batch = shardDigests.slice(i, i + ALLOCATION_BATCH_SIZE)
+
+    // Each batch can be processed concurrently
+    const batchResults = await Promise.all(
+      batch.map((shard) =>
+        assertAllocated(context, space, shard, 'ShardNotFound')
+      )
+    )
+
+    for (const res of batchResults) {
+      if (res.error) return res
+    }
   }
 
   // TODO: randomly validate slices in the index correspond to slices in the blob
 
   const publishRes = await Promise.all([
     // publish the index data to IPNI
-    context.ipniService.publish(idxRes.ok),
+    context.ipniService.publish(index),
     // publish a content claim for the index
-    publishIndexClaim(context, { content: idxRes.ok.content, index: idxLink }),
+    publishIndexClaim(context, { content: index.content, index: idxLink }),
   ])
   for (const res of publishRes) {
     if (res.error) return res
