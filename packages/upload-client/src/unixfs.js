@@ -174,6 +174,7 @@ class UnixFSDirectoryBuilder {
       linksByPath.set(path, link)
 
       if (this.#options?.onDirectoryEntryLink) {
+        /* c8 ignore next */
         this.#options.onDirectoryEntryLink({ name: dir.name, ...link })
       }
     }

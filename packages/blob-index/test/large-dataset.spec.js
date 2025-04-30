@@ -9,7 +9,6 @@ import * as Link from 'multiformats/link'
 /**
  * @typedef {import('entail').Test} Test
  * @typedef {import('entail').assert} Assert
- * @typedef {globalThis.Set<string>} StringSet
  */
 
 export const test = {
