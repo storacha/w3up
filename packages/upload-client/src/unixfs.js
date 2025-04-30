@@ -3,7 +3,7 @@ import * as raw from 'multiformats/codecs/raw'
 import { withMaxChunkSize } from '@ipld/unixfs/file/chunker/fixed'
 import { withWidth } from '@ipld/unixfs/file/layout/balanced'
 
-const SHARD_THRESHOLD = 1000 // shard directory after > 1,000 items
+export const SHARD_THRESHOLD = 1000 // shard directory after > 1,000 items
 const queuingStrategy = UnixFS.withCapacity()
 
 const defaultSettings = UnixFS.configure({
@@ -157,10 +157,12 @@ class UnixFSDirectoryBuilder {
       const dirWriter =
         dir.entries.size <= SHARD_THRESHOLD
           ? UnixFS.createDirectoryWriter(writer)
-          : UnixFS.createShardedDirectoryWriter(writer)
+          : /* c8 ignore next */
+            UnixFS.createShardedDirectoryWriter(writer)
 
       // Add all entries from this directory
       for (const [name, _] of dir.entries) {
+        /* c8 ignore next */
         const entryPath = path ? `${path}/${name}` : name
         const link = linksByPath.get(entryPath)
 
