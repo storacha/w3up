@@ -343,3 +343,7 @@ export type EncodedDelegation<C extends Capabilities = Capabilities> = string &
 
 export type BytesDelegation<C extends Capabilities = Capabilities> =
   Uint8Array & Phantom<Delegation<C>>
+
+export enum AppName {
+  BskyBackups = 'bsky-backups',
+}

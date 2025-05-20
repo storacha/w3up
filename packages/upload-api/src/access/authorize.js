@@ -82,6 +82,12 @@ export const authorize = async ({ capability, invocation }, ctx) => {
         // Link to the invocation that requested the authorization.
         cause: invocation.cid,
       },
+      // we copy the facts in so that information can be passed
+      // from the invoker of this capability to the invoker of the confirm
+      // capability - we use this, for example, to let bsky.storage users
+      // specify that they should be redirected back to bsky.storage after
+      // completing the Stripe plan selection flow
+      facts: invocation.facts,
     })
     .delegate()
 

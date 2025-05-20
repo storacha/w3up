@@ -20,6 +20,7 @@ import { type Client } from './client.js'
 import { StorefrontService } from '@web3-storage/filecoin-client/storefront'
 export * from '@ucanto/interface'
 export * from '@web3-storage/did-mailto'
+export { AppName } from '@web3-storage/access/types'
 export type { Agent, CapabilityQuery } from '@web3-storage/access/agent'
 export type {
   Access,
