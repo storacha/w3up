@@ -1,5 +1,17 @@
 # Changelog
 
+## [8.1.0](https://github.com/storacha/w3up/compare/filecoin-api-v8.0.0...filecoin-api-v8.1.0) (2025-05-21)
+
+
+### Features
+
+* external login ([#1629](https://github.com/storacha/w3up/issues/1629)) ([150b5d7](https://github.com/storacha/w3up/commit/150b5d7c55ca92becbabab969285497fbba86268))
+
+
+### Other Changes
+
+* upgrade dependencies for better de-duplication ([#1620](https://github.com/storacha/w3up/issues/1620)) ([fa90a01](https://github.com/storacha/w3up/commit/fa90a01ceb0877cfe606d6a5a86b7a11f6b0a018))
+
 ## [8.0.0](https://github.com/storacha/w3up/compare/filecoin-api-v7.3.2...filecoin-api-v8.0.0) (2024-12-09)
 
 
