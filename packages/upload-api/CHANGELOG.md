@@ -1,5 +1,12 @@
 # Changelog
 
+## [19.2.0](https://github.com/storacha/w3up/compare/upload-api-v19.1.0...upload-api-v19.2.0) (2025-05-21)
+
+
+### Features
+
+* port of https://github.com/storacha/upload-service/commit/2c12c23d13d14e9f1b79c34b8169f20975d431f7 ([#1641](https://github.com/storacha/w3up/issues/1641)) ([8eb4306](https://github.com/storacha/w3up/commit/8eb43061b184e222f6aaf10d69a0129225858a6f))
+
 ## [19.1.0](https://github.com/storacha/w3up/compare/upload-api-v19.0.0...upload-api-v19.1.0) (2025-02-25)
 
 
