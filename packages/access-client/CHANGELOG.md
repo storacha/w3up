@@ -1,5 +1,17 @@
 # Changelog
 
+## [20.3.0](https://github.com/storacha/w3up/compare/access-v20.2.0...access-v20.3.0) (2025-05-21)
+
+
+### Features
+
+* port of https://github.com/storacha/upload-service/commit/2c12c23d13d14e9f1b79c34b8169f20975d431f7 ([#1641](https://github.com/storacha/w3up/issues/1641)) ([8eb4306](https://github.com/storacha/w3up/commit/8eb43061b184e222f6aaf10d69a0129225858a6f))
+
+
+### Fixes
+
+* dedupe proofs ([#1635](https://github.com/storacha/w3up/issues/1635)) ([2ddb404](https://github.com/storacha/w3up/commit/2ddb4042fee59e6b667057f6e82c711fa9e318ee))
+
 ## [20.2.0](https://github.com/storacha/w3up/compare/access-v20.1.2...access-v20.2.0) (2025-02-25)
 
 
