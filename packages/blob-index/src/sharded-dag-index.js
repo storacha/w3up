@@ -9,6 +9,12 @@ import { DigestMap } from './digest-map.js'
 
 export const version = 'index/sharded/dag@0.1'
 
+/**
+ * The size of the batch to process when archiving large datasets.
+ * This is a heuristic to avoid memory issues when archiving large datasets.
+ */
+const ARCHIVE_BATCH_SIZE = 10_000
+
 export const ShardedDAGIndexSchema = Schema.variant({
   [version]: Schema.struct({
     /** DAG root. */
@@ -166,23 +172,44 @@ export const create = (content) => new ShardedDAGIndex(content)
  */
 export const archive = async (model) => {
   const blocks = new Map()
-  const shards = [...model.shards.entries()].sort((a, b) =>
-    compare(a[0].digest, b[0].digest)
-  )
   const index = {
     content: model.content,
     shards: /** @type {API.Link[]} */ ([]),
   }
-  for (const s of shards) {
-    const slices = [...s[1].entries()]
-      .sort((a, b) => compare(a[0].digest, b[0].digest))
-      .map((e) => [e[0].bytes, e[1]])
-    const bytes = dagCBOR.encode([s[0].bytes, slices])
-    const digest = await sha256.digest(bytes)
-    const cid = Link.create(dagCBOR.code, digest)
-    blocks.set(cid.toString(), { cid, bytes })
-    index.shards.push(cid)
+
+  // Convert all shards to an array first
+  const allShards = [...model.shards.entries()]
+
+  // Process shards in batches
+  for (let i = 0; i < allShards.length; i += ARCHIVE_BATCH_SIZE) {
+    const batch = allShards.slice(i, i + ARCHIVE_BATCH_SIZE)
+    const sortedBatch = batch.sort((a, b) => compare(a[0].digest, b[0].digest))
+
+    for (const s of sortedBatch) {
+      // Process slices in batches
+      const allSlices = [...s[1].entries()]
+      const sortedSlices = []
+
+      // Sort slices in batches
+      for (let j = 0; j < allSlices.length; j += ARCHIVE_BATCH_SIZE) {
+        const sliceBatch = allSlices.slice(j, j + ARCHIVE_BATCH_SIZE)
+        const sortedSliceBatch = sliceBatch.sort((a, b) =>
+          compare(a[0].digest, b[0].digest)
+        )
+        sortedSlices.push(...sortedSliceBatch)
+      }
+
+      // Map the sorted slices
+      const mappedSlices = sortedSlices.map((e) => [e[0].bytes, e[1]])
+
+      const bytes = dagCBOR.encode([s[0].bytes, mappedSlices])
+      const digest = await sha256.digest(bytes)
+      const cid = Link.create(dagCBOR.code, digest)
+      blocks.set(cid.toString(), { cid, bytes })
+      index.shards.push(cid)
+    }
   }
+
   const bytes = dagCBOR.encode({ [version]: index })
   const digest = await sha256.digest(bytes)
   const cid = Link.create(dagCBOR.code, digest)
